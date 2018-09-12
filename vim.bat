@@ -11,7 +11,7 @@ goto eof
 
 :havevim
 rem collect the arguments in VIMARGS for Win95
-set VIMARGS=
+set VIMARGS= -- --
 :loopstart
 if .%1==. goto loopend
 set VIMARGS=%VIMARGS% %1
@@ -19,14 +19,8 @@ shift
 goto loopstart
 :loopend
 
-if .%OS%==.Windows_NT goto ntaction
-
+echo "%VIM_EXE_DIR%\nvim-qt.exe"  %VIMARGS%
 "%VIM_EXE_DIR%\nvim-qt.exe"  %VIMARGS%
-goto eof
-
-:ntaction
-rem for WinNT we can use %*
-"%VIM_EXE_DIR%\nvim-qt.exe"  %*
 goto eof
 
 
