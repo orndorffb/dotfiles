@@ -1,12 +1,12 @@
-call plug#begin('~/.config/nvim/plugged')
+call plug#begin('~/.vim/plugged')
     Plug 'bling/vim-bufferline'
-    Plug 'iCyMind/NeoSolarized'
+    "Plug 'iCyMind/NeoSolarized'
     Plug 'kien/ctrlp.vim'
     Plug 'vim-airline/vim-airline'
     "Plug 'tpope/vim-dispatch'
     Plug 'morhetz/gruvbox'
     "Plug 'vim-syntastic/syntastic'
-    Plug 'omnisharp/omnisharp-vim'
+    "Plug 'omnisharp/omnisharp-vim'
     "Plug 'w0rp/ale'
 call plug#end()
 
@@ -21,6 +21,20 @@ set shiftwidth=4        " Indentation amount for < and > commands.
 
 set background=dark
 colorscheme gruvbox
+
+if has("gui_running")
+  set guioptions-=m  "menu bar
+  set guioptions-=T  "toolbar
+  set guioptions-=r  "scrollbar
+  set lines=50 columns=150
+  if has("gui_gtk2")
+    set guifont=Inconsolata\ 10
+  elseif has("gui_macvim")
+    set guifont=Menlo\ Regular:h14
+  elseif has("gui_win32")
+    set guifont=Consolas:h10:cANSI
+  endif
+endif
 
 set nojoinspaces        " Prevents inserting two spaces after punctuation on a join (J)
 
