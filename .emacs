@@ -7,19 +7,27 @@
   ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
-;;Themes
-(setq custom-safe-themes t)
+
+(menu-bar-mode -1)
+(toggle-scroll-bar -1)
+(tool-bar-mode -1)
+(global-linum-mode 1)
 (load-theme 'gruvbox t)
 
-;;Remove bars
-(tool-bar-mode -1) 
-(toggle-scroll-bar -1) 
-(menu-bar-mode -1) 
-
-;; org mode
 (require 'org)
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
+(add-hook 'org-mode-hook 'org-hide-block-all)
+
+(require 'ob-sh)
+(org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))
+
+(defun dice-magic (damage)
+   "Says hello."
+   (interactive "s Damage Die: ")
+   (defvar request "curl -X POST -H \"application/json\" -d \"{\\\"cmd\\\":\\\"Roll 1d4\\\"}\" https://api.dicemagic.io/roll")
+   (defvar result (shell-command-to-string request))
+   (message "%s" result))

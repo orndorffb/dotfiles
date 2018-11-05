@@ -4,7 +4,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'kien/ctrlp.vim'
     Plug 'vim-airline/vim-airline'
     "Plug 'tpope/vim-dispatch'
-    Plug 'morhetz/gruvbox'
+    "Plug 'morhetz/gruvbox'
     "Plug 'vim-syntastic/syntastic'
     "Plug 'omnisharp/omnisharp-vim'
     "Plug 'w0rp/ale'
