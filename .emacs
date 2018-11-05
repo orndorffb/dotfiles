@@ -25,9 +25,9 @@
 (require 'ob-sh)
 (org-babel-do-load-languages 'org-babel-load-languages '((sh . t)))
 
-(defun dice-magic (damage)
+(defun dice-magic (hitMod damage)
    "Says hello."
-   (interactive "s Damage Die: ")
-   (defvar request "curl -X POST -H \"application/json\" -d \"{\\\"cmd\\\":\\\"Roll 1d4\\\"}\" https://api.dicemagic.io/roll")
+   (interactive "sHit Mod:\nsDamage Die: ")
+   (defvar request (format "curl -s -X POST -H \"application/json\" -d \"{\\\"cmd\\\":\\\"Roll 1d20%s and %s\\\"}\" https://api.dicemagic.io/roll" hitMod damage))
    (defvar result (shell-command-to-string request))
    (message "%s" result))
