@@ -1,4 +1,5 @@
 (require 'package)
+(require 'json)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
@@ -27,7 +28,10 @@
 
 (defun dice-magic (hitMod damage)
    "Says hello."
-   (interactive "sHit Mod:\nsDamage Die: ")
-   (defvar request (format "curl -s -X POST -H \"application/json\" -d \"{\\\"cmd\\\":\\\"Roll 1d20%s and %s\\\"}\" https://api.dicemagic.io/roll" hitMod damage))
-   (defvar result (shell-command-to-string request))
-   (message "%s" result))
+   (interactive "sHit Mod: \nsDamage Die: ")
+   (setq request (format "curl -s -X POST -H \"application/json\" -d \"{\\\"cmd\\\":\\\"Roll 1d20 %s and %s\\\"}\" https://api.dicemagic.io/roll" hitMod damage))
+   (setq result (shell-command-to-string request))
+   (let ((json-object-type 'plist)
+	 (json-array-type 'list))
+     (setq parsedResponse (json-read-from-string result)))
+   (message "%s" parsedResponse))
