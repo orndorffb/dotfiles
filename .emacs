@@ -35,3 +35,13 @@
 	 (json-array-type 'list))
      (setq parsedResponse (json-read-from-string result)))
    (message "%s" parsedResponse))
+
+(defun dice-magic-generic (message)
+   "Says hello."
+   (interactive "sWhat do you want to ask DiceMagic? ")
+   (setq request (format "curl -s -X POST -H \"application/json\" -d \"{\\\"cmd\\\":\\\"%s\\\"}\" https://api.dicemagic.io/roll" message))
+   (setq result (shell-command-to-string request))
+   (let ((json-object-type 'plist)
+	 (json-array-type 'list))
+     (setq parsedResponse (json-read-from-string result)))
+   (message "%s" parsedResponse))
