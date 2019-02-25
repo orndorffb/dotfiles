@@ -15,8 +15,30 @@
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
+(toggle-word-wrap)
 (global-linum-mode 1)
-(load-theme 'gruvbox t)
+
+(require 'doom-themes)
+
+;; Global settings (defaults)
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+;; may have their own settings.
+(load-theme 'doom-one t)
+
+;; Enable flashing mode-line on errors
+(doom-themes-visual-bell-config)
+
+;; Enable custom neotree theme (all-the-icons must be installed!)
+(doom-themes-neotree-config)
+;; or for treemacs users
+(doom-themes-treemacs-config)
+
+;; Corrects (and improves) org-mode's native fontification.
+(doom-themes-org-config)
+
 
 (setq inhibit-splash-screen t)
 (switch-to-buffer "*scratch*")
@@ -26,6 +48,12 @@
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
 (add-hook 'org-mode-hook 'org-hide-block-all)
+
+(require 'evil)
+  (evil-mode 1)
+
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
 
 (setq backup-directory-alist `(("." . "~/.saves")))
 
@@ -38,6 +66,9 @@
 	 (json-array-type 'list))
      (setq parsedResponse (json-read-from-string result)))
    (message "%s" parsedResponse))
+
+(require 'magit)
+  (global-set-key (kbd "C-x g") 'magit-status)
 
 (defun start-kazmon-omnisharp ()
   (interactive)
@@ -68,6 +99,7 @@
   (helm-projectile-on)
   (setq projectile-indexing-method 'alien)
   (setq projectile-git-submodule-command nil)
+  (setq projectile-enable-caching t)
 
 (global-set-key (kbd "C-c o k") 'start-kazmon-omnisharp)
 
@@ -102,9 +134,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
  '(package-selected-packages
    (quote
-    (projectile powershell company helm omnisharp magit gruvbox-theme))))
+    (evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
