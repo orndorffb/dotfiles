@@ -52,8 +52,7 @@
 (require 'evil)
   (evil-mode 1)
 
-(require 'expand-region)
-(global-set-key (kbd "C-=") 'er/expand-region)
+
 
 (setq backup-directory-alist `(("." . "~/.saves")))
 
