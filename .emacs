@@ -50,7 +50,7 @@
 (add-hook 'org-mode-hook 'org-hide-block-all)
 
 (require 'evil)
-  (evil-mode 1)
+  (evil-mode -1)
 
 
 
@@ -77,7 +77,8 @@
 (require 'helm-config)
   (global-set-key (kbd "M-x") #'helm-M-x)
   (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-  (global-set-key (kbd "C-x C-f") #'helm-find-files)
+  (global-set-key (kbd "C-x C-f") #'helm-find-files) 
+  (global-set-key (kbd "C-x b") #'helm-mini) 
 
   (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
       helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
