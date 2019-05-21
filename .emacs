@@ -16,7 +16,8 @@
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
 (toggle-word-wrap)
-(global-linum-mode 1)
+(global-display-line-numbers-mode 1)
+(setq inhibit-compacting-font-caches t)
 
 (require 'doom-themes)
 
@@ -26,18 +27,7 @@
 
 ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 ;; may have their own settings.
-(load-theme 'doom-one t)
-
-;; Enable flashing mode-line on errors
-(doom-themes-visual-bell-config)
-
-;; Enable custom neotree theme (all-the-icons must be installed!)
-(doom-themes-neotree-config)
-;; or for treemacs users
-(doom-themes-treemacs-config)
-
-;; Corrects (and improves) org-mode's native fontification.
-(doom-themes-org-config)
+(load-theme 'sanityinc-tomorrow-night t)
 
 
 (setq inhibit-splash-screen t)
@@ -54,7 +44,8 @@
 
 
 
-(setq backup-directory-alist `(("." . "~/.saves")))
+(setq backup-directory-alist `((".*" . "~/.saves")))
+
 
 (defun dice-magic-generic (message)
    "Make a request to dice magic."
@@ -97,7 +88,7 @@
   (projectile-global-mode)
   (setq projectile-completion-system 'helm)
   (helm-projectile-on)
-  (setq projectile-indexing-method 'alien)
+  (setq projectile-indexing-method 'hybrid)
   (setq projectile-git-submodule-command nil)
   (setq projectile-enable-caching t)
 
@@ -125,7 +116,9 @@
   ;(electric-pair-local-mode 1) ;; Emacs 25
 
   (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
-  (local-set-key (kbd "C-c C-c") 'recompile))
+  (local-set-key (kbd "C-c C-c") 'recompile)
+  (local-set-key (kbd "C-c C-g") 'omnisharp-go-to-definition))
+
 
 (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
 
@@ -136,10 +129,10 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
+    ("82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a622aaf6377fe1cd14e4298497b7b2cae2efc9e0ce362dade3a58c16c89e089c" "54f2d1fcc9bcadedd50398697618f7c34aceb9966a6cbaa99829eb64c0c1f3ca" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
  '(package-selected-packages
    (quote
-    (evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme))))
+    (color-theme-sanityinc-tomorrow zenburn-theme csharp-mode evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
