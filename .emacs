@@ -19,12 +19,6 @@
 (global-display-line-numbers-mode 1)
 (setq inhibit-compacting-font-caches t)
 
-(require 'doom-themes)
-
-;; Global settings (defaults)
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-      doom-themes-enable-italic t) ; if nil, italics is universally disabled
-
 ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 ;; may have their own settings.
 (load-theme 'sanityinc-tomorrow-night t)
@@ -56,6 +50,8 @@
 	 (json-array-type 'list))
      (setq parsedResponse (json-read-from-string result)))
    (message "%s" parsedResponse))
+
+(global-set-key (kbd "C-c d") 'dice-magic-generic)
 
 (require 'magit)
   (global-set-key (kbd "C-x g") 'magit-status)
