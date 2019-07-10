@@ -12,6 +12,8 @@
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 
 
+(server-start)
+
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
@@ -33,12 +35,11 @@
 (setq org-log-done t)
 (add-hook 'org-mode-hook 'org-hide-block-all)
 
-(require 'evil)
-  (evil-mode -1)
+(global-set-key (kbd "C-;") 'er/expand-region)
 
 
-
-(setq backup-directory-alist `((".*" . "~/.saves")))
+(setq make-backup-files nil) ; stop creating backup~ files
+(setq auto-save-default nil) ; stop creating #autosave# files
 
 
 (defun dice-magic-generic (message)
@@ -88,16 +89,26 @@
   (setq projectile-git-submodule-command nil)
   (setq projectile-enable-caching t)
 
-(global-set-key (kbd "C-c o k") 'start-kazmon-omnisharp)
+(defun lookup-dotnet-docs ()
+  (interactive)
+  (let (word)
+    (setq word
+	  (if (use-region-p)
+	      (buffer-substring-no-properties (region-beginning) (region-end))
+	    (current-word)))
+    (setq word (replace-regexp-in-string " " "_" word))
+    (browse-url (format "https://docs.microsoft.com/en-us/dotnet/api/?view=netcore-2.2&term=%s" word))
+    ;; (eww myUrl) ; emacs's own browser
+    ))
 
 (eval-after-load
   'company
   '(add-to-list 'company-backends #'company-omnisharp))
 
 (defun my-csharp-mode-setup ()
-  (omnisharp-mode)
-  (company-mode)
-  (flycheck-mode)
+  ;;(omnisharp-mode)
+  ;;(company-mode)
+  ;;(flycheck-mode)
 
   (setq indent-tabs-mode nil)
   (setq c-syntactic-indentation t)
@@ -111,9 +122,10 @@
   ;(electric-pair-mode 1)       ;; Emacs 24
   ;(electric-pair-local-mode 1) ;; Emacs 25
 
-  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
-  (local-set-key (kbd "C-c C-c") 'recompile)
-  (local-set-key (kbd "C-c C-g") 'omnisharp-go-to-definition))
+;;  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
+;;  (local-set-key (kbd "C-c C-c") 'recompile)
+  ;;  (local-set-key (kbd "C-c C-g") 'omnisharp-go-to-definition)
+  )
 
 
 (add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
@@ -128,7 +140,7 @@
     ("82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a622aaf6377fe1cd14e4298497b7b2cae2efc9e0ce362dade3a58c16c89e089c" "54f2d1fcc9bcadedd50398697618f7c34aceb9966a6cbaa99829eb64c0c1f3ca" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
  '(package-selected-packages
    (quote
-    (color-theme-sanityinc-tomorrow zenburn-theme csharp-mode evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme))))
+    (flycheck color-theme-sanityinc-tomorrow zenburn-theme csharp-mode evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
