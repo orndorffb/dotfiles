@@ -23,7 +23,7 @@
 
 ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 ;; may have their own settings.
-(load-theme 'sanityinc-tomorrow-night t)
+(load-theme 'zenburn t)
 
 
 (setq inhibit-splash-screen t)
@@ -41,6 +41,8 @@
 (setq make-backup-files nil) ; stop creating backup~ files
 (setq auto-save-default nil) ; stop creating #autosave# files
 
+    (global-set-key (kbd "C-<tab>") 'dabbrev-expand)
+    (define-key minibuffer-local-map (kbd "C-<tab>") 'dabbrev-expand)
 
 (defun dice-magic-generic (message)
    "Make a request to dice magic."
@@ -61,33 +63,47 @@
   (interactive)
   (omnisharp-start-omnisharp-server "c:\docusign_source\KazMon\KazMon.sln"))
 
-(require 'helm)
-(require 'helm-config)
-  (global-set-key (kbd "M-x") #'helm-M-x)
-  (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-  (global-set-key (kbd "C-x C-f") #'helm-find-files) 
-  (global-set-key (kbd "C-x b") #'helm-mini) 
+(require 'ivy)
+  (ivy-mode 1)
+  (global-set-key (kbd "M-x") #'counsel-M-x)
+  (global-set-key (kbd "C-x C-f") #'counsel-find-file) 
+  (global-set-key (kbd "C-x b") #'ivy-switch-buffer)
+(global-set-key (kbd "C-s") #'swiper)
+(global-set-key (kbd "M-y") #'counsel-yank-pop)
+(global-set-key (kbd "M-.") #'counsel-etags-find-tag-at-point)
+(global-set-key (kbd "C-c g") #'counsel-git)
+(global-set-key (kbd "C-c t") #'counsel-etags-find-tag)
 
-  (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-      helm-ff-file-name-history-use-recentf t
-      helm-echo-input-in-header-line t)
 
-  (setq helm-autoresize-max-height 0)
-  (setq helm-autoresize-min-height 20)
-  (helm-autoresize-mode 1)
-  (helm-mode 1)
+
+
+
+;; (Require 'helm)
+;; (require 'helm-config)
+;;   (global-set-key (kbd "M-x") #'helm-M-x)
+;;   (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+;;   (global-set-key (kbd "C-x C-f") #'helm-find-files) 
+;;   (global-set-key (kbd "C-x b") #'helm-mini) 
+
+;;   (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+;;       helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+;;       helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+;;       helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+;;       helm-ff-file-name-history-use-recentf t
+;;       helm-echo-input-in-header-line t)
+
+;;   (setq helm-autoresize-max-height 0)
+;;   (setq helm-autoresize-min-height 20)
+;;   (helm-autoresize-mode 1)
+;;   (helm-mode 1)
 
 (require 'projectile)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (projectile-global-mode)
-  (setq projectile-completion-system 'helm)
-  (helm-projectile-on)
   (setq projectile-indexing-method 'hybrid)
   (setq projectile-git-submodule-command nil)
   (setq projectile-enable-caching t)
+  (setq counsel-projectile-mode t)
 
 (defun lookup-dotnet-docs ()
   (interactive)
@@ -135,12 +151,19 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-backends
+   (quote
+    (company-etags company-omnisharp company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
+		   (company-dabbrev-code company-gtags company-etags company-keywords)
+		   company-oddmuse company-dabbrev)))
  '(custom-safe-themes
    (quote
-    ("82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a622aaf6377fe1cd14e4298497b7b2cae2efc9e0ce362dade3a58c16c89e089c" "54f2d1fcc9bcadedd50398697618f7c34aceb9966a6cbaa99829eb64c0c1f3ca" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
+    ("05a4b82c39107308b5c3720fd0c9792c2076e1ff3ebb6670c6f1c98d44227689" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a622aaf6377fe1cd14e4298497b7b2cae2efc9e0ce362dade3a58c16c89e089c" "54f2d1fcc9bcadedd50398697618f7c34aceb9966a6cbaa99829eb64c0c1f3ca" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
+ '(helm-buffer-max-length 40)
  '(package-selected-packages
    (quote
-    (flycheck color-theme-sanityinc-tomorrow zenburn-theme csharp-mode evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme))))
+    (counsel-etags counsel-projectile counsel swiper ivy flycheck color-theme-sanityinc-tomorrow zenburn-theme csharp-mode evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme)))
+ '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
