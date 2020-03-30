@@ -1,6 +1,4 @@
 (package-initialize)
-(require 'package)
-(require 'json)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
@@ -11,39 +9,68 @@
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 
+;; Basic Setup
+  (server-start)
+  (set-frame-font "Fira Code:size=11")
+  (menu-bar-mode -1)
+  (toggle-scroll-bar -1)
+  (tool-bar-mode -1)
+  (toggle-word-wrap)
+  (global-display-line-numbers-mode 1)
+  (setq inhibit-compacting-font-caches t)
+  (setq explicit-bash-args '("--noediting" "--login"))
+  (setq inhibit-splash-screen t)
+  (switch-to-buffer "*scratch*")
+  (setq make-backup-files nil) ; stop creating backup~ files
+  (setq auto-save-default nil) ; stop creating #autosave# files
+  
+;;Packages
+(require 'package)
 
-(server-start)
 
-(menu-bar-mode -1)
-(toggle-scroll-bar -1)
-(tool-bar-mode -1)
-(toggle-word-wrap)
-(global-display-line-numbers-mode 1)
-(setq inhibit-compacting-font-caches t)
+;;MacOS settings for GUi launch
+(require 'exec-path-from-shell) ;; if not using the ELPA package
+  (when (memq window-system '(mac ns))
+    (exec-path-from-shell-initialize))
 
-;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
-;; may have their own settings.
-(load-theme 'zenburn t)
+;;Json
+(require 'json)
 
-
-(setq inhibit-splash-screen t)
-(switch-to-buffer "*scratch*")
-
+;;Org-mode settings
 (require 'org)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-(add-hook 'org-mode-hook 'org-hide-block-all)
+  (define-key global-map "\C-cl" 'org-store-link)
+  (define-key global-map "\C-ca" 'org-agenda)
+  (setq org-log-done t)
+  (add-hook 'org-mode-hook 'org-hide-block-all)
 
-(global-set-key (kbd "C-;") 'er/expand-region)
+;;Theme
+(load-theme 'sanityinc-tomorrow-night t)
 
+;;Magit
+(require 'magit)
+  (global-set-key (kbd "C-x g") 'magit-status)
 
-(setq make-backup-files nil) ; stop creating backup~ files
-(setq auto-save-default nil) ; stop creating #autosave# files
+;;Ivy
+(require 'ivy)
+  (ivy-mode 1)
+  (global-set-key (kbd "M-x") #'counsel-M-x)
+  (global-set-key (kbd "C-x C-f") #'counsel-find-file) 
+  (global-set-key (kbd "C-x b") #'ivy-switch-buffer)
+  (global-set-key (kbd "C-s") #'swiper)
+  (global-set-key (kbd "M-y") #'counsel-yank-pop)
+  (global-set-key (kbd "M-.") #'counsel-etags-find-tag-at-point)
+  (global-set-key (kbd "C-c g") #'counsel-git)
 
-    (global-set-key (kbd "C-<tab>") 'dabbrev-expand)
-    (define-key minibuffer-local-map (kbd "C-<tab>") 'dabbrev-expand)
+;; Projectile
+(require 'projectile)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  (setq counsel-find-file-ignore-regexp "\\.nupkg\\'")
+  (projectile-global-mode)
+  (setq projectile-git-submodule-command nil)
+  (setq projectile-enable-caching t)
+  (counsel-projectile-mode 1)
 
+;;Custom Functions
 (defun dice-magic-generic (message)
    "Make a request to dice magic."
    (interactive "sWhat do you want to ask DiceMagic? ")
@@ -53,57 +80,8 @@
 	 (json-array-type 'list))
      (setq parsedResponse (json-read-from-string result)))
    (message "%s" parsedResponse))
-
 (global-set-key (kbd "C-c d") 'dice-magic-generic)
 
-(require 'magit)
-  (global-set-key (kbd "C-x g") 'magit-status)
-
-(defun start-kazmon-omnisharp ()
-  (interactive)
-  (omnisharp-start-omnisharp-server "c:\docusign_source\KazMon\KazMon.sln"))
-
-(require 'ivy)
-  (ivy-mode 1)
-  (global-set-key (kbd "M-x") #'counsel-M-x)
-  (global-set-key (kbd "C-x C-f") #'counsel-find-file) 
-  (global-set-key (kbd "C-x b") #'ivy-switch-buffer)
-(global-set-key (kbd "C-s") #'swiper)
-(global-set-key (kbd "M-y") #'counsel-yank-pop)
-(global-set-key (kbd "M-.") #'counsel-etags-find-tag-at-point)
-(global-set-key (kbd "C-c g") #'counsel-git)
-(global-set-key (kbd "C-c t") #'counsel-etags-find-tag)
-
-
-
-
-
-;; (Require 'helm)
-;; (require 'helm-config)
-;;   (global-set-key (kbd "M-x") #'helm-M-x)
-;;   (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-;;   (global-set-key (kbd "C-x C-f") #'helm-find-files) 
-;;   (global-set-key (kbd "C-x b") #'helm-mini) 
-
-;;   (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-;;       helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-;;       helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-;;       helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-;;       helm-ff-file-name-history-use-recentf t
-;;       helm-echo-input-in-header-line t)
-
-;;   (setq helm-autoresize-max-height 0)
-;;   (setq helm-autoresize-min-height 20)
-;;   (helm-autoresize-mode 1)
-;;   (helm-mode 1)
-
-(require 'projectile)
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (projectile-global-mode)
-  (setq projectile-indexing-method 'hybrid)
-  (setq projectile-git-submodule-command nil)
-  (setq projectile-enable-caching t)
-  (setq counsel-projectile-mode t)
 
 (defun lookup-dotnet-docs ()
   (interactive)
@@ -117,34 +95,6 @@
     ;; (eww myUrl) ; emacs's own browser
     ))
 
-(eval-after-load
-  'company
-  '(add-to-list 'company-backends #'company-omnisharp))
-
-(defun my-csharp-mode-setup ()
-  ;;(omnisharp-mode)
-  ;;(company-mode)
-  ;;(flycheck-mode)
-
-  (setq indent-tabs-mode nil)
-  (setq c-syntactic-indentation t)
-  (c-set-style "ellemtel")
-  (setq c-basic-offset 4)
-  (setq truncate-lines t)
-  (setq tab-width 4)
-  (setq evil-shift-width 4)
-
-  ;csharp-mode README.md recommends this too
-  ;(electric-pair-mode 1)       ;; Emacs 24
-  ;(electric-pair-local-mode 1) ;; Emacs 25
-
-;;  (local-set-key (kbd "C-c r r") 'omnisharp-run-code-action-refactoring)
-;;  (local-set-key (kbd "C-c C-c") 'recompile)
-  ;;  (local-set-key (kbd "C-c C-g") 'omnisharp-go-to-definition)
-  )
-
-
-(add-hook 'csharp-mode-hook 'my-csharp-mode-setup t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -152,17 +102,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-backends
-   (quote
-    (company-etags company-omnisharp company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
+   '(company-etags company-omnisharp company-bbdb company-eclim company-semantic company-clang company-xcode company-cmake company-capf company-files
 		   (company-dabbrev-code company-gtags company-etags company-keywords)
-		   company-oddmuse company-dabbrev)))
+		   company-oddmuse company-dabbrev))
  '(custom-safe-themes
-   (quote
-    ("05a4b82c39107308b5c3720fd0c9792c2076e1ff3ebb6670c6f1c98d44227689" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a622aaf6377fe1cd14e4298497b7b2cae2efc9e0ce362dade3a58c16c89e089c" "54f2d1fcc9bcadedd50398697618f7c34aceb9966a6cbaa99829eb64c0c1f3ca" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
+   '("a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" "a2cde79e4cc8dc9a03e7d9a42fabf8928720d420034b66aecc5b665bbf05d4e9" "1436d643b98844555d56c59c74004eb158dc85fc55d2e7205f8d9b8c860e177f" "05a4b82c39107308b5c3720fd0c9792c2076e1ff3ebb6670c6f1c98d44227689" "82d2cac368ccdec2fcc7573f24c3f79654b78bf133096f9b40c20d97ec1d8016" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "a622aaf6377fe1cd14e4298497b7b2cae2efc9e0ce362dade3a58c16c89e089c" "54f2d1fcc9bcadedd50398697618f7c34aceb9966a6cbaa99829eb64c0c1f3ca" "6b2636879127bf6124ce541b1b2824800afc49c6ccd65439d6eb987dbf200c36" "7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default))
  '(helm-buffer-max-length 40)
  '(package-selected-packages
-   (quote
-    (counsel-etags counsel-projectile counsel swiper ivy flycheck color-theme-sanityinc-tomorrow zenburn-theme csharp-mode evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm omnisharp magit gruvbox-theme)))
+   '(lsp-mode exec-path-from-shell omnisharp material-theme counsel-etags counsel-projectile counsel swiper ivy flycheck color-theme-sanityinc-tomorrow zenburn-theme csharp-mode evil expand-region doom-themes monokai-theme json-mode projectile powershell company helm magit gruvbox-theme))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
