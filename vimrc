@@ -1,3 +1,14 @@
+call plug#begin()
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+call plug#end()
+
+
 " Enable filetype plugins
 filetype plugin on
 filetype indent on
@@ -5,6 +16,8 @@ filetype indent on
 set cmdheight=1
 set number
 :imap jj <Esc>
+:nmap ; :
+let mapleader = ","
 
 ":autocmd InsertEnter,InsertLeave * set cul!
 
@@ -50,3 +63,9 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
+" Airline stuff
+let g:airline#extensions#tabline#enabled = 1
+
+" Fzf leader bindings
+map <leader>b :Buffers<cr>
+map <leader>f :Files<cr>
