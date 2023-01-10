@@ -17,7 +17,8 @@ set cmdheight=1
 set number
 :imap jj <Esc>
 :nmap ; :
-let mapleader = ","
+nnoremap <SPACE> <Nop>
+let mapleader = " "
 
 ":autocmd InsertEnter,InsertLeave * set cul!
 
@@ -73,4 +74,4 @@ let g:airline#extensions#tabline#enabled = 1
 " Fzf leader bindings
 map <leader>b :Buffers<cr>
 map <leader>f :Files<cr>
-map <leader>l :Lines<cr>
+map <leader>/ :BLines<cr>
