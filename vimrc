@@ -42,6 +42,11 @@ set tm=500
 set splitbelow
 set splitright
 
+" Buffer stuff
+set hidden
+noremap <Space>j :bprev<CR>
+noremap <Space>k :bnext<CR>
+
 " Enable syntax highlighting
 syntax enable
 
