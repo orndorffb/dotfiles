@@ -18,4 +18,7 @@ return require('packer').startup(function(use)
 	  'rose-pine/neovim'
   })
 
+  use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
+  use('nvim-treesitter/playground')
+
 end)
