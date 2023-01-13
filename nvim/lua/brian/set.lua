@@ -23,3 +23,10 @@ vim.opt.termguicolors = true
 vim.opt.scrolloff = 8
 
 vim.opt.updatetime = 50
+
+require('rose-pine').setup({
+	--- @usage 'main' | 'moon'
+	dark_variant = 'moon'
+})
+
+vim.cmd('colorscheme rose-pine')
