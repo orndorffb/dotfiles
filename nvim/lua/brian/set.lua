@@ -23,6 +23,13 @@ vim.opt.scrolloff = 8
 
 vim.opt.updatetime = 50
 
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+
+
+
 require('rose-pine').setup({
 	--- @usage 'main' | 'moon'
 	dark_variant = 'moon'
