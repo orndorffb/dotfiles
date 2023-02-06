@@ -28,11 +28,5 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
+vim.cmd('colorscheme Nordic')
 
-
-require('rose-pine').setup({
-	--- @usage 'main' | 'moon'
-	dark_variant = 'moon'
-})
-
-vim.cmd('colorscheme rose-pine')
