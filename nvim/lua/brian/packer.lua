@@ -19,6 +19,11 @@ return require('packer').startup(function(use)
   use('nvim-treesitter/playground')
 
   use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+  }
+
+  use {
     'VonHeikemen/lsp-zero.nvim',
     requires = {
         -- LSP Support
