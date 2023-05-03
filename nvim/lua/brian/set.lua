@@ -28,10 +28,7 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
-
+vim.cmd('colorscheme zenbones')
+vim.o.background = "light"
 
 vim.opt.list = true
-
-require("indent_blankline").setup {
-    show_end_of_line = false,
-}
