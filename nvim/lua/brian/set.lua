@@ -28,5 +28,5 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
-vim.cmd('colorscheme Nordic')
-
+vim.cmd('colorscheme zenbones')
+vim.o.background = "light"
