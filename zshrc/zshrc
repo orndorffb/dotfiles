@@ -3,7 +3,7 @@ fpath+=("$(brew --prefix)/share/zsh/site-functions")
 autoload -U promptinit; promptinit
 
 # change the path color
-zstyle :prompt:pure:path color red
+#zstyle :prompt:pure:path color red
 
 prompt pure
 
@@ -24,3 +24,9 @@ alias tn='tmux new-session'
 
 # Lists all ongoing sessions
 alias tl='tmux list-sessions'
+export PATH="/opt/homebrew/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"; [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Docker aliases
+alias dim='docker images'
+alias db='docker build .'
