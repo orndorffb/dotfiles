@@ -14,7 +14,16 @@ return require('packer').startup(function(use)
 	  requires = { {'nvim-lua/plenary.nvim'} }
   }
 
-  use('AlexvZyl/nordic.nvim')
+  use { "catppuccin/nvim", as = "catppuccin" }
+  use('rebelot/kanagawa.nvim')
+  use 'AlexvZyl/nordic.nvim'
+  use({ 'rose-pine/neovim' })
+  use 'nvim-tree/nvim-web-devicons'
+  use {
+      "mcchrish/zenbones.nvim",
+      requires = "rktjmp/lush.nvim"
+  }
+
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('nvim-treesitter/playground')
 
@@ -50,7 +59,7 @@ return require('packer').startup(function(use)
         {'saadparwaiz1/cmp_luasnip'},
         {'hrsh7th/cmp-nvim-lsp'},
         {'hrsh7th/cmp-nvim-lua'},
- 
+
         -- Snippets
         {'L3MON4D3/LuaSnip'},
         {'rafamadriz/friendly-snippets'},
@@ -65,4 +74,5 @@ return require('packer').startup(function(use)
     tag = 'nightly' -- optional, updated every week. (see issue #1193)
   }
 
+  use "lukas-reineke/indent-blankline.nvim"
 end)
