@@ -9,7 +9,12 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (global-display-line-numbers-mode)
-(set-fringe-mode 10) 
+(set-fringe-mode 10)
+
+;; Window and buffer management
+(global-set-key (kbd "C-x |") 'split-window-horizontally)
+(global-set-key (kbd "C-x -") 'split-window-vertically)
+
 (setq backup-directory-alist '(("." . "~/.saves")))
 (setq backup-by-copying t)
 (setq visible-bell       nil
@@ -39,6 +44,11 @@
 (use-package exec-path-from-shell
   :ensure t)
 
+(use-package eglot
+  :ensure t
+  :bind (("C-c g r" . xref-find-references)
+	 ("C-c g d" . xref-find-definitions)))
+
 (use-package expand-region
   :bind (("C-=" . er/expand-region))
   :ensure t)
@@ -56,6 +66,14 @@
 
 (use-package lsp-mode
   :ensure t)
+
+(use-package ace-window
+  :ensure t
+  :init (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (setq aw-ignore-current t)
+  (setq aw-dispatch-always nil)
+  (setq aw-minibuffer-flag t)
+  :bind (( "M-o" . ace-window)))
 
 (use-package ivy
   :ensure t
@@ -93,7 +111,7 @@
  '(custom-safe-themes
    '("02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "da75eceab6bea9298e04ce5b4b07349f8c02da305734f7c0c8c6af7b5eaa9738" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "631c52620e2953e744f2b56d102eae503017047fb43d65ce028e88ef5846ea3b" default))
  '(package-selected-packages
-   '(company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
+   '(expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
