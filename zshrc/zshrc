@@ -27,6 +27,9 @@ alias tl='tmux list-sessions'
 export PATH="/opt/homebrew/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"; [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
+# Go stuff
+export GOPATH="$HOME/go"
+export PATH=$PATH:$GOPATH/bin
 # Docker aliases
 alias dim='docker images'
 alias db='docker build .'

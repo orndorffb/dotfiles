@@ -9,6 +9,7 @@
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (global-display-line-numbers-mode)
+(set-fringe-mode 10) 
 (setq backup-directory-alist '(("." . "~/.saves")))
 (setq backup-by-copying t)
 (setq visible-bell       nil
@@ -39,6 +40,9 @@
   :ensure t)
 
 (use-package magit
+  :ensure t)
+
+(use-package go-mode
   :ensure t)
 
 (use-package company
