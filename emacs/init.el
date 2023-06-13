@@ -20,8 +20,16 @@
 (setq visible-bell       nil
       ring-bell-function #'ignore)
 
+;; no backup files
+(setq-default make-backup-files nil)
+;; no lockfiles
+(setq create-lockfiles nil)
+
 ;; Set font
 (set-frame-font "JetBrains Mono 13" nil t)
+
+;; Org stuff
+(add-hook 'org-mode-hook 'org-indent-mode)
 
 (use-package doom-themes
   :ensure t
@@ -44,10 +52,15 @@
 (use-package exec-path-from-shell
   :ensure t)
 
+;; Lsp stuff
 (use-package eglot
   :ensure t
   :bind (("C-c g r" . xref-find-references)
 	 ("C-c g d" . xref-find-definitions)))
+
+(defun eglot-restart ()
+    (eglot-shutdown)
+    (eglot))
 
 (use-package expand-region
   :bind (("C-=" . er/expand-region))
@@ -75,6 +88,10 @@
   (setq aw-minibuffer-flag t)
   :bind (( "M-o" . ace-window)))
 
+(use-package avy
+  :ensure t
+  :bind (("M-s" . avy-goto-char-2)))
+
 (use-package ivy
   :ensure t
   :bind (("C-x B" . ivy-switch-buffer-other-window))
@@ -91,6 +108,7 @@
 (use-package counsel
   :ensure t
   :after ivy
+  :bind (("C-c f s" . counsel-git-grep))
   :init (counsel-mode))
   
 (use-package swiper
