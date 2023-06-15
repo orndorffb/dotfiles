@@ -59,8 +59,19 @@
 	 ("C-c g d" . xref-find-definitions)))
 
 (defun eglot-restart ()
-    (eglot-shutdown)
-    (eglot))
+  "Shutdown the buffer's lsp server and restarts it"
+  (interactive)
+  (eglot-shutdown)
+  (eglot))
+
+(use-package tree-sitter
+  :ensure t
+  :config
+  (global-tree-sitter-mode))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :after tree-sitter)
 
 (use-package expand-region
   :bind (("C-=" . er/expand-region))
@@ -90,7 +101,7 @@
 
 (use-package avy
   :ensure t
-  :bind (("M-s" . avy-goto-char-2)))
+  :bind (("M-s" . avy-goto-char-timer)))
 
 (use-package ivy
   :ensure t

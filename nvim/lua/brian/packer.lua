@@ -14,35 +14,17 @@ return require('packer').startup(function(use)
 	  requires = { {'nvim-lua/plenary.nvim'} }
   }
 
-  use { "catppuccin/nvim", as = "catppuccin" }
-  use('rebelot/kanagawa.nvim')
-  use 'AlexvZyl/nordic.nvim'
-  use({ 'rose-pine/neovim' })
-  use 'nvim-tree/nvim-web-devicons'
-  use {
-      "mcchrish/zenbones.nvim",
-      requires = "rktjmp/lush.nvim"
-  }
+  use { 'kyazdani42/nvim-web-devicons' }
 
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('nvim-treesitter/playground')
-
-  -- use({
-  --     'rose-pine/neovim',
-  --     as = 'rose-pine',
-  --     config = function()
-  --         require("rose-pine").setup()
-  --         vim.cmd('colorscheme rose-pine')
-  --     end
-  -- })
-  use {
-      "mcchrish/zenbones.nvim",
-      requires = "rktjmp/lush.nvim"
-  }
+  use { 'ggandor/leap.nvim' }
   use {
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   }
+
+  use { 'navarasu/onedark.nvim' }
 
   use {
     'VonHeikemen/lsp-zero.nvim',
@@ -64,14 +46,6 @@ return require('packer').startup(function(use)
         {'L3MON4D3/LuaSnip'},
         {'rafamadriz/friendly-snippets'},
     }
-  }
-
-  use {
-    'nvim-tree/nvim-tree.lua',
-    requires = {
-      'nvim-tree/nvim-web-devicons', -- optional, for file icons
-    },
-    tag = 'nightly' -- optional, updated every week. (see issue #1193)
   }
 
   use "lukas-reineke/indent-blankline.nvim"
