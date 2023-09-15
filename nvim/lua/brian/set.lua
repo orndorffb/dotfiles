@@ -26,7 +26,8 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
-vim.cmd('colorscheme onedark')
+
+vim.cmd('colorscheme catppuccin')
 vim.o.background = "dark"
 
 vim.opt.list = true

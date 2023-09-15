@@ -15,6 +15,7 @@ return require('packer').startup(function(use)
   }
 
   use { 'kyazdani42/nvim-web-devicons' }
+  use { 'prettier/vim-prettier' }
 
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('nvim-treesitter/playground')
@@ -25,7 +26,7 @@ return require('packer').startup(function(use)
   }
 
   use { 'navarasu/onedark.nvim' }
-
+  use { "catppuccin/nvim", as = "catppuccin" }
   use {
     'VonHeikemen/lsp-zero.nvim',
     requires = {
