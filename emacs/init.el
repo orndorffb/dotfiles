@@ -74,7 +74,7 @@
   :after tree-sitter)
 
 (use-package expand-region
-  :bind (("C-=" . er/expand-region))
+  :bind (("C-;" . er/expand-region))
   :ensure t)
 
 (use-package magit
