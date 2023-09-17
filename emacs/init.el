@@ -101,7 +101,7 @@
 
 (use-package avy
   :ensure t
-  :bind (("M-s" . avy-goto-char-timer)))
+  :bind (("C-'" . avy-goto-char-timer)))
 
 (use-package ivy
   :ensure t
