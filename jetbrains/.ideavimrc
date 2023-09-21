@@ -1,0 +1,25 @@
+""" Map leader to space ---------------------
+let mapleader=" "
+
+""" Plugins  --------------------------------
+set surround
+set easymotion
+
+""" Common settings -------------------------
+set so=5
+set incsearch
+
+""" Mappings --------------------------------
+map S <Plug>(easymotion-s)
+map s <Plug>(easymotion-f)
+
+map <leader>b <Action>(ToggleLineBreakpoint)
+map gr <Action>(FindUsages)
+
+map <leader>fs <Action>(FindInPath)
+map <leader>ds <Action>(FileStructurePopup)
+
+map <leader>ff <Action>(GotoFile)
+map <leader>rf <Action>(RecentFiles)
+
+
