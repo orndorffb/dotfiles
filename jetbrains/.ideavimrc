@@ -10,8 +10,8 @@ set so=5
 set incsearch
 
 """ Mappings --------------------------------
-map S <Plug>(easymotion-s)
-map s <Plug>(easymotion-f)
+map s <Action>(AceAction)
+map S <Action>(AceTargetAction)
 
 map <leader>b <Action>(ToggleLineBreakpoint)
 map gr <Action>(FindUsages)
@@ -25,7 +25,9 @@ map <leader>rf <Action>(RecentFiles)
 
 map <leader>gs <Action>(Vcs.QuickListPopupAction)
 map <leader>gb <Action>(Git.Branches)
-map <leader>gc <Action>(CheckinProject)
-map <leader>gf <Action>(Git.Pull)
 
-
+" Splits manipulation
+nmap <leader>ws :action SplitHorizontally<cr>
+nmap <leader>wv :action SplitVertically<cr>
+nmap <leader>wc :action Unsplit<cr>
+nmap <leader>wC :action UnsplitAll<cr>
