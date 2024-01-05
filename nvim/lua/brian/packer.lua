@@ -17,6 +17,8 @@ return require('packer').startup(function(use)
   use { 'kyazdani42/nvim-web-devicons' }
   use { 'prettier/vim-prettier' }
 
+  use({ 'rose-pine/neovim', as = 'rose-pine' })
+
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('nvim-treesitter/playground')
   use { 'ggandor/leap.nvim' }
@@ -48,6 +50,4 @@ return require('packer').startup(function(use)
         {'rafamadriz/friendly-snippets'},
     }
   }
-
-  use "lukas-reineke/indent-blankline.nvim"
 end)
