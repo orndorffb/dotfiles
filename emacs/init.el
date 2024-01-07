@@ -91,6 +91,9 @@
 (use-package lsp-mode
   :ensure t)
 
+(use-package elixir-mode
+  :ensure t)
+
 (use-package ace-window
   :ensure t
   :init (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
