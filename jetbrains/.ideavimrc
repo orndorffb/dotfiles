@@ -1,0 +1,33 @@
+""" Map leader to space ---------------------
+let mapleader=" "
+
+""" Plugins  --------------------------------
+set surround
+set easymotion
+
+""" Common settings -------------------------
+set so=5
+set incsearch
+
+""" Mappings --------------------------------
+map s <Action>(AceAction)
+map S <Action>(AceTargetAction)
+
+map <leader>b <Action>(ToggleLineBreakpoint)
+map gr <Action>(FindUsages)
+
+map <leader>fs <Action>(FindInPath)
+map <leader>ds <Action>(FileStructurePopup)
+
+map <leader>ff <Action>(GotoFile)
+map <leader>rf <Action>(RecentFiles)
+
+
+map <leader>gs <Action>(Vcs.QuickListPopupAction)
+map <leader>gb <Action>(Git.Branches)
+
+" Splits manipulation
+nmap <leader>ws :action SplitHorizontally<cr>
+nmap <leader>wv :action SplitVertically<cr>
+nmap <leader>wc :action Unsplit<cr>
+nmap <leader>wC :action UnsplitAll<cr>
