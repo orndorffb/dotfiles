@@ -128,8 +128,7 @@
 	'((consult-ripgrep buffer)
 	  (consult-find buffer)
 	  (consult-imenu buffer)
-	  (consult-xref buffer)
-	  ))
+	  (consult-xref buffer)))
   :config
   (vertico-mode)
   (vertico-multiform-mode))
