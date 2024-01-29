@@ -26,7 +26,7 @@
 (setq create-lockfiles nil)
 
 ;; Set font
-(set-frame-font "JetBrains Mono 12" nil t)
+(set-frame-font "Monaspace Neon Var 13" nil t)
 
 ;; Org stuff
 (add-hook 'org-mode-hook 'org-indent-mode)
@@ -65,15 +65,37 @@
   :ensure t)
 
 (use-package magit
-  :ensure t)
+  :ensure t
+  :config
+  (magit-save-repository-buffers nil))
 
 (use-package go-mode
   :ensure t)
 
-(use-package company
+(use-package corfu
   :ensure t
-  :config
-  (global-company-mode))
+  ;; Optional customizations
+  :custom
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+  ;; Enable Corfu only for certain modes.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes.
+  :init
+  (global-corfu-mode))
 
 (use-package lsp-mode
   :ensure t)
@@ -106,7 +128,8 @@
 	'((consult-ripgrep buffer)
 	  (consult-find buffer)
 	  (consult-imenu buffer)
-	  (consult-buffer buffer)))
+	  (consult-xref buffer)
+	  ))
   :config
   (vertico-mode)
   (vertico-multiform-mode))
@@ -114,8 +137,7 @@
 ;; Currently disabled
 (use-package vertico-posframe
   :ensure t
-  :init
-)
+  :init)
 
 (use-package marginalia
   :ensure t
@@ -125,7 +147,6 @@
   (marginalia-mode))
 
 (use-package consult
-  ;; Replace bindings. Lazily loaded due by `use-package'.
   :ensure t
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
@@ -255,7 +276,7 @@
  '(custom-safe-themes
    '("80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "da75eceab6bea9298e04ce5b4b07349f8c02da305734f7c0c8c6af7b5eaa9738" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "631c52620e2953e744f2b56d102eae503017047fb43d65ce028e88ef5846ea3b" default))
  '(package-selected-packages
-   '(rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
+   '(corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
