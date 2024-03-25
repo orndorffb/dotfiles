@@ -97,8 +97,10 @@
   :init
   (global-corfu-mode))
 
-(use-package lsp-mode
-  :ensure t)
+(use-package ruby-mode
+  :ensure t
+  :init
+  (setq ruby-indent-level 2))
 
 (use-package elixir-mode
   :ensure t)
