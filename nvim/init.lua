@@ -38,7 +38,7 @@ vim.o.background = "dark"
 
 vim.opt.list = true
 
--- Plugins
+-- plugin manager setup
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -52,6 +52,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Plugins
 require("lazy").setup({
   {
     "rose-pine/neovim",
@@ -72,6 +73,7 @@ require("lazy").setup({
       {'<leader>ff', "<cmd>Telescope find_files<cr>", desc = "Find file"},
       {'<leader>fb', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
       {'<leader>ds', "<cmd>Telescope lsp_document_symbols<cr>", desc = "lsp document symbols"},
+      {'<leader>ts', "<cmd>Telescope treesitter<cr>", desc = "treesitter symbols"},
       {'gd', "<cmd>Telescope lsp_definitions<cr>", desc = "lsp defs"},
       {'gr', "<cmd>Telescope lsp_references<cr>", desc = "lsp refs"},
     },
@@ -92,7 +94,21 @@ require("lazy").setup({
           indent = { enable = true },
         })
     end
-  }
+  },
+  -- LSP packages, following docs from https://lsp-zero.netlify.app/v3.x/getting-started.html
+  {'VonHeikemen/lsp-zero.nvim', branch = 'v3.x'},
+  {'neovim/nvim-lspconfig'},
+  {'hrsh7th/cmp-nvim-lsp'},
+  {'hrsh7th/nvim-cmp'},
+  {'L3MON4D3/LuaSnip'},
 })
 
+-- LSP setup
+local lsp_zero = require('lsp-zero')
+lsp_zero.on_attach(function(client, bufnr)
+  lsp_zero.default_keymaps({buffer = bufnr})
+end)
+
+-- Ruby LSP
+require('lspconfig').solargraph.setup({})
 
