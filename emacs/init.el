@@ -34,8 +34,10 @@
 (use-package exec-path-from-shell
   :ensure t)
 
-(use-package vterm
-    :ensure t)
+(use-package ef-themes
+  :ensure
+  :init
+  (load-theme 'ef-dream))
 
 ;; Lsp stuff
 (use-package eglot
@@ -46,6 +48,7 @@
 (setq eglot-workspace-configuration
   '((solargraph (diagnostics . t))))
 
+;; Custom functions
 (defun eglot-restart ()
   "Shutdown the buffer's lsp server and restarts it"
   (interactive)
@@ -58,6 +61,13 @@
 ;; (use-package yasnippet-snippets
 ;;   :ensure t)
 
+(use-package moody
+  :ensure t
+  :config
+  (moody-replace-mode-line-front-space)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode))
+
 (use-package tree-sitter
   :ensure t
   :config
@@ -68,7 +78,7 @@
   :after tree-sitter)
 
 (use-package expand-region
-  :bind (("C-;" . er/expand-region))
+  :bind (("C-c s" . er/expand-region))
   :ensure t)
 
 (use-package magit
@@ -89,7 +99,26 @@
 (use-package ruby-mode
   :ensure t
   :init
-  (setq ruby-indent-level 2))
+  (setq ruby-indent-level 2)
+  :config
+  (defun set-ruby-breakpoint ()
+    "Add 'require \"debug\"' at the top of the file and 'binding.break' above the current line."
+    (interactive)
+    (save-excursion
+      ;; Add 'require "debug"' at the top of the file if it's not already present
+      (goto-char (point-min))
+      (unless (search-forward "require \"debug\"" nil t)
+	(goto-char (point-min))
+	(insert "require \"debug\"\n\n"))
+      )
+
+    ;; Add 'binding.break' above the current line
+    (let ((current-line (line-number-at-pos)))
+      (goto-line current-line)
+      (beginning-of-line)
+      (open-line 1)
+      (insert "binding.break")))
+(define-key ruby-mode-map (kbd "C-c b") 'set-ruby-breakpoint))
 
 (use-package elixir-mode
   :ensure t)
@@ -104,7 +133,7 @@
 
 (use-package avy
   :ensure t
-  :bind (("C-'" . avy-goto-char-2)))
+  :bind (("C-c j" . avy-goto-char-2)))
 
 (use-package orderless
   :ensure t
@@ -188,69 +217,25 @@
          :map minibuffer-local-map
          ("M-s" . consult-history)                 ;; orig. next-matching-history-element
          ("M-r" . consult-history))                ;; orig. previous-matching-history-element
-
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
   :hook (completion-list-mode . consult-preview-at-point-mode)
-
-  ;; The :init configuration is always executed (Not lazy)
   :init
 
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
   (setq register-preview-delay 0.5
         register-preview-function #'consult-register-format)
 
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
   (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
-
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
   :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key "M-.")
-  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
    consult-theme :preview-key '(:debounce 0.2 any)
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-bookmark consult--source-file-register
    consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
 
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
   (setq consult-narrow-key "<") ;; "C-+"
-
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
-
-  ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-  ;;;; 1. project.el (the default)
-  ;; (setq consult-project-function #'consult--default-project--function)
-  ;;;; 2. vc.el (vc-root-dir)
-  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
-  ;;;; 3. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-  ;;;; 4. projectile.el (projectile-project-root)
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
-  ;;;; 5. No project support
-  ;; (setq consult-project-function nil)
 )
 
   
@@ -263,93 +248,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(connection-local-criteria-alist
-   '(((:application tramp :machine "localhost")
-      tramp-connection-local-darwin-ps-profile)
-     ((:application tramp :machine "brianorndorff-XP9M")
-      tramp-connection-local-darwin-ps-profile)
-     ((:application tramp)
-      tramp-connection-local-default-system-profile tramp-connection-local-default-shell-profile)))
- '(connection-local-profile-alist
-   '((tramp-connection-local-darwin-ps-profile
-      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,uid,user,gid,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state=abcde" "-o" "ppid,pgid,sess,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etime,pcpu,pmem,args")
-      (tramp-process-attributes-ps-format
-       (pid . number)
-       (euid . number)
-       (user . string)
-       (egid . number)
-       (comm . 52)
-       (state . 5)
-       (ppid . number)
-       (pgrp . number)
-       (sess . number)
-       (ttname . string)
-       (tpgid . number)
-       (minflt . number)
-       (majflt . number)
-       (time . tramp-ps-time)
-       (pri . number)
-       (nice . number)
-       (vsize . number)
-       (rss . number)
-       (etime . tramp-ps-time)
-       (pcpu . number)
-       (pmem . number)
-       (args)))
-     (tramp-connection-local-busybox-ps-profile
-      (tramp-process-attributes-ps-args "-o" "pid,user,group,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "stat=abcde" "-o" "ppid,pgid,tty,time,nice,etime,args")
-      (tramp-process-attributes-ps-format
-       (pid . number)
-       (user . string)
-       (group . string)
-       (comm . 52)
-       (state . 5)
-       (ppid . number)
-       (pgrp . number)
-       (ttname . string)
-       (time . tramp-ps-time)
-       (nice . number)
-       (etime . tramp-ps-time)
-       (args)))
-     (tramp-connection-local-bsd-ps-profile
-      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,euid,user,egid,egroup,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state,ppid,pgid,sid,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etimes,pcpu,pmem,args")
-      (tramp-process-attributes-ps-format
-       (pid . number)
-       (euid . number)
-       (user . string)
-       (egid . number)
-       (group . string)
-       (comm . 52)
-       (state . string)
-       (ppid . number)
-       (pgrp . number)
-       (sess . number)
-       (ttname . string)
-       (tpgid . number)
-       (minflt . number)
-       (majflt . number)
-       (time . tramp-ps-time)
-       (pri . number)
-       (nice . number)
-       (vsize . number)
-       (rss . number)
-       (etime . number)
-       (pcpu . number)
-       (pmem . number)
-       (args)))
-     (tramp-connection-local-default-shell-profile
-      (shell-file-name . "/bin/sh")
-      (shell-command-switch . "-c"))
-     (tramp-connection-local-default-system-profile
-      (path-separator . ":")
-      (null-device . "/dev/null"))))
  '(custom-safe-themes
-   '("b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" "0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850" "6945dadc749ac5cbd47012cad836f92aea9ebec9f504d32fe89a956260773ca4" "80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "da75eceab6bea9298e04ce5b4b07349f8c02da305734f7c0c8c6af7b5eaa9738" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "631c52620e2953e744f2b56d102eae503017047fb43d65ce028e88ef5846ea3b" default))
+   '("159a29ab0ec5ba4e2811eddd9756aa779b23467723dcbdd223929fbf2dde8954" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" "9b59e147dbbde5e638ea1cde5ec0a358d5f269d27bd2b893a0947c4a867e14c1" "80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "da75eceab6bea9298e04ce5b4b07349f8c02da305734f7c0c8c6af7b5eaa9738" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "631c52620e2953e744f2b56d102eae503017047fb43d65ce028e88ef5846ea3b" default))
  '(package-selected-packages
-   '(modus-themes codespaces vterm corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
+   '(moody ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background nil)))))
