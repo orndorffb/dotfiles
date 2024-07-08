@@ -4,6 +4,25 @@
 (eval-when-compile
   (require 'use-package))
 
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(ef-dream))
+ '(custom-safe-themes
+   '("7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
+ '(package-selected-packages
+   '(crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:background nil)))))
+
+
 ;; Basic editor settings
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
@@ -28,16 +47,19 @@
 (setq create-lockfiles nil)
 
 ;; Set font
-(set-frame-font "Iosevka Fixed 13" nil t)
+(set-frame-font "Iosevka Fixed 14" nil t)
 
 ;; Org stuff
 (add-hook 'org-mode-hook 'org-indent-mode)
+(add-hook 'org-mode-hook 'visual-line-mode)
+(global-set-key (kbd "C-c C-c") 'org-capture)
+(setq org-default-notes-file "~/Documents/org/capture.org")
 
 (use-package exec-path-from-shell
   :ensure t)
 
 (use-package ef-themes
-  :ensure
+  :ensure t
   :init
   (load-theme 'ef-dream))
 
@@ -172,7 +194,6 @@
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
-         ("C-c k" . consult-kmacro)
          ("C-c m" . consult-man)
          ("C-c i" . consult-info)
 	 ("C-s" . consult-line)
@@ -244,19 +265,3 @@
 ;; Get path settings from zsh
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("263e3a9286c7ab0c4f57f5d537033c8a5943e69d142e747723181ab9b12a5855" "d4b608d76e3a087b124c74c2b642c933d8121b24e53d4bbd5e7327c36cc69ccc" "159a29ab0ec5ba4e2811eddd9756aa779b23467723dcbdd223929fbf2dde8954" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" "9b59e147dbbde5e638ea1cde5ec0a358d5f269d27bd2b893a0947c4a867e14c1" "80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" "da75eceab6bea9298e04ce5b4b07349f8c02da305734f7c0c8c6af7b5eaa9738" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "631c52620e2953e744f2b56d102eae503017047fb43d65ce028e88ef5846ea3b" default))
- '(package-selected-packages
-   '(ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
