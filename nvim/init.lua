@@ -55,12 +55,12 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 require("lazy").setup({
   {
-    "rose-pine/neovim",
+    "rebelot/kanagawa.nvim",
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       -- load the colorscheme here
-      vim.cmd([[colorscheme rose-pine]])
+      vim.cmd([[colorscheme kanagawa]])
     end,
   },
   {
@@ -77,38 +77,36 @@ require("lazy").setup({
       {'gd', "<cmd>Telescope lsp_definitions<cr>", desc = "lsp defs"},
       {'gr', "<cmd>Telescope lsp_references<cr>", desc = "lsp refs"},
     },
-    config = function()
+    config = function ()
       require('telescope').setup()
     end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    lazy = false,
-    config = function ()
+    config = function()
       local configs = require("nvim-treesitter.configs")
-      ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "ruby", "javascript", "html" },
+
       configs.setup({
+          ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "elixir", "heex", "javascript", "html" },
           sync_install = false,
           highlight = { enable = true },
           indent = { enable = true },
         })
     end
   },
-  -- LSP packages, following docs from https://lsp-zero.netlify.app/v3.x/getting-started.html
-  {'VonHeikemen/lsp-zero.nvim', branch = 'v3.x'},
-  {'neovim/nvim-lspconfig'},
-  {'hrsh7th/cmp-nvim-lsp'},
-  {'hrsh7th/nvim-cmp'},
-  {'L3MON4D3/LuaSnip'},
+  {
+    "ggandor/leap.nvim",
+    config = function()
+      require('leap').create_default_mappings()
+    end
+  },
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('lualine').setup()
+    end
+  }
 })
-
--- LSP setup
-local lsp_zero = require('lsp-zero')
-lsp_zero.on_attach(function(client, bufnr)
-  lsp_zero.default_keymaps({buffer = bufnr})
-end)
-
--- Ruby LSP
-require('lspconfig').solargraph.setup({})
 
