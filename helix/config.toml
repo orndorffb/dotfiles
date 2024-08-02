@@ -1,0 +1,29 @@
+theme = "ayu_mirage"
+
+[editor]
+rulers = [120]
+line-number = "relative"
+
+[editor.indent-guides]
+render = true
+character = "▏"
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+
+[keys.insert]
+j = { k = "normal_mode" }
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "file-type", "total-line-numbers", "file-encoding"]
+center = []
+right = ["selections", "primary-selection-length", "position", "position-percentage", "spacer", "diagnostics", "workspace-diagnostics", "version-control"]
