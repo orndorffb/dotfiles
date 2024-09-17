@@ -71,6 +71,7 @@ require("lazy").setup({
     lazy = false,
     keys = {
       {'<leader>fs', "<cmd>Telescope live_grep<cr>", desc = "Live grep"},
+      {'<leader>fg', "<cmd>Telescope git_files<cr>", desc = "Find files in git"},
       {'<leader>ff', "<cmd>Telescope find_files<cr>", desc = "Find file"},
       {'<leader>fb', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
       {'<leader>ds', "<cmd>Telescope lsp_document_symbols<cr>", desc = "lsp document symbols"},
