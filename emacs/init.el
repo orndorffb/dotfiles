@@ -35,6 +35,7 @@
 (global-set-key (kbd "M-<down>") 'scroll-up-line)
 (global-set-key (kbd "M-<up>") 'scroll-down-line)
 
+
 (setq backup-directory-alist '(("." . "~/.saves")))
 (setq backup-by-copying t)
 (setq visible-bell       nil
@@ -49,10 +50,11 @@
 (set-frame-font "Iosevka Fixed 14" nil t)
 
 ;; Some keybinds for basic stuff
-(global-set-key (kbd "C-c s") 'consult-ripgrep)
+(global-set-key (kbd "C-c r") 'consult-ripgrep)
 (global-set-key (kbd "C-c f") 'project-find-file)
 (global-set-key (kbd "C-c s") 'consult-imenu)
-(global-set-key (kbd "C") 'comment-dwim)
+(global-set-key (kbd "C-c c") 'comment-dwim)
+(global-set-key (kbd "C-c *") 'rg-dwim)	
 
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
