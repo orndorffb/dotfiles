@@ -229,7 +229,7 @@
       (beginning-of-line)
       (open-line 1)
       (insert "binding.break")))
-(define-key ruby-mode-map (kbd "C-c b") 'set-ruby-breakpoint))
+)
 
 (use-package elixir-mode
   :ensure t)
