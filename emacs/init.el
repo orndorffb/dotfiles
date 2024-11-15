@@ -12,9 +12,9 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(ef-dream))
  '(custom-safe-themes
-   '("7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
+   '("daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077" "7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
  '(package-selected-packages
-   '(meow crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
+   '(kanagawa-themes meow crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -158,6 +158,11 @@
 
 (use-package exec-path-from-shell
   :ensure t)
+
+(use-package kanagawa-themes
+  :ensure t
+  :init
+  (load-theme 'kanagawa-wave))
 
 ;; (use-package ef-themes
 ;;   :ensure t
