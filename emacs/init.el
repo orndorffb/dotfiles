@@ -50,9 +50,9 @@
 (set-frame-font "Iosevka Fixed 14" nil t)
 
 ;; Some keybinds for basic stuff
-(global-set-key (kbd "C-c r") 'consult-ripgrep)
+(global-set-key (kbd "C-c s") 'consult-ripgrep)
 (global-set-key (kbd "C-c f") 'project-find-file)
-(global-set-key (kbd "C-c s") 'consult-imenu)
+(global-set-key (kbd "C-c S") 'consult-imenu)
 (global-set-key (kbd "C-c c") 'comment-dwim)
 (global-set-key (kbd "C-c *") 'rg-dwim)	
 
