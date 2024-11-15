@@ -52,7 +52,7 @@
 (global-set-key (kbd "C-c s") 'consult-ripgrep)
 (global-set-key (kbd "C-c f") 'project-find-file)
 (global-set-key (kbd "C-c s") 'consult-imenu)
-
+(global-set-key (kbd "C") 'comment-dwim)
 
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
