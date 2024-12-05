@@ -1,6 +1,6 @@
 """ Map leader to space ---------------------
 let mapleader=" "
-
+inoremap jk <Esc>
 """ Plugins  --------------------------------
 set surround
 set easymotion
@@ -16,11 +16,14 @@ map S <Action>(AceTargetAction)
 map <leader>b <Action>(ToggleLineBreakpoint)
 map gr <Action>(FindUsages)
 
-map <leader>fs <Action>(FindInPath)
-map <leader>ds <Action>(FileStructurePopup)
+map <leader>/ <Action>(FindInPath)
+map <leader>s <Action>(FileStructurePopup)
+map <leader>S <Action>(GotoSymbol)
 
-map <leader>ff <Action>(GotoFile)
+map <leader>f <Action>(GotoFile)
 map <leader>rf <Action>(RecentFiles)
+map alt+o <Action>(EditorSelectWord)
+map alt+i <Action>(EditorUnselectLine)
 
 
 map <leader>gs <Action>(Vcs.QuickListPopupAction)
