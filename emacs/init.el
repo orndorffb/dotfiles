@@ -12,7 +12,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(ef-dream))
  '(custom-safe-themes
-   '("daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077" "7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
+   '("80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077" "7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
  '(package-selected-packages
    '(kanagawa-themes meow crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
 (custom-set-faces
@@ -47,14 +47,14 @@
 (setq create-lockfiles nil)
 
 ;; Set font
-(set-frame-font "Iosevka Fixed 14" nil t)
+(set-frame-font "JetBrains Mono 12" nil t)
 
 ;; Some keybinds for basic stuff
 (global-set-key (kbd "C-c s") 'consult-ripgrep)
-(global-set-key (kbd "C-c f") 'project-find-file)
+(global-set-key (kbd "C-c p") 'project-find-file)
 (global-set-key (kbd "C-c S") 'consult-imenu)
 (global-set-key (kbd "C-c c") 'comment-dwim)
-(global-set-key (kbd "C-c *") 'rg-dwim)	
+(global-set-key (kbd "C-c f") 'rg-dwim)	
 
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
@@ -258,18 +258,19 @@
   :ensure t
   :init
   (setq vertico-multiform-commands
-	'((consult-ripgrep buffer)
-	  (consult-find buffer)
-	  (consult-imenu buffer)
-	  (consult-xref buffer)))
+	'((consult-project-buffer posframe)
+	  (consult-buffer posframe)
+	  (execute-extended-command posframe)
+	  (project-find-file posframe)
+	  ))
   :config
   (vertico-mode)
   (vertico-multiform-mode))
 
 ; ;; Currently disabled
-; (use-package vertico-posframe
-;   :ensure t
-;   :init)
+(use-package vertico-posframe
+  :ensure t
+  :init)
 
 (use-package marginalia
   :ensure t
