@@ -65,6 +65,68 @@ require("lazy").setup({
     end,
   },
   {
+    -- LSP Config
+    "neovim/nvim-lspconfig",
+    lazy = false,  -- Ensure it's loaded at startup
+    priority = 1000,  -- Load this first to set up the LSP
+    config = function()
+      require'lspconfig'.rust_analyzer.setup({
+        settings = {
+          ["rust-analyzer"] = {
+            cargo = { allFeatures = true },  -- Enable all Cargo features
+            procMacro = { enable = true },  -- Enable procedural macros
+          }
+        }
+      })
+    end,
+  },
+  {
+    -- nvim-cmp for autocompletion
+    "hrsh7th/nvim-cmp",
+    event = "InsertEnter",  -- Only load when you start typing in insert mode
+    config = function()
+      local cmp = require'cmp'
+
+      -- Setup nvim-cmp.
+      cmp.setup({
+        -- Configure sources for completion
+        sources = {
+          { name = 'nvim_lsp' },  -- LSP-based completion (including rust-analyzer)
+          { name = 'buffer' },    -- Autocomplete from current buffer
+          { name = 'path' },      -- Autocomplete file paths
+        },
+
+        -- Mapping for completion
+        mapping = {
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          ['<C-y>'] = cmp.mapping.confirm({ select = true }),  -- Confirm selection
+          ['<C-Space>'] = cmp.mapping.complete(),  -- Trigger completion manually
+        },
+
+        -- Snippet configuration (optional but recommended)
+        snippet = {
+          expand = function(args)
+            vim.fn["vsnip#anonymous"](args.body)  -- If using vsnip or any snippet manager
+          end,
+        },
+      })
+    end,
+  },
+
+  {
+    -- Completion source for LSP
+    "hrsh7th/cmp-nvim-lsp",
+    event = "InsertEnter",
+  },
+
+  {
+    -- Optional: Snippet engine (e.g., vsnip or luasnip)
+    "hrsh7th/vim-vsnip",  -- Use vsnip for snippets (you can choose another snippet engine)
+    event = "InsertEnter",
+  },
+
+  {
     'nvim-telescope/telescope.nvim',
     tag = '0.1.6',
     dependencies = { 'nvim-lua/plenary.nvim' },
@@ -96,20 +158,6 @@ require("lazy").setup({
           indent = { enable = true },
         })
     end
-  },
-  {
-    "folke/flash.nvim",
-    event = "VeryLazy",
-    ---@type Flash.Config
-    opts = {},
-    -- stylua: ignore
-    keys = {
-      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-    },
   },
   {
     'nvim-lualine/lualine.nvim',
