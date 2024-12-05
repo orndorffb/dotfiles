@@ -65,6 +65,37 @@ require("lazy").setup({
     end,
   },
   {
+    "echasnovski/mini.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("mini.surround").setup({
+        mappings = {
+          add = "sa", -- Add surrounding with 'sa'
+          delete = "sd", -- Delete surrounding with 'sd'
+          replace = "sr", -- Replace surrounding with 'sr'
+        },
+      })
+
+      require("mini.comment").setup()
+
+      require("mini.jump2d").setup({
+        view = {
+          dim = true
+        },
+        mappings = {
+          start_jumping = "<leader>gw"
+        }
+      })
+
+      require("mini.indentscope").setup({
+        draw = {
+          delay = 100,
+        },
+      })
+    end,
+  },
+  {
     -- LSP Config
     "neovim/nvim-lspconfig",
     lazy = false,  -- Ensure it's loaded at startup
@@ -134,7 +165,7 @@ require("lazy").setup({
     keys = {
       {'<leader>fs', "<cmd>Telescope live_grep<cr>", desc = "Live grep"},
       {'<leader>fg', "<cmd>Telescope git_files<cr>", desc = "Find files in git"},
-      {'<leader>ff', "<cmd>Telescope find_files<cr>", desc = "Find file"},
+      {'<leader><leader>', "<cmd>Telescope find_files<cr>", desc = "Find file"},
       {'<leader>fb', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
       {'<leader>ds', "<cmd>Telescope lsp_document_symbols<cr>", desc = "lsp document symbols"},
       {'<leader>ts', "<cmd>Telescope treesitter<cr>", desc = "treesitter symbols"},
