@@ -1,0 +1,22 @@
+font:
+  # Font family
+  normal:
+    family: "JetBrains Mono"
+    style: Regular
+  #
+  # # Size of the font (in pixels)
+  size: 12.0
+  #
+  # # Bold font style (optional)
+  # bold:
+  #   family: "Fira Code"
+  #   style: Bold
+  #
+  # # Italic font style (optional)
+  # italic:
+  #   family: "Fira Code"
+  #   style: Italic
+  #
+  # # Font rendering options
+  # hinting: full
+  # anti_alias: true
