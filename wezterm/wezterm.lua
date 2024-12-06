@@ -7,7 +7,6 @@ config.color_scheme = 'NvimLight'
 config.font_size = 12
 
 config.window_decorations = "RESIZE"
-config.tab_bar_at_bottom = true
 
 -- Tmux like bindings
 -- config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1001 }
