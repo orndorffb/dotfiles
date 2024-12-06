@@ -56,13 +56,19 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 require("lazy").setup({
   {
+    "wnkz/monoglow.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+    config = function()
+      -- load the colorscheme here
+      vim.cmd([[colorscheme monoglow]])
+    end,
+  },
+  {
     "rebelot/kanagawa.nvim",
     lazy = false, -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
-    config = function()
-      -- load the colorscheme here
-      vim.cmd([[colorscheme kanagawa-dragon]])
-    end,
   },
   {
     "echasnovski/mini.nvim",
@@ -89,9 +95,7 @@ require("lazy").setup({
       })
 
       require("mini.indentscope").setup({
-        draw = {
-          delay = 100,
-        },
+        -- draw = { delay = 100, },
       })
     end,
   },
@@ -101,6 +105,7 @@ require("lazy").setup({
     lazy = false,  -- Ensure it's loaded at startup
     priority = 1000,  -- Load this first to set up the LSP
     config = function()
+      require'lspconfig'.ruby_lsp.setup{}
       require'lspconfig'.rust_analyzer.setup({
         settings = {
           ["rust-analyzer"] = {
@@ -163,10 +168,9 @@ require("lazy").setup({
     dependencies = { 'nvim-lua/plenary.nvim' },
     lazy = false,
     keys = {
-      {'<leader>fs', "<cmd>Telescope live_grep<cr>", desc = "Live grep"},
-      {'<leader>fg', "<cmd>Telescope git_files<cr>", desc = "Find files in git"},
+      {'<leader>s', "<cmd>Telescope live_grep<cr>", desc = "Live grep"},
       {'<leader><leader>', "<cmd>Telescope find_files<cr>", desc = "Find file"},
-      {'<leader>fb', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
+      {'<leader>b', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
       {'<leader>ds', "<cmd>Telescope lsp_document_symbols<cr>", desc = "lsp document symbols"},
       {'<leader>ts', "<cmd>Telescope treesitter<cr>", desc = "treesitter symbols"},
       {'gd', "<cmd>Telescope lsp_definitions<cr>", desc = "lsp defs"},

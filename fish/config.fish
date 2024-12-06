@@ -31,3 +31,4 @@ alias f=fzf_fd
 
 eval (tmuxifier init - fish)
 starship init fish | source
+rvm default
