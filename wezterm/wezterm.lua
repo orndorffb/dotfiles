@@ -8,9 +8,10 @@ config.font_size = 12
 
 config.window_decorations = "RESIZE"
 config.tab_bar_at_bottom = true
-config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+
+-- Tmux like bindings
+-- config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1001 }
 config.keys = {
-  -- splitting
   {
     mods   = "LEADER",
     key    = "-",
@@ -49,7 +50,7 @@ config.keys = {
   {
     key = 'l',
     mods = 'LEADER',
-    action = wezterm.action{ActivatePaneDirection="Right1000"}
+    action = wezterm.action{ActivatePaneDirection="Right"}
   }
 }
 
