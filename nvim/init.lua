@@ -35,7 +35,8 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
-vim.o.background = "dark"
+-- vim.o.background = "dark"
+ vim.o.background = "light"
 
 vim.opt.list = true
 
@@ -62,7 +63,7 @@ require("lazy").setup({
     opts = {},
     config = function()
       -- load the colorscheme here
-      vim.cmd([[colorscheme monoglow]])
+      -- vim.cmd([[colorscheme monoglow]])
     end,
   },
   {
