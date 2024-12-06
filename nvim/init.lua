@@ -36,7 +36,7 @@ vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
 -- vim.o.background = "dark"
- vim.o.background = "light"
+vim.o.background = "light"
 
 vim.opt.list = true
 
@@ -56,21 +56,6 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugins
 require("lazy").setup({
-  {
-    "wnkz/monoglow.nvim",
-    lazy = false,
-    priority = 1000,
-    opts = {},
-    config = function()
-      -- load the colorscheme here
-      -- vim.cmd([[colorscheme monoglow]])
-    end,
-  },
-  {
-    "rebelot/kanagawa.nvim",
-    lazy = false, -- make sure we load this during startup if it is your main colorscheme
-    priority = 1000, -- make sure to load this before all the other start plugins
-  },
   {
     "echasnovski/mini.nvim",
     lazy = false,
@@ -174,25 +159,6 @@ require("lazy").setup({
     -- Optional: Snippet engine (e.g., vsnip or luasnip)
     "hrsh7th/vim-vsnip",  -- Use vsnip for snippets (you can choose another snippet engine)
     event = "InsertEnter",
-  },
-
-  {
-    -- 'nvim-telescope/telescope.nvim',
-    -- tag = '0.1.6',
-    -- dependencies = { 'nvim-lua/plenary.nvim' },
-    -- lazy = false,
-    -- keys = {
-    --   {'<leader>s', "<cmd>Telescope live_grep<cr>", desc = "Live grep"},
-    --   {'<leader><leader>', "<cmd>Telescope find_files<cr>", desc = "Find file"},
-    --   {'<leader>b', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
-    --   {'<leader>ds', "<cmd>Telescope lsp_document_symbols<cr>", desc = "lsp document symbols"},
-    --   {'<leader>ts', "<cmd>Telescope treesitter<cr>", desc = "treesitter symbols"},
-    --   {'gd', "<cmd>Telescope lsp_definitions<cr>", desc = "lsp defs"},
-    --   {'gr', "<cmd>Telescope lsp_references<cr>", desc = "lsp refs"},
-    -- },
-    -- config = function ()
-    --   require('telescope').setup()
-    -- end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
