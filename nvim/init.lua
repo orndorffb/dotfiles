@@ -84,6 +84,15 @@ require("lazy").setup({
       })
 
       require("mini.comment").setup()
+      require("mini.statusline").setup()
+      require("mini.pairs").setup()
+      require("mini.pick").setup({
+        mappings = {
+          vim.api.nvim_set_keymap('n', '<leader><leader>', ':Pick files<CR>', { noremap = true, silent = true }),
+          vim.api.nvim_set_keymap('n', '<leader>b', ':Pick buffers<CR>', { noremap = true, silent = true }),
+          vim.api.nvim_set_keymap('n', '<leader>s', ':Pick grep_live<CR>', { noremap = true, silent = true }),
+        }
+      })
 
       require("mini.jump2d").setup({
         view = {
@@ -95,7 +104,7 @@ require("lazy").setup({
       })
 
       require("mini.indentscope").setup({
-        -- draw = { delay = 100, },
+         draw = { delay = 50, },
       })
     end,
   },
@@ -114,6 +123,9 @@ require("lazy").setup({
           }
         }
       })
+      local opts = { noremap = true, silent = true }  -- Default options for the mappings
+      vim.api.nvim_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+      vim.api.nvim_set_keymap('n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', opts)
     end,
   },
   {
@@ -163,22 +175,22 @@ require("lazy").setup({
   },
 
   {
-    'nvim-telescope/telescope.nvim',
-    tag = '0.1.6',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    lazy = false,
-    keys = {
-      {'<leader>s', "<cmd>Telescope live_grep<cr>", desc = "Live grep"},
-      {'<leader><leader>', "<cmd>Telescope find_files<cr>", desc = "Find file"},
-      {'<leader>b', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
-      {'<leader>ds', "<cmd>Telescope lsp_document_symbols<cr>", desc = "lsp document symbols"},
-      {'<leader>ts', "<cmd>Telescope treesitter<cr>", desc = "treesitter symbols"},
-      {'gd', "<cmd>Telescope lsp_definitions<cr>", desc = "lsp defs"},
-      {'gr', "<cmd>Telescope lsp_references<cr>", desc = "lsp refs"},
-    },
-    config = function ()
-      require('telescope').setup()
-    end,
+    -- 'nvim-telescope/telescope.nvim',
+    -- tag = '0.1.6',
+    -- dependencies = { 'nvim-lua/plenary.nvim' },
+    -- lazy = false,
+    -- keys = {
+    --   {'<leader>s', "<cmd>Telescope live_grep<cr>", desc = "Live grep"},
+    --   {'<leader><leader>', "<cmd>Telescope find_files<cr>", desc = "Find file"},
+    --   {'<leader>b', "<cmd>Telescope buffers<cr>", desc = "Find in buffers"},
+    --   {'<leader>ds', "<cmd>Telescope lsp_document_symbols<cr>", desc = "lsp document symbols"},
+    --   {'<leader>ts', "<cmd>Telescope treesitter<cr>", desc = "treesitter symbols"},
+    --   {'gd', "<cmd>Telescope lsp_definitions<cr>", desc = "lsp defs"},
+    --   {'gr', "<cmd>Telescope lsp_references<cr>", desc = "lsp refs"},
+    -- },
+    -- config = function ()
+    --   require('telescope').setup()
+    -- end,
   },
   {
     "nvim-treesitter/nvim-treesitter",
@@ -192,13 +204,6 @@ require("lazy").setup({
           highlight = { enable = true },
           indent = { enable = true },
         })
-    end
-  },
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-  config = function()
-      require('lualine').setup()
     end
   },
   {
