@@ -3,13 +3,25 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 -- Theme and font
-config.color_scheme = 'NvimLight'
+config.color_scheme = 'zenbones'
 config.font_size = 12
 
 config.window_decorations = "RESIZE"
+config.tab_bar_at_bottom = true
+config.inactive_pane_hsb = {
+  saturation = 1,
+  brightness = 1,
+}
+
+config.unix_domains = {
+  {
+    name = 'unix',
+  },
+}
+
 
 -- Tmux like bindings
--- config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1001 }
+config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
 config.keys = {
   {
     mods   = "LEADER",
@@ -18,7 +30,7 @@ config.keys = {
   },
   {
     mods   = "LEADER",
-    key    = "=",
+    key    = "|",
     action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' }
   },
   {
