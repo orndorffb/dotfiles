@@ -124,6 +124,9 @@ require("lazy").setup({
     lazy = false,  -- Ensure it's loaded at startup
     priority = 1000,  -- Load this first to set up the LSP
     config = function()
+      require'lspconfig'.elixirls.setup{
+        cmd = { "elixir-ls" };
+      }
       require'lspconfig'.ruby_lsp.setup{}
       require'lspconfig'.rust_analyzer.setup({
         settings = {
