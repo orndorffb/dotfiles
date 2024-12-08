@@ -35,6 +35,20 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
+-- Thanks for the func chatgpt
+function ToggleBackground()
+  local current_bg = vim.o.background
+  if current_bg == "dark" then
+    vim.o.background = "light"
+    print("Switched to light background")
+  else
+    vim.o.background = "dark"
+    print("Switched to dark background")
+  end
+end
+vim.api.nvim_set_keymap('n', '<leader>tb', ':lua ToggleBackground()<CR>', { noremap = true, silent = true })
+
+
 -- vim.o.background = "dark"
 vim.o.background = "light"
 

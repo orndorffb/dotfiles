@@ -3,6 +3,8 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 -- Theme and font
+
+-- config.color_scheme = 'zenbones_dark'
 config.color_scheme = 'zenbones'
 config.font_size = 12
 
