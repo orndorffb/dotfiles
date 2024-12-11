@@ -49,8 +49,8 @@ end
 vim.api.nvim_set_keymap('n', '<leader>tb', ':lua ToggleBackground()<CR>', { noremap = true, silent = true })
 
 
--- vim.o.background = "dark"
-vim.o.background = "light"
+vim.o.background = "dark"
+-- vim.o.background = "light"
 
 vim.opt.list = true
 
@@ -71,13 +71,24 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 require("lazy").setup({
   {
+    "neanias/everforest-nvim",
+    version = false,
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("everforest").setup({
+        background = 'hard'
+      })
+      vim.cmd.colorscheme('everforest')
+    end,
+  },
+  {
     "zenbones-theme/zenbones.nvim",
     dependencies = "rktjmp/lush.nvim",
     lazy = false,
     priority = 1000,
     config = function()
-        vim.g.zenbones_darken_comments = 45
-        vim.cmd.colorscheme('zenbones')
+        -- vim.cmd.colorscheme('zenbones')
     end
   },
   {
