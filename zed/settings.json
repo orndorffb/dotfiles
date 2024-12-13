@@ -18,6 +18,19 @@
   "vim_mode": true,
   "ui_font_size": 14,
   "buffer_font_size": 12,
-  "buffer_font_family": "JetBrains Mono NL"
+  "buffer_font_family": "JetBrains Mono NL",
   // "ui_font_family": "JetBrains Mono NL"
+  "cursor_blink": false,
+  "relative_line_numbers": true,
+  "scrollbar": {
+    "show": "never"
+  },
+  "vertical_scroll_margin": 0,
+  "tab_bar": {
+    "show": false
+  },
+  "toolbar": {
+    "breadcrumbs": true,
+    "quick_actions": false
+  }
 }
