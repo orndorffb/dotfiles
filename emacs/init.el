@@ -146,7 +146,7 @@
   :ensure t
   :config
   ;; Basic configuration of meow
-  (meow-global-mode 1)   ;; Enable meow globally
+  ;; (meow-global-mode 1)   ;; Enable meow globally
   (meow-setup)           ;; Setup meow keymaps and modes
   ;; Optionally configure the default QWERTY keymap (this is the default)
   (setq meow-keypad-use-2nd-row nil)  ;; This keeps the standard keybindings
