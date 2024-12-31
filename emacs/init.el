@@ -85,6 +85,7 @@
   :config
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
+  (global-set-key (kbd "C-c C-<return>")
   (global-set-key (kbd "C-c RET") 'gptel-send))
 
 ;; Lsp stuff
