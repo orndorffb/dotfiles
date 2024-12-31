@@ -10,9 +10,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(ef-dream))
  '(custom-safe-themes
-   '("d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6" "80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077" "7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
+   '("fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c" "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6" "80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077" "7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
  '(package-selected-packages
    '(kanagawa-themes meow crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
 (custom-set-faces
@@ -47,7 +46,7 @@
 (setq create-lockfiles nil)
 
 ;; Set font
-(set-frame-font "Iosevka 12" nil t)
+(set-frame-font "Iosevka 13" nil t)
 
 ;; Some keybinds for basic stuff
 (global-set-key (kbd "C-c s") 'consult-ripgrep)
@@ -55,7 +54,6 @@
 (global-set-key (kbd "C-c S") 'consult-imenu)
 (global-set-key (kbd "C-c c") 'comment-dwim)
 (global-set-key (kbd "C-c f") 'rg-dwim)	
-
 
 ;; Org stuff
 (add-hook 'org-mode-hook 'org-indent-mode)
@@ -66,10 +64,21 @@
 (use-package exec-path-from-shell
   :ensure t)
 
-(use-package kanagawa-themes
+(use-package modus-themes
   :ensure t
-  :init
-  (load-theme 'kanagawa-dragon))
+  :config
+  ;; Add all your customizations prior to loading the themes
+  (setq modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil)
+
+  ;; Maybe define some palette overrides, such as by using our presets
+  (setq modus-themes-common-palette-overrides
+        modus-themes-preset-overrides-intense)
+
+  ;; Load the theme of your choice.
+  (load-theme 'modus-operandi)
+
+  (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
 ;; Lsp stuff
 (use-package eglot
