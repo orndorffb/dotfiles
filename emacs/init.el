@@ -13,7 +13,7 @@
  '(custom-safe-themes
    '("fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c" "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6" "80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077" "7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
  '(package-selected-packages
-   '(kanagawa-themes meow crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
+   '(transient gptel kanagawa-themes meow crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -80,11 +80,16 @@
 
   (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
+(use-package gptel
+  :ensure t
+  :config
+  (setq gptel-default-model "gpt-4")
+  (setq gptel-system-message "You are a helpful assistant.")
+  (global-set-key (kbd "C-c RET") 'gptel-send))
+
 ;; Lsp stuff
 (use-package eglot
-  :ensure t
-  :bind (("C-c g r" . xref-find-references)
-	 ("C-c g d" . xref-find-definitions)))
+  :ensure t)
 
 (setq eglot-workspace-configuration
   '((solargraph (diagnostics . t))))
