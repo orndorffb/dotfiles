@@ -54,7 +54,7 @@
 (global-set-key (kbd "C-c S") 'consult-imenu)
 (global-set-key (kbd "C-c c") 'comment-dwim)
 (global-set-key (kbd "C-c f") 'rg-dwim)
-(global-set-key (kbd "C-c b") 'consult
+
 
 ;; Org stuff
 (add-hook 'org-mode-hook 'org-indent-mode)
@@ -183,7 +183,7 @@
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
   (global-set-key (kbd "C-c C-<return>")
-  (global-set-key (kbd "C-c RET") 'gptel-send))
+  (global-set-key (kbd "C-c RET") 'gptel-send)))
 
 ;; Lsp stuff
 (use-package eglot
@@ -257,7 +257,7 @@
 
 (use-package avy
   :ensure t
-  :bind (("C-c j" . avy-goto-char-2)))
+  :bind (("C-c C-j" . avy-goto-char-2)))
 
 (use-package orderless
   :ensure t
