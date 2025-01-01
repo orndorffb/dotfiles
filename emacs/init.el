@@ -272,7 +272,7 @@
 
 (use-package avy
   :ensure t
-  :bind (("C-c j" . avy-goto-char-2)))
+  :bind (("C-c j" . avy-goto-char-timer)))
 
 (use-package orderless
   :ensure t
