@@ -190,12 +190,12 @@
   :config
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
-  (global-set-key (kbd "C-c C-<return>")
-  (global-set-key (kbd "C-c RET") 'gptel-send)))
+  (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
+  (global-set-key (kbd "C-c RET") 'gptel-send))
 
-;; Lsp stuff
 (use-package eglot
-  :ensure t)
+  :ensure t
+  :hook (ruby-mode . eglot-ensure))
 
 (setq eglot-workspace-configuration
   '((solargraph (diagnostics . t))))
@@ -265,7 +265,7 @@
 
 (use-package avy
   :ensure t
-  :bind (("C-c C-j" . avy-goto-char-2)))
+  :bind (("C-c j" . avy-goto-char-2)))
 
 (use-package orderless
   :ensure t
