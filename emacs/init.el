@@ -195,7 +195,7 @@
 
 (use-package eglot
   :ensure t
-  :hook (ruby-mode . eglot-ensure))
+  :hook ((ruby-mode rust-mode) . eglot-ensure))
 
 (setq eglot-workspace-configuration
   '((solargraph (diagnostics . t))))
@@ -227,8 +227,6 @@
   (corfu-auto t)                 ;; Enable auto completion
   :init
   (global-corfu-mode))
-
-
 
 ;; Rust mode setup
 (use-package rust-mode
