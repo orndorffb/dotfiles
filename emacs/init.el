@@ -60,7 +60,11 @@
 (add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
 (global-set-key (kbd "C-c C-c") 'org-capture)
-(setq org-default-notes-file "~/Documents/org/capture.org")
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+         "* TODO %?\n  %i\n  %a")
+        ("j" "Journal" entry (file+datetree "~/org/journal.org")
+         "* %?\nEntered on %U\n  %i\n  %a")))
 
 (defun meow-setup ()
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
@@ -152,11 +156,15 @@
   :ensure t
   :config
   ;; Basic configuration of meow
-  (meow-global-mode 1)   ;; Enable meow globally
+  ;;  (meow-global-mode 1) ;; Enable meow globally
   (meow-setup)           ;; Setup meow keymaps and modes
   ;; Optionally configure the default QWERTY keymap (this is the default)
   (setq meow-keypad-use-2nd-row nil)  ;; This keeps the standard keybindings
-)
+  )
+
+(use-package expand-region
+  :ensure t
+  :bind (("C-;" . er/expand-region)))
 
 (use-package exec-path-from-shell
   :ensure t)
