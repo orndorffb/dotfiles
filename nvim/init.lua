@@ -1,6 +1,6 @@
 -- Remaps
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>fe", vim.cmd.Ex)
+vim.keymap.set("n", "<leader>e", vim.cmd.Ex)
 vim.keymap.set("n", "<leader>p", "\"+p")
 vim.keymap.set("n", "<leader>P", "\"+P")
 vim.keymap.set("i", "jk", "<Esc>")
@@ -49,8 +49,8 @@ end
 vim.api.nvim_set_keymap('n', '<leader>tb', ':lua ToggleBackground()<CR>', { noremap = true, silent = true })
 
 
-vim.o.background = "dark"
--- vim.o.background = "light"
+-- vim.o.background = "dark"
+vim.o.background = "light"
 
 vim.opt.list = true
 
@@ -79,7 +79,7 @@ require("lazy").setup({
       require("everforest").setup({
         background = 'hard'
       })
-      vim.cmd.colorscheme('everforest')
+      -- vim.cmd.colorscheme('everforest')
     end,
   },
   {
@@ -88,7 +88,7 @@ require("lazy").setup({
     lazy = false,
     priority = 1000,
     config = function()
-        -- vim.cmd.colorscheme('zenbones')
+        vim.cmd.colorscheme('zenbones')
     end
   },
   {
@@ -109,7 +109,7 @@ require("lazy").setup({
       require("mini.pairs").setup()
       require("mini.pick").setup({
         mappings = {
-          vim.api.nvim_set_keymap('n', '<leader><leader>', ':Pick files<CR>', { noremap = true, silent = true }),
+          vim.api.nvim_set_keymap('n', '<leader>f', ':Pick files<CR>', { noremap = true, silent = true }),
           vim.api.nvim_set_keymap('n', '<leader>b', ':Pick buffers<CR>', { noremap = true, silent = true }),
           vim.api.nvim_set_keymap('n', '<leader>s', ':Pick grep_live<CR>', { noremap = true, silent = true }),
         }

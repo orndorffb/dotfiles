@@ -1,32 +1,16 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-(eval-when-compile
-  (require 'use-package))
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c" "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6" "80214de566132bf2c844b9dee3ec0599f65c5a1f2d6ff21a2c8309e6e70f9242" "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077" "7776ba149258df15039b1f0aba4b180d95069b2589bc7d6570a833f05fdf7b6d" "4343cbc036f09361b2912119c63573433df725f599bfbdc16fb97f1e4847a08b" "841b6a0350ae5029d6410d27cc036b9f35d3bf657de1c08af0b7cbe3974d19ac" default))
- '(package-selected-packages
-   '(rust-mode transient gptel kanagawa-themes meow crux ef-themes vterm sublime-themes corfu rg robe catppuccin-theme ivy-xref expand-region company exec-path-from-shell counsel ivy use-package magit lsp-mode eglot)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
-
 ;; Basic editor settings
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (global-display-line-numbers-mode)
 (set-fringe-mode 10)
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+;;(load-theme 'zenbones t)
+
 
 ;; Window and buffer management
 (global-set-key (kbd "C-x |") 'split-window-horizontally)
@@ -46,7 +30,7 @@
 (setq create-lockfiles nil)
 
 ;; Set font
-(set-frame-font "Iosevka 13" nil t)
+(set-frame-font "JetBrains Mono 12" nil t)
 
 ;; Some keybinds for basic stuff
 (global-set-key (kbd "C-c s") 'consult-ripgrep)
@@ -54,7 +38,6 @@
 (global-set-key (kbd "C-c S") 'consult-imenu)
 (global-set-key (kbd "C-c c") 'comment-dwim)
 (global-set-key (kbd "C-c f") 'rg-dwim)
-
 
 ;; Org stuff
 (add-hook 'org-mode-hook 'org-indent-mode)
@@ -66,102 +49,6 @@
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
-(defun meow-setup ()
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-  (meow-motion-overwrite-define-key
-   '("j" . meow-next)
-   '("k" . meow-prev)
-   '("<escape>" . ignore))
-  (meow-leader-define-key
-   ;; SPC j/k will run the original command in MOTION state.
-   '("j" . "H-j")
-   '("k" . "H-k")
-   ;; Use SPC (0-9) for digit arguments.
-   '("1" . meow-digit-argument)
-   '("2" . meow-digit-argument)
-   '("3" . meow-digit-argument)
-   '("4" . meow-digit-argument)
-   '("5" . meow-digit-argument)
-   '("6" . meow-digit-argument)
-   '("7" . meow-digit-argument)
-   '("8" . meow-digit-argument)
-   '("9" . meow-digit-argument)
-   '("0" . meow-digit-argument)
-   '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet))
-  (meow-normal-define-key
-   '("0" . meow-expand-0)
-   '("9" . meow-expand-9)
-   '("8" . meow-expand-8)
-   '("7" . meow-expand-7)
-   '("6" . meow-expand-6)
-   '("5" . meow-expand-5)
-   '("4" . meow-expand-4)
-   '("3" . meow-expand-3)
-   '("2" . meow-expand-2)
-   '("1" . meow-expand-1)
-   '("-" . negative-argument)
-   '(";" . meow-reverse)
-   '("," . meow-inner-of-thing)
-   '("." . meow-bounds-of-thing)
-   '("[" . meow-beginning-of-thing)
-   '("]" . meow-end-of-thing)
-   '("a" . meow-append)
-   '("A" . meow-open-below)
-   '("b" . meow-back-word)
-   '("B" . meow-back-symbol)
-   '("c" . meow-change)
-   '("d" . meow-delete)
-   '("D" . meow-backward-delete)
-   '("e" . meow-next-word)
-   '("E" . meow-next-symbol)
-   '("f" . meow-find)
-   '("g" . meow-cancel-selection)
-   '("G" . meow-grab)
-   '("h" . meow-left)
-   '("H" . meow-left-expand)
-   '("i" . meow-insert)
-   '("I" . meow-open-above)
-   '("j" . meow-next)
-   '("J" . meow-next-expand)
-   '("k" . meow-prev)
-   '("K" . meow-prev-expand)
-   '("l" . meow-right)
-   '("L" . meow-right-expand)
-   '("m" . meow-join)
-   '("n" . meow-search)
-   '("o" . meow-block)
-   '("O" . meow-to-block)
-   '("p" . meow-yank)
-   '("q" . meow-quit)
-   '("Q" . meow-goto-line)
-   '("r" . meow-replace)
-   '("R" . meow-swap-grab)
-   '("s" . meow-kill)
-   '("t" . meow-till)
-   '("u" . meow-undo)
-   '("U" . meow-undo-in-selection)
-   '("v" . meow-visit)
-   '("w" . meow-mark-word)
-   '("W" . meow-mark-symbol)
-   '("x" . meow-line)
-   '("X" . meow-goto-line)
-   '("y" . meow-save)
-   '("Y" . meow-sync-grab)
-   '("z" . meow-pop-selection)
-   '("'" . repeat)
-   '("<escape>" . ignore)))
-
-(use-package meow
-  :ensure t
-  :config
-  ;; Basic configuration of meow
-  ;;  (meow-global-mode 1) ;; Enable meow globally
-  (meow-setup)           ;; Setup meow keymaps and modes
-  ;; Optionally configure the default QWERTY keymap (this is the default)
-  (setq meow-keypad-use-2nd-row nil)  ;; This keeps the standard keybindings
-  )
-
 (use-package expand-region
   :ensure t
   :bind (("C-;" . er/expand-region)))
@@ -169,21 +56,31 @@
 (use-package exec-path-from-shell
   :ensure t)
 
-(use-package modus-themes
-  :ensure t
+
+(use-package copilot
+  :vc (:url "https://github.com/copilot-emacs/copilot.el"
+            :rev :newest
+            :branch "main")
   :config
-  ;; Add all your customizations prior to loading the themes
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs nil)
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
-  ;; Maybe define some palette overrides, such as by using our presets
-  (setq modus-themes-common-palette-overrides
-        modus-themes-preset-overrides-intense)
 
-  ;; Load the theme of your choice.
-  (load-theme 'modus-operandi)
+;; (use-package modus-themes
+;;   :ensure t
+;;   :config
+;;   ;; Add all your customizations prior to loading the themes
+;;   (setq modus-themes-italic-constructs t
+;;         modus-themes-bold-constructs nil)
 
-  (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
+;;   ;; Maybe define some palette overrides, such as by using our presets
+;;   (setq modus-themes-common-palette-overrides
+;;         modus-themes-preset-overrides-intense)
+
+;;   ;; Load the theme of your choice.
+;;   (load-theme 'modus-operandi)
+
+;;   (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
 (use-package gptel
   :ensure t
@@ -195,7 +92,9 @@
 
 (use-package eglot
   :ensure t
-  :hook ((ruby-mode rust-mode) . eglot-ensure))
+  :hook (ruby-mode . eglot-ensure)
+  :config
+  (setq eglot-server-programs '((ruby-mode . ("ruby-lsp")))))
 
 (setq eglot-workspace-configuration
   '((solargraph (diagnostics . t))))
@@ -234,6 +133,10 @@
   :hook (rust-mode . (lambda ()
                        (setq indent-tabs-mode nil) ; Use spaces instead of tabs
                        (setq rust-format-on-save t)))) ; Format on save
+
+(use-package rbenv
+  :ensure t
+  :config (global-rbenv-mode))
 
 (use-package ruby-mode
   :ensure t
@@ -322,6 +225,7 @@
          ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
          ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+	 ("C-c d" . consult-flymake)
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
          ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
@@ -381,3 +285,25 @@
 ;; Get path settings from zsh
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850"
+     "61607956384e528c1bc3ca5c9b703b309d4b3a63acfec3edb7f9a26549262add"
+     "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
+     "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
+     "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
+     default))
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch
+	      "main"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

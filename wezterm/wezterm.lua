@@ -4,9 +4,9 @@ local config = wezterm.config_builder()
 
 -- Theme and font
 
--- config.color_scheme = 'zenbones_dark'
+ config.color_scheme = 'zenbones_dark'
 -- config.color_scheme = 'zenbones'
-config.color_scheme = 'Everforest Dark Hard (Gogh)'
+-- config.color_scheme = 'Everforest Dark Hard (Gogh)'
 config.font_size = 12
 
 config.window_decorations = "RESIZE"
