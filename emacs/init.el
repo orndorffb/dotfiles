@@ -56,6 +56,16 @@
 (use-package exec-path-from-shell
   :ensure t)
 
+(use-package ultra-scroll
+  :vc (:url "https://github.com/jdtsmith/ultra-scroll"
+            :rev :newest
+            :branch "main")
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+
 
 (use-package copilot
   :vc (:url "https://github.com/copilot-emacs/copilot.el"
@@ -297,13 +307,15 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
      default))
- '(package-selected-packages nil)
+ '(package-selected-packages '(ultra-scroll))
  '(package-vc-selected-packages
-   '((copilot :url "https://github.com/copilot-emacs/copilot.el" :branch
-	      "main"))))
+   '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
+		   :branch "main")
+     (copilot :url "https://github.com/copilot-emacs/copilot.el"
+	      :branch "main"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background nil)))))
