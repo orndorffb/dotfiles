@@ -7,6 +7,7 @@
 (tool-bar-mode -1)
 (global-display-line-numbers-mode)
 (set-fringe-mode 10)
+(add-to-list 'default-frame-alist '(undecorated-round . t))
 
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 ;;(load-theme 'zenbones t)
@@ -102,12 +103,18 @@
 
 (use-package eglot
   :ensure t
-  :hook (ruby-mode . eglot-ensure)
+  :hook ((ruby-mode . eglot-ensure)
+         (rust-mode . eglot-ensure)
+         (elixir-mode . eglot-ensure))
   :config
-  (setq eglot-server-programs '((ruby-mode . ("ruby-lsp")))))
+  (setq eglot-server-programs '(
+                                (ruby-mode . ("ruby-lsp"))
+                                (rust-mode . ("rust-analyzer"))
+                                (elixir-mode . ("elixir-ls"))
+                                )))
 
 (setq eglot-workspace-configuration
-  '((solargraph (diagnostics . t))))
+      '((solargraph (diagnostics . t))))
 
 ;; Custom functions
 (defun eglot-restart ()
@@ -170,10 +177,8 @@
       (beginning-of-line)
       (open-line 1)
       (insert "binding.break")))
-)
+  )
 
-(use-package elixir-mode
-  :ensure t)
 
 (use-package ace-window
   :ensure t
@@ -206,7 +211,7 @@
   (vertico-mode)
   (vertico-multiform-mode))
 
-; ;; Currently disabled
+					; ;; Currently disabled
 (use-package vertico-posframe
   :ensure t
   :init)
@@ -214,7 +219,7 @@
 (use-package marginalia
   :ensure t
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+              ("M-A" . marginalia-cycle))
   :init
   (marginalia-mode))
 
@@ -289,9 +294,27 @@
    :preview-key '(:debounce 0.4 any))
 
   (setq consult-narrow-key "<") ;; "C-+"
-)
+  )
 
-  
+(setq treesit-language-source-alist
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+	(cmake "https://github.com/uyha/tree-sitter-cmake")
+	(css "https://github.com/tree-sitter/tree-sitter-css")
+	(elisp "https://github.com/Wilfred/tree-sitter-elisp")
+	(go "https://github.com/tree-sitter/tree-sitter-go")
+	(html "https://github.com/tree-sitter/tree-sitter-html")
+	(javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+	(json "https://github.com/tree-sitter/tree-sitter-json")
+	(make "https://github.com/alemuller/tree-sitter-make")
+	(markdown "https://github.com/ikatyang/tree-sitter-markdown")
+	(python "https://github.com/tree-sitter/tree-sitter-python")
+	(toml "https://github.com/tree-sitter/tree-sitter-toml")
+	(tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+	(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+	(elixir "https://github.com/elixir-lang/tree-sitter-elixir")
+	(heex "https://github.com/phoenixframework/tree-sitter-heex")
+	(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
 ;; Get path settings from zsh
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
@@ -301,7 +324,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850"
+   '("fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c"
+     "0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850"
      "61607956384e528c1bc3ca5c9b703b309d4b3a63acfec3edb7f9a26549262add"
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
