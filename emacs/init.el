@@ -50,6 +50,10 @@
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
+(use-package zoom-window
+  :ensure t
+  :bind (("C-x C-z" . zoom-window-zoom)))
+
 (use-package expand-region
   :ensure t
   :bind (("C-;" . er/expand-region)))
@@ -331,7 +335,7 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
      default))
- '(package-selected-packages '(ultra-scroll))
+ '(package-selected-packages '(ultra-scroll zoom-window))
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
 		   :branch "main")
