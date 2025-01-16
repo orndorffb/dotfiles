@@ -9,7 +9,7 @@
 (set-fringe-mode 10)
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 ;;(load-theme 'zenbones t)
 
 
@@ -81,21 +81,17 @@
   (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
 
-;; (use-package modus-themes
-;;   :ensure t
-;;   :config
-;;   ;; Add all your customizations prior to loading the themes
-;;   (setq modus-themes-italic-constructs t
-;;         modus-themes-bold-constructs nil)
+ (use-package modus-themes
+   :ensure t
+   :config
+   ;; Add all your customizations prior to loading the themes
+   (setq modus-themes-italic-constructs t
+         modus-themes-bold-constructs nil)
 
-;;   ;; Maybe define some palette overrides, such as by using our presets
-;;   (setq modus-themes-common-palette-overrides
-;;         modus-themes-preset-overrides-intense)
+   ;; Load the theme of your choice.
+   (load-theme 'modus-operandi)
 
-;;   ;; Load the theme of your choice.
-;;   (load-theme 'modus-operandi)
-
-;;   (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
+   (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
 (use-package gptel
   :ensure t
@@ -194,7 +190,16 @@
 
 (use-package avy
   :ensure t
-  :bind (("C-c j" . avy-goto-char-timer)))
+  :config
+  (defun avy-goto-word-crt-line ()
+    "Jump to a word start on the current line only."
+    (interactive)
+    (avy-with avy-goto-word-0
+      (avy-goto-word-0 nil (line-beginning-position) (line-end-position))))
+  :bind (
+	 ("C-'" . avy-goto-char-timer)
+	 ("C-c w" . avy-goto-word-crt-line)
+	 ))
 
 (use-package orderless
   :ensure t
@@ -329,13 +334,25 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c"
+     "2e7dc2838b7941ab9cabaa3b6793286e5134f583c04bde2fba2f4e20f2617cf7"
      "0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850"
      "61607956384e528c1bc3ca5c9b703b309d4b3a63acfec3edb7f9a26549262add"
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
      default))
- '(package-selected-packages '(ultra-scroll zoom-window))
+ '(package-selected-packages
+   '(ace-window bind-key catppuccin-theme clipetty codespaces company
+		consult copilot corfu counsel doom-modeline eat
+		ef-themes eglot elixir-mode exec-path-from-shell
+		expand-region git-commit go-mode gptel
+		gruber-darker-theme highlight-indent-guides ht
+		ivy-rich ivy-xref kanagawa-theme kanagawa-themes lv
+		magit marginalia markdown-mode meow modus-themes moody
+		orderless rbenv rg robe rspec-mode rust-mode
+		spacious-padding spinner tree-sitter-langs
+		ultra-scroll vertico-posframe vterm web-mode yaml-mode
+		yasnippet-snippets zoom-window))
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
 		   :branch "main")
@@ -346,4 +363,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
+ )
