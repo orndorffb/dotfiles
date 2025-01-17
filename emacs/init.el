@@ -10,7 +10,7 @@
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 
 ;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-;;(load-theme 'zenbones t)
+;;(load-theme 'kanagawa-dragon t)
 
 
 ;; Window and buffer management
@@ -50,6 +50,15 @@
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
+(defun setup-term (buffer-name command)
+  "Create a new vterm buffer named BUFFER-NAME and run COMMAND in it."
+  (interactive "sBuffer name: \nsCommand: ")
+  (let ((vterm-buffer (vterm (generate-new-buffer-name buffer-name))))
+    (with-current-buffer vterm-buffer
+      (vterm-send-string command)
+      (vterm-send-return))
+    vterm-buffer))
+
 (use-package zoom-window
   :ensure t
   :bind (("C-x C-z" . zoom-window-zoom)))
@@ -87,6 +96,10 @@
    ;; Add all your customizations prior to loading the themes
    (setq modus-themes-italic-constructs t
          modus-themes-bold-constructs nil)
+
+   (setq modus-themes-vivendi-color-overrides
+      '((bg-main . "#1d2021")
+        (fg-main . "#c2c2c2")))
 
    ;; Load the theme of your choice.
    (load-theme 'modus-operandi)
@@ -333,7 +346,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c"
+   '("9e296dbc86374778cca0f22cfd7cd44d35e7c2e678085417be97251ce7c75dcc"
+     "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
+     "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6"
+     "fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c"
      "2e7dc2838b7941ab9cabaa3b6793286e5134f583c04bde2fba2f4e20f2617cf7"
      "0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850"
      "61607956384e528c1bc3ca5c9b703b309d4b3a63acfec3edb7f9a26549262add"
