@@ -19,6 +19,8 @@
 (global-set-key (kbd "M-<down>") 'scroll-up-line)
 (global-set-key (kbd "M-<up>") 'scroll-down-line)
 
+(delete-selection-mode 1)
+
 
 (setq backup-directory-alist '(("." . "~/.saves")))
 (setq backup-by-copying t)
@@ -50,14 +52,22 @@
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
-(defun setup-term (buffer-name command)
-  "Create a new vterm buffer named BUFFER-NAME and run COMMAND in it."
+(defun setup-term-eat (buffer-name command)
+  "Create a new Eat buffer named BUFFER-NAME and run COMMAND in it."
   (interactive "sBuffer name: \nsCommand: ")
-  (let ((vterm-buffer (vterm (generate-new-buffer-name buffer-name))))
-    (with-current-buffer vterm-buffer
-      (vterm-send-string command)
-      (vterm-send-return))
-    vterm-buffer))
+  (let ((eat-buffer (get-buffer-create (generate-new-buffer-name buffer-name))))
+    (with-current-buffer eat-buffer
+      (eat-mode) ;; Activate Eat mode
+      (eat-send-input command))
+    eat-buffer))
+
+(defun start-project-terms-eat ()
+  "Setup Eat terminals for various projects."
+  (interactive)
+  (setup-term-eat "rotom-eat" "cd ~/SpringCare/rotom && clear")
+  (setup-term-eat "ehr-eat" "cd ~/SpringCare/spring-ehr-api && clear"))
+
+
 
 (use-package zoom-window
   :ensure t
@@ -102,7 +112,7 @@
         (fg-main . "#c2c2c2")))
 
    ;; Load the theme of your choice.
-   (load-theme 'modus-operandi)
+;;   (load-theme 'modus-operandi)
 
    (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
@@ -346,7 +356,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("9e296dbc86374778cca0f22cfd7cd44d35e7c2e678085417be97251ce7c75dcc"
+   '("d0a4b929a8ca0715fc1db5eda6effc17b2ce4427809f245028a88a949429d50e"
+     "622a74a498b3362ca51f23eea7b1efba62fc493267f2b0456751b053f3872db0"
+     "9e296dbc86374778cca0f22cfd7cd44d35e7c2e678085417be97251ce7c75dcc"
      "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
      "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6"
      "fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c"
@@ -358,9 +370,9 @@
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
      default))
  '(package-selected-packages
-   '(ace-window bind-key catppuccin-theme clipetty codespaces company
-		consult copilot corfu counsel doom-modeline eat
-		ef-themes eglot elixir-mode exec-path-from-shell
+   '(ace-window autothemer bind-key catppuccin-theme clipetty codespaces
+		company consult copilot corfu counsel doom-modeline
+		eat ef-themes eglot elixir-mode exec-path-from-shell
 		expand-region git-commit go-mode gptel
 		gruber-darker-theme highlight-indent-guides ht
 		ivy-rich ivy-xref kanagawa-theme kanagawa-themes lv
