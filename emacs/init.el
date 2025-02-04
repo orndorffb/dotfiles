@@ -171,6 +171,25 @@
 
 (nano-light)
 
+(defvar my-nano-theme-toggle nil
+  "Tracks whether nano-light or nano-dark is active.")
+
+(defun my-toggle-nano-theme ()
+  "Toggle between nano-light and nano-dark themes."
+  (interactive)
+  (if my-nano-theme-toggle
+      (progn
+        (setq my-nano-theme-toggle nil)
+        (message "Switched to nano-light")
+        (nano-light))
+    (progn
+      (setq my-nano-theme-toggle t)
+      (message "Switched to nano-dark")
+      (nano-dark))))
+
+;; Bind to F5
+(global-set-key (kbd "<f5>") #'my-toggle-nano-theme)
+
 ;;--My stuff--------------------------------------------------------------------
 
 ;; Window and buffer management
@@ -267,7 +286,7 @@
 
 (use-package eglot
   :ensure t
-  :hook ((ruby-mode . eglot-ensure)
+  :hook ((ruby-ts-mode . eglot-ensure)
          (rust-mode . eglot-ensure)
          (elixir-mode . eglot-ensure))
   :config
