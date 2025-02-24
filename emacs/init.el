@@ -4,7 +4,7 @@
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 (set-face-attribute 'default nil
-                    :height 120 :weight 'light :family "Roboto Mono")
+                    :height 120 :weight 'light :family "Jetbrains Mono")
 (set-face-attribute 'bold nil :weight 'regular)
 (set-face-attribute 'bold-italic nil :weight 'regular)
 (set-display-table-slot standard-display-table 'truncation (make-glyph-code ?…))
@@ -117,7 +117,7 @@
   "NANO light theme (based on material colors)"
 
   (interactive)
-  (nano-set-face 'nano-default "#37474F" "#FFFFFF") ;; Blue Grey / L800
+  (nano-set-face 'nano-default "#253238" "#FFFFFF") ;; Blue Grey / L800
   (nano-set-face 'nano-strong "#000000" nil 'regular) ;; Black
   (nano-set-face 'nano-highlight nil "#FAFAFA") ;; Very Light Grey
   (nano-set-face 'nano-subtle nil "#ECEFF1") ;; Blue Grey / L50
@@ -246,6 +246,18 @@
   (setup-term-eat "rotom-eat" "cd ~/SpringCare/rotom && clear")
   (setup-term-eat "ehr-eat" "cd ~/SpringCare/spring-ehr-api && clear"))
 
+(defun run-standardrb-on-current-file ()
+  "Run <project_root>/bin/standardrb <current_file> --fix-unsafely."
+  (interactive)
+  (let* ((project-root (locate-dominating-file default-directory ".git")) ; Adjust this to your project's root indicator
+         (current-file (buffer-file-name))
+         (standardrb-command (concat (expand-file-name "bin/standardrb" project-root)
+                                      " " (shell-quote-argument current-file)
+                                      " --fix-unsafely")))
+    (if (and project-root current-file)
+        (shell-command standardrb-command)
+      (message "Could not find project root or current file."))))
+
 (use-package zoom-window
   :ensure t
   :bind (("C-x C-z" . zoom-window-zoom)))
@@ -273,6 +285,7 @@
             :rev :newest
             :branch "main")
   :config
+  (setq copilot-node-executable "node")
   (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
@@ -282,7 +295,8 @@
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
   (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
-  (global-set-key (kbd "C-c RET") 'gptel-send))
+  (global-set-key (kbd "C-c RET") 'gptel-send)
+  (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
 (use-package eglot
   :ensure t

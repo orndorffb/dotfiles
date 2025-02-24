@@ -24,7 +24,7 @@ config.unix_domains = {
 
 
 -- Tmux like bindings
-config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+-- config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
 config.keys = {
   {
     mods   = "LEADER",

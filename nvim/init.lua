@@ -112,8 +112,10 @@ require("lazy").setup({
           vim.api.nvim_set_keymap('n', '<leader>f', ':Pick files<CR>', { noremap = true, silent = true }),
           vim.api.nvim_set_keymap('n', '<leader>b', ':Pick buffers<CR>', { noremap = true, silent = true }),
           vim.api.nvim_set_keymap('n', '<leader>s', ':Pick grep_live<CR>', { noremap = true, silent = true }),
+          vim.api.nvim_set_keymap('n', '<leader>S', ':Pick lsp scope="document_symbol"<CR>', { noremap = true, silent = true })
         }
       })
+      require("mini.extra").setup()
 
       require("mini.jump2d").setup({
         view = {
