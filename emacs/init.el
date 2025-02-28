@@ -33,57 +33,6 @@
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
 
-(defun simple-mode-line-render (left right)
-  "Return a string of `window-width' length.
-Containing LEFT, and RIGHT aligned respectively."
-  (let ((available-width
-         (- (window-total-width)
-            (+ (length (format-mode-line left))
-               (length (format-mode-line right))))))
-    (append left
-            (list (format (format "%%%ds" available-width) ""))
-            right)))
-
-(with-eval-after-load 'subr-x
-  (setq-default mode-line-buffer-identification
-                '(:eval
-                  (format-mode-line
-                   (propertized-buffer-identification
-                    (or (when-let* ((buffer-file-truename buffer-file-truename)
-                                    (prj                  (cdr-safe (project-current)))
-                                    (prj-parent           (file-name-directory (directory-file-name (expand-file-name prj)))))
-                          (concat (file-relative-name (file-name-directory buffer-file-truename) prj-parent) (file-name-nondirectory buffer-file-truename)))
-                        "%b"))))))
-
-(setq-default column-number-mode t
-              mode-line-format   '((:eval (simple-mode-line-render '("%e" ; left side
-                                                                     mode-line-front-space
-                                                                     mode-line-modified
-                                                                     mode-line-remote
-                                                                     mode-line-frame-identification
-                                                                     mode-line-buffer-identification
-                                                                     "   "
-                                                                     "%l:%c")
-                                                                   '("%"
-                                                                     mode-line-misc-info  ; right side
-                                                                     "  "
-                                                                     mode-line-process
-                                                                     mode-line-end-spaces
-                                                                     "  ")))))
-
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance           . dark))
-
-(setq window-divider-default-right-width  24
-      window-divider-default-bottom-width 12
-      window-divider-default-places       t)
-(setq-default tab-width 4)
-(window-divider-mode 1)
-
-(use-package olivetti
-  :ensure t
-  :custom (olivetti-set-width 100))
-
 ;; Theme
 (use-package stimmung-themes
   :demand t
@@ -93,6 +42,57 @@ Containing LEFT, and RIGHT aligned respectively."
   (stimmung-themes-type 'none :italic? t)
   (stimmung-themes-comment 'background :italic? nil)
   :config (stimmung-themes-load-light))
+
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance           . dark))
+
+(set-face-attribute 'mode-line nil
+                    :box '(:line-width 1 :color "#000000"))
+
+(setq default-frame-alist
+      '((left-fringe . 0) (right-fringe . 0)
+        (internal-border-width . 20) (vertical-scroll-bars . nil)
+        (bottom-divider-width . 0) (right-divider-width . 0)
+        (undecorated-round . t)))
+(modify-frame-parameters nil default-frame-alist)
+
+(defface nano-default-i
+  '((t :foreground "white" :background "gray20" :weight bold))
+  "Default mode-line face.")
+
+(defface nano-critical-i
+  '((t :foreground "white" :background "orange3" :weight bold))
+  "Face for modified buffers.")
+
+(defface nano-faded-i
+  '((t :foreground "gray70" :background "gray10"))
+  "Face for inactive or low-priority elements.")
+
+
+
+(setq-default mode-line-format
+  '(:eval
+    (let ((prefix (cond (buffer-read-only     '("RO" . nano-default-i))
+                        ((buffer-modified-p)  '("**" . nano-critical-i))
+                        (t                    '("RW" . nano-faded-i))))
+          (mode (concat "(" (downcase (cond ((consp mode-name) (car mode-name))
+                                            ((stringp mode-name) mode-name)
+                                            (t "unknow")))
+                        " mode)"))
+          (coords (format-mode-line "%c:%l ")))
+      (list
+       (propertize " " 'face (cdr prefix)  'display '(raise -0.25))
+       (propertize (car prefix) 'face (cdr prefix))
+       (propertize " " 'face (cdr prefix) 'display '(raise +0.25))
+       (propertize (format-mode-line " %b "))
+       (propertize " " 'display `(space :align-to (- right ,(length coords))))
+       (propertize coords 'face 'nano-faded)))))
+
+(use-package olivetti
+  :ensure t
+  :custom (olivetti-set-width 100))
+
+
 
 
 ;; Window and buffer management
