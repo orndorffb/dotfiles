@@ -19,14 +19,6 @@
 (scroll-bar-mode -1)
 (fringe-mode 10)
 
-
-(setq frame-resize-pixelwise t
-      default-frame-alist    (append (list
-                                      '(vertical-scroll-bars . 0)
-                                      '(internal-border-width . 0)
-                                      '(right-fringe   . 0)
-                                      '(tool-bar-lines . 0))))
-
 ;;--My stuff--------------------------------------------------------------------
 
 (defadvice load-theme (before clear-previous-themes activate) ; Improve theme loading
@@ -52,8 +44,7 @@
 (setq default-frame-alist
       '((left-fringe . 0) (right-fringe . 0)
         (internal-border-width . 20) (vertical-scroll-bars . nil)
-        (bottom-divider-width . 0) (right-divider-width . 0)
-        (undecorated-round . t)))
+        (bottom-divider-width . 0) (right-divider-width . 0)))
 (modify-frame-parameters nil default-frame-alist)
 
 (defface nano-default-i
