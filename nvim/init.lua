@@ -119,7 +119,7 @@ require("lazy").setup({
 
       require("mini.jump2d").setup({
         view = {
-          dim = true
+          dim = true,
         },
         mappings = {
           start_jumping = "<leader>gw"

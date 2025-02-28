@@ -1,196 +1,99 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
-(set-face-attribute 'default nil
-                    :height 120 :weight 'light :family "Jetbrains Mono")
-(set-face-attribute 'bold nil :weight 'regular)
-(set-face-attribute 'bold-italic nil :weight 'regular)
-(set-display-table-slot standard-display-table 'truncation (make-glyph-code ?…))
-(set-display-table-slot standard-display-table 'wrap (make-glyph-code ?–))
 
-;; --- Frame / windows layout & behavior --------------------------------------
-(setq default-frame-alist
-      '((height . 44) (width  . 81) (left-fringe . 0) (right-fringe . 0)
-        (internal-border-width . 20) (vertical-scroll-bars . nil)
-        (bottom-divider-width . 0) (right-divider-width . 0)
-        (undecorated-round . t)))
-(modify-frame-parameters nil default-frame-alist)
-(setq-default pop-up-windows nil)
+(add-to-list 'default-frame-alist  '(font . "Iosevka Comfy"))
+(set-face-attribute 'default        nil :family "Iosevka Comfy" :height 140 :weight 'regular)
+(set-face-attribute 'fixed-pitch    nil :family "Iosevka Comfy" :height 140)
+(set-face-attribute 'variable-pitch nil :family "Iosevka Comfy" :height 140)
+(setq-default line-spacing 0.0)
 
 ;; --- Activate / Deactivate modes --------------------------------------------
-(tool-bar-mode -1) (menu-bar-mode -1) (blink-cursor-mode -1)
-(global-hl-line-mode 1) (global-display-line-numbers-mode 1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(blink-cursor-mode -1)
+(global-hl-line-mode 1)
+(global-display-line-numbers-mode 1)
 (pixel-scroll-precision-mode 1)
+(scroll-bar-mode -1)
+(fringe-mode 10)
 
-;; --- Minimal NANO (not a real) theme ----------------------------------------
-(defface nano-default '((t)) "")   (defface nano-default-i '((t)) "")
-(defface nano-highlight '((t)) "") (defface nano-highlight-i '((t)) "")
-(defface nano-subtle '((t)) "")    (defface nano-subtle-i '((t)) "")
-(defface nano-faded '((t)) "")     (defface nano-faded-i '((t)) "")
-(defface nano-salient '((t)) "")   (defface nano-salient-i '((t)) "")
-(defface nano-popout '((t)) "")    (defface nano-popout-i '((t)) "")
-(defface nano-strong '((t)) "")    (defface nano-strong-i '((t)) "")
-(defface nano-critical '((t)) "")  (defface nano-critical-i '((t)) "")
 
-(defun nano-set-face (name &optional foreground background weight)
-  "Set NAME and NAME-i faces with given FOREGROUND, BACKGROUND and WEIGHT"
-
-  (apply #'set-face-attribute `(,name nil
-                                ,@(when foreground `(:foreground ,foreground))
-                                ,@(when background `(:background ,background))
-                                ,@(when weight `(:weight ,weight))))
-  (apply #'set-face-attribute `(,(intern (concat (symbol-name name) "-i")) nil
-                                :foreground ,(face-background 'nano-default)
-                                ,@(when foreground `(:background ,foreground))
-                                :weight regular)))
-
-(defun nano-link-face (sources faces &optional attributes)
-  "Make FACES to inherit from SOURCES faces and unspecify ATTRIBUTES."
-
-  (let ((attributes (or attributes
-                        '( :foreground :background :family :weight
-                           :height :slant :overline :underline :box))))
-    (dolist (face (seq-filter #'facep faces))
-      (dolist (attribute attributes)
-        (set-face-attribute face nil attribute 'unspecified))
-      (set-face-attribute face nil :inherit sources))))
-
-(defun nano-install-theme ()
-  "Install THEME"
-
-  (set-face-attribute 'default nil
-                      :foreground (face-foreground 'nano-default)
-                      :background (face-background 'nano-default))
-  (dolist (item '((nano-default .  (variable-pitch variable-pitch-text
-                                    fixed-pitch fixed-pitch-serif))
-                  (nano-highlight . (hl-line highlight))
-                  (nano-subtle .    (match region
-                                     lazy-highlight widget-field))
-                  (nano-faded .     (shadow
-                                     font-lock-comment-face
-                                     font-lock-doc-face
-                                     icomplete-section
-                                     completions-annotations))
-                  (nano-popout .    (warning
-                                     font-lock-string-face))
-                  (nano-salient .   (success link
-                                     help-argument-name
-                                     custom-visibility
-                                     font-lock-type-face
-                                     font-lock-keyword-face
-                                     font-lock-builtin-face
-                                     completions-common-part))
-                  (nano-strong .    (font-lock-function-name-face
-                                     font-lock-variable-name-face
-                                     icomplete-first-match
-                                     minibuffer-prompt))
-                  (nano-critical .  (error
-                                     completions-first-difference))
-                  (nano-faded-i .   (help-key-binding))
-                  (nano-default-i . (custom-button-mouse
-                                     isearch))
-                  (nano-critical-i . (isearch-fail))
-                  ((nano-subtle nano-strong) . (custom-button
-                                                icomplete-selected-match))
-                  ((nano-faded-i nano-strong) . (show-paren-match))))
-    (nano-link-face (car item) (cdr item)))
-
-  ;; Mode & header lines 
-  (set-face-attribute 'header-line nil
-                      :background 'unspecified
-                      :underline nil
-                      :box `( :line-width 1
-                              :color ,(face-background 'nano-default))
-                      :inherit 'nano-subtle)
-  (set-face-attribute 'mode-line nil
-                      :background (face-background 'default)
-                      :underline (face-foreground 'nano-faded)
-                      :height 40 :overline nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil
-                      :background (face-background 'default)
-                      :underline (face-foreground 'nano-faded)
-                      :height 40 :overline nil :box nil))
-
-(defun nano-light (&rest args)
-  "NANO light theme (based on material colors)"
-
-  (interactive)
-  (nano-set-face 'nano-default "#253238" "#FFFFFF") ;; Blue Grey / L800
-  (nano-set-face 'nano-strong "#000000" nil 'regular) ;; Black
-  (nano-set-face 'nano-highlight nil "#FAFAFA") ;; Very Light Grey
-  (nano-set-face 'nano-subtle nil "#ECEFF1") ;; Blue Grey / L50
-  (nano-set-face 'nano-faded "#90A4AE") ;; Blue Grey / L300
-  (nano-set-face 'nano-salient "#673AB7") ;; Deep Purple / L500
-  (nano-set-face 'nano-popout "#C06C55") ;; Deep Orange / L200
-  (nano-set-face 'nano-critical "#FF6F00") ;; Amber / L900
-  (nano-install-theme))
-  
-(defun nano-dark (&rest args)
-  "NANO dark theme (based on nord colors)"
-
-  (interactive)
-  (nano-set-face 'nano-default "#ECEFF4" "#2E3440") ;; Snow Storm 3 
-  (nano-set-face 'nano-strong "#ECEFF4" nil 'regular) ;; Polar Night 0
-  (nano-set-face 'nano-highlight nil "#3B4252")  ;; Polar Night 1
-  (nano-set-face 'nano-subtle nil "#434C5E") ;; Polar Night 2 
-  (nano-set-face 'nano-faded "#677691") ;; 
-  (nano-set-face 'nano-salient "#81A1C1")  ;; Frost 2
-  (nano-set-face 'nano-popout "#D08770") ;; Aurora 1
-  (nano-set-face 'nano-critical "#EBCB8B") ;; Aurora 2
-  (nano-install-theme))
-
-;; --- Header & mode lines ----------------------------------------------------
-(setq-default mode-line-format "")
-(setq-default header-line-format
-  '(:eval
-    (let ((prefix (cond (buffer-read-only     '("RO" . nano-default-i))
-                        ((buffer-modified-p)  '("**" . nano-critical-i))
-                        (t                    '("RW" . nano-faded-i))))
-          (mode (concat "(" (downcase (cond ((consp mode-name) (car mode-name))
-                                            ((stringp mode-name) mode-name)
-                                            (t "unknow")))
-                        " mode)"))
-          (coords (format-mode-line "%c:%l ")))
-      (list
-       (propertize " " 'face (cdr prefix)  'display '(raise -0.25))
-       (propertize (car prefix) 'face (cdr prefix))
-       (propertize " " 'face (cdr prefix) 'display '(raise +0.25))
-       (propertize (format-mode-line " %b ") 'face 'nano-strong)
-       (propertize mode 'face 'header-line)
-       (propertize " " 'display `(space :align-to (- right ,(length coords))))
-       (propertize coords 'face 'nano-faded)))))
-
-;; --- Minibuffer setup -------------------------------------------------------
-(defun nano-minibuffer--setup ()
-  (set-window-margins nil 3 0)
-  
-  (setq truncate-lines t))
-(add-hook 'minibuffer-setup-hook #'nano-minibuffer--setup)
-
-(nano-light)
-
-(defvar my-nano-theme-toggle nil
-  "Tracks whether nano-light or nano-dark is active.")
-
-(defun my-toggle-nano-theme ()
-  "Toggle between nano-light and nano-dark themes."
-  (interactive)
-  (if my-nano-theme-toggle
-      (progn
-        (setq my-nano-theme-toggle nil)
-        (message "Switched to nano-light")
-        (nano-light))
-    (progn
-      (setq my-nano-theme-toggle t)
-      (message "Switched to nano-dark")
-      (nano-dark))))
-
-;; Bind to F5
-(global-set-key (kbd "<f5>") #'my-toggle-nano-theme)
+(setq frame-resize-pixelwise t
+      default-frame-alist    (append (list
+                                      '(vertical-scroll-bars . 0)
+                                      '(internal-border-width . 0)
+                                      '(right-fringe   . 0)
+                                      '(tool-bar-lines . 0))))
 
 ;;--My stuff--------------------------------------------------------------------
+
+(defadvice load-theme (before clear-previous-themes activate) ; Improve theme loading
+  "Clear existing theme settings instead of layering them."
+  (mapc #'disable-theme custom-enabled-themes))
+
+(defun simple-mode-line-render (left right)
+  "Return a string of `window-width' length.
+Containing LEFT, and RIGHT aligned respectively."
+  (let ((available-width
+         (- (window-total-width)
+            (+ (length (format-mode-line left))
+               (length (format-mode-line right))))))
+    (append left
+            (list (format (format "%%%ds" available-width) ""))
+            right)))
+
+(with-eval-after-load 'subr-x
+  (setq-default mode-line-buffer-identification
+                '(:eval
+                  (format-mode-line
+                   (propertized-buffer-identification
+                    (or (when-let* ((buffer-file-truename buffer-file-truename)
+                                    (prj                  (cdr-safe (project-current)))
+                                    (prj-parent           (file-name-directory (directory-file-name (expand-file-name prj)))))
+                          (concat (file-relative-name (file-name-directory buffer-file-truename) prj-parent) (file-name-nondirectory buffer-file-truename)))
+                        "%b"))))))
+
+(setq-default column-number-mode t
+              mode-line-format   '((:eval (simple-mode-line-render '("%e" ; left side
+                                                                     mode-line-front-space
+                                                                     mode-line-modified
+                                                                     mode-line-remote
+                                                                     mode-line-frame-identification
+                                                                     mode-line-buffer-identification
+                                                                     "   "
+                                                                     "%l:%c")
+                                                                   '("%"
+                                                                     mode-line-misc-info  ; right side
+                                                                     "  "
+                                                                     mode-line-process
+                                                                     mode-line-end-spaces
+                                                                     "  ")))))
+
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance           . dark))
+
+(setq window-divider-default-right-width  24
+      window-divider-default-bottom-width 12
+      window-divider-default-places       t)
+(setq-default tab-width 4)
+(window-divider-mode 1)
+
+(use-package olivetti
+  :ensure t
+  :custom (olivetti-set-width 100))
+
+;; Theme
+(use-package stimmung-themes
+  :demand t
+  :ensure t
+  :custom
+  (stimmung-themes-constant 'none)
+  (stimmung-themes-type 'none :italic? t)
+  (stimmung-themes-comment 'background :italic? nil)
+  :config (stimmung-themes-load-light))
+
 
 ;; Window and buffer management
 (global-set-key (kbd "C-x |") 'split-window-horizontally)
@@ -211,8 +114,6 @@
 ;; no lockfiles
 (setq create-lockfiles nil)
 
-;; Set font
-;;(set-frame-font "JetBrains Mono 12" nil t)
 
 ;; Some keybinds for basic stuff
 (global-set-key (kbd "C-c s") 'consult-ripgrep)
@@ -252,8 +153,8 @@
   (let* ((project-root (locate-dominating-file default-directory ".git")) ; Adjust this to your project's root indicator
          (current-file (buffer-file-name))
          (standardrb-command (concat (expand-file-name "bin/standardrb" project-root)
-                                      " " (shell-quote-argument current-file)
-                                      " --fix-unsafely")))
+                                     " " (shell-quote-argument current-file)
+                                     " --fix-unsafely")))
     (if (and project-root current-file)
         (shell-command standardrb-command)
       (message "Could not find project root or current file."))))
@@ -349,8 +250,8 @@
                        (setq rust-format-on-save t)))) ; Format on save
 
 (use-package rbenv
-  :ensure t
-  :config (global-rbenv-mode))
+  :ensure t)
+
 
 ;; Use ruby-ts-mode instead of ruby-mode
 (when (treesit-available-p)
@@ -368,8 +269,8 @@
       ;; Add 'require "debug"' at the top of the file if it's not already present
       (goto-char (point-min))
       (unless (search-forward "require \"debug\"" nil t)
-	(goto-char (point-min))
-	(insert "require \"debug\"\n\n"))
+		(goto-char (point-min))
+		(insert "require \"debug\"\n\n"))
       )
 
     ;; Add 'binding.break' above the current line
@@ -396,11 +297,11 @@
     "Jump to a word start on the current line only."
     (interactive)
     (avy-with avy-goto-word-0
-      (avy-goto-word-0 nil (line-beginning-position) (line-end-position))))
+			  (avy-goto-word-0 nil (line-beginning-position) (line-end-position))))
   :bind (
-	 ("C-'" . avy-goto-char-timer)
-	 ("C-c w" . avy-goto-word-crt-line)
-	 ))
+		 ("C-'" . avy-goto-char-timer)
+		 ("C-c w" . avy-goto-word-crt-line)
+		 ))
 
 (use-package orderless
   :ensure t
@@ -412,11 +313,11 @@
   :ensure t
   :init
   (setq vertico-multiform-commands
-	'((consult-project-buffer posframe)
-	  (consult-buffer posframe)
-	  (execute-extended-command posframe)
-	  (project-find-file posframe)
-	  ))
+		'((consult-project-buffer posframe)
+		  (consult-buffer posframe)
+		  (execute-extended-command posframe)
+		  (project-find-file posframe)
+		  ))
   :config
   (vertico-mode)
   (vertico-multiform-mode))
@@ -439,7 +340,7 @@
          ("C-c h" . consult-history)
          ("C-c m" . consult-man)
          ("C-c i" . consult-info)
-	 ("C-s" . consult-line)
+		 ("C-s" . consult-line)
          ([remap Info-search] . consult-info)
          ;; C-x bindings in `ctl-x-map'
          ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
@@ -449,7 +350,7 @@
          ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
          ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-	 ("C-c d" . consult-flymake)
+		 ("C-c d" . consult-flymake)
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
          ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
@@ -507,23 +408,23 @@
 
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-	(ruby "https://github.com/tree-sitter/tree-sitter-ruby")
-	(cmake "https://github.com/uyha/tree-sitter-cmake")
-	(css "https://github.com/tree-sitter/tree-sitter-css")
-	(elisp "https://github.com/Wilfred/tree-sitter-elisp")
-	(go "https://github.com/tree-sitter/tree-sitter-go")
-	(html "https://github.com/tree-sitter/tree-sitter-html")
-	(javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-	(json "https://github.com/tree-sitter/tree-sitter-json")
-	(make "https://github.com/alemuller/tree-sitter-make")
-	(markdown "https://github.com/ikatyang/tree-sitter-markdown")
-	(python "https://github.com/tree-sitter/tree-sitter-python")
-	(toml "https://github.com/tree-sitter/tree-sitter-toml")
-	(tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-	(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-	(elixir "https://github.com/elixir-lang/tree-sitter-elixir")
-	(heex "https://github.com/phoenixframework/tree-sitter-heex")
-	(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+		(ruby "https://github.com/tree-sitter/tree-sitter-ruby")
+		(cmake "https://github.com/uyha/tree-sitter-cmake")
+		(css "https://github.com/tree-sitter/tree-sitter-css")
+		(elisp "https://github.com/Wilfred/tree-sitter-elisp")
+		(go "https://github.com/tree-sitter/tree-sitter-go")
+		(html "https://github.com/tree-sitter/tree-sitter-html")
+		(javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+		(json "https://github.com/tree-sitter/tree-sitter-json")
+		(make "https://github.com/alemuller/tree-sitter-make")
+		(markdown "https://github.com/ikatyang/tree-sitter-markdown")
+		(python "https://github.com/tree-sitter/tree-sitter-python")
+		(toml "https://github.com/tree-sitter/tree-sitter-toml")
+		(tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+		(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+		(elixir "https://github.com/elixir-lang/tree-sitter-elixir")
+		(heex "https://github.com/phoenixframework/tree-sitter-heex")
+		(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 ;; Get path settings from zsh
 (when (memq window-system '(mac ns x))
@@ -549,21 +450,22 @@
      default))
  '(package-selected-packages
    '(ace-window autothemer bind-key catppuccin-theme clipetty codespaces
-		company consult copilot corfu counsel doom-modeline
-		eat ef-themes eglot elixir-mode exec-path-from-shell
-		expand-region git-commit go-mode gptel
-		gruber-darker-theme highlight-indent-guides ht
-		ivy-rich ivy-xref kanagawa-theme kanagawa-themes lv
-		magit marginalia markdown-mode meow modus-themes moody
-		orderless rbenv rg robe rspec-mode rust-mode
-		spacious-padding spinner tree-sitter-langs
-		ultra-scroll vertico-posframe vterm web-mode yaml-mode
-		yasnippet-snippets zoom-window))
+				company consult copilot corfu counsel doom-modeline
+				eat ef-themes eglot elixir-mode exec-path-from-shell
+				expand-region git-commit go-mode gptel
+				gruber-darker-theme highlight-indent-guides ht
+				ivy-rich ivy-xref kanagawa-theme kanagawa-themes lv
+				magit marginalia markdown-mode meow modus-themes
+				mood-line moody nano-modeline olivetti orderless rbenv
+				rg robe rspec-mode rust-mode spacious-padding spinner
+				stimmung-themes tree-sitter-langs ultra-scroll
+				vertico-posframe vterm web-mode yaml-mode
+				yasnippet-snippets zoom-window))
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
-		   :branch "main")
+				   :branch "main")
      (copilot :url "https://github.com/copilot-emacs/copilot.el"
-	      :branch "main"))))
+			  :branch "main"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
