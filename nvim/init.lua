@@ -71,18 +71,6 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 require("lazy").setup({
   {
-    "neanias/everforest-nvim",
-    version = false,
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require("everforest").setup({
-        background = 'hard'
-      })
-      -- vim.cmd.colorscheme('everforest')
-    end,
-  },
-  {
     "zenbones-theme/zenbones.nvim",
     dependencies = "rktjmp/lush.nvim",
     lazy = false,
@@ -92,26 +80,26 @@ require("lazy").setup({
     end
   },
   {
-  "nvim-telescope/telescope.nvim",
-  dependencies = { "nvim-lua/plenary.nvim" },
-  config = function()
-    local telescope = require("telescope")
-    local builtin = require("telescope.builtin")
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      local telescope = require("telescope")
+      local builtin = require("telescope.builtin")
 
-    telescope.setup({
-      defaults = {
-        layout_strategy = "horizontal",
-        layout_config = { prompt_position = "top" },
-        sorting_strategy = "ascending",
-        winblend = 0,
-      }
-    })
+      telescope.setup({
+        defaults = {
+          layout_strategy = "horizontal",
+          layout_config = { prompt_position = "top" },
+          sorting_strategy = "ascending",
+          winblend = 0,
+        }
+      })
 
-    vim.keymap.set("n", "<leader>f", builtin.find_files, { noremap = true, silent = true })
-    vim.keymap.set("n", "<leader>b", builtin.buffers, { noremap = true, silent = true })
-    vim.keymap.set("n", "<leader>s", builtin.live_grep, { noremap = true, silent = true })
-    vim.keymap.set("n", "<leader>S", builtin.lsp_document_symbols, { noremap = true, silent = true })
-  end,
+      vim.keymap.set("n", "<leader>f", builtin.find_files, { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>b", builtin.buffers, { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>s", builtin.live_grep, { noremap = true, silent = true })
+      vim.keymap.set("n", "<leader>S", builtin.lsp_document_symbols, { noremap = true, silent = true })
+    end,
   },
   {
     "echasnovski/mini.nvim",
@@ -201,7 +189,6 @@ require("lazy").setup({
       })
     end,
   },
-
   {
     -- Completion source for LSP
     "hrsh7th/cmp-nvim-lsp",
