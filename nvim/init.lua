@@ -49,8 +49,8 @@ end
 vim.api.nvim_set_keymap('n', '<leader>tb', ':lua ToggleBackground()<CR>', { noremap = true, silent = true })
 
 
--- vim.o.background = "dark"
-vim.o.background = "light"
+vim.o.background = "dark"
+-- vim.o.background = "light"
 
 vim.opt.list = true
 
@@ -92,6 +92,28 @@ require("lazy").setup({
     end
   },
   {
+  "nvim-telescope/telescope.nvim",
+  dependencies = { "nvim-lua/plenary.nvim" },
+  config = function()
+    local telescope = require("telescope")
+    local builtin = require("telescope.builtin")
+
+    telescope.setup({
+      defaults = {
+        layout_strategy = "horizontal",
+        layout_config = { prompt_position = "top" },
+        sorting_strategy = "ascending",
+        winblend = 0,
+      }
+    })
+
+    vim.keymap.set("n", "<leader>f", builtin.find_files, { noremap = true, silent = true })
+    vim.keymap.set("n", "<leader>b", builtin.buffers, { noremap = true, silent = true })
+    vim.keymap.set("n", "<leader>s", builtin.live_grep, { noremap = true, silent = true })
+    vim.keymap.set("n", "<leader>S", builtin.lsp_document_symbols, { noremap = true, silent = true })
+  end,
+  },
+  {
     "echasnovski/mini.nvim",
     lazy = false,
     priority = 1000,
@@ -107,16 +129,7 @@ require("lazy").setup({
       require("mini.comment").setup()
       require("mini.statusline").setup()
       require("mini.pairs").setup()
-      require("mini.pick").setup({
-        mappings = {
-          vim.api.nvim_set_keymap('n', '<leader>f', ':Pick files<CR>', { noremap = true, silent = true }),
-          vim.api.nvim_set_keymap('n', '<leader>b', ':Pick buffers<CR>', { noremap = true, silent = true }),
-          vim.api.nvim_set_keymap('n', '<leader>s', ':Pick grep_live<CR>', { noremap = true, silent = true }),
-          vim.api.nvim_set_keymap('n', '<leader>S', ':Pick lsp scope="document_symbol"<CR>', { noremap = true, silent = true })
-        }
-      })
       require("mini.extra").setup()
-
       require("mini.jump2d").setup({
         view = {
           dim = true,
