@@ -71,20 +71,12 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 require("lazy").setup({
   {
-    "p00f/alabaster.nvim",
-    lazy = false,
-    priority = 1000,
-    config = function()
-        vim.cmd.colorscheme("alabaster")
-    end
-  },
-  {
     "zenbones-theme/zenbones.nvim",
     dependencies = "rktjmp/lush.nvim",
     lazy = false,
     priority = 1000,
     config = function()
-   --     vim.cmd.colorscheme('zenbones')
+        vim.cmd.colorscheme('zenbones')
     end
   },
   {
