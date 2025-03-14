@@ -43,7 +43,7 @@
 
 (setq default-frame-alist
       '((left-fringe . 0) (right-fringe . 0)
-        (internal-border-width . 20) (vertical-scroll-bars . nil)
+         (vertical-scroll-bars . nil)
         (bottom-divider-width . 0) (right-divider-width . 0)))
 (modify-frame-parameters nil default-frame-alist)
 
@@ -82,9 +82,6 @@
 (use-package olivetti
   :ensure t
   :custom (olivetti-set-width 100))
-
-
-
 
 ;; Window and buffer management
 (global-set-key (kbd "C-x |") 'split-window-horizontally)
@@ -196,6 +193,7 @@
          (rust-mode . eglot-ensure)
          (elixir-mode . eglot-ensure))
   :config
+  (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
   (setq eglot-server-programs '(
                                 (ruby-mode . ("ruby-lsp"))
                                 (rust-mode . ("rust-analyzer"))
