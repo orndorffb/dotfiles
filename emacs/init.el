@@ -3,10 +3,10 @@
 
 ;; --- Typography stack -------------------------------------------------------
 
-(add-to-list 'default-frame-alist  '(font . "Iosevka Comfy"))
-(set-face-attribute 'default        nil :family "Iosevka Comfy" :height 140 :weight 'regular)
-(set-face-attribute 'fixed-pitch    nil :family "Iosevka Comfy" :height 140)
-(set-face-attribute 'variable-pitch nil :family "Iosevka Comfy" :height 140)
+(add-to-list 'default-frame-alist  '(font . "Essential PragmataPro"))
+(set-face-attribute 'default        nil :family "Essential PragmataPro" :height 140 :weight 'regular)
+(set-face-attribute 'fixed-pitch    nil :family "Essential PragmataPro" :height 140)
+(set-face-attribute 'variable-pitch nil :family "Essential PragmataPro" :height 140)
 (setq-default line-spacing 0.0)
 
 ;; --- Activate / Deactivate modes --------------------------------------------
@@ -35,17 +35,20 @@
   (stimmung-themes-comment 'background :italic? nil)
   :config (stimmung-themes-load-light))
 
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance           . dark))
+
 
 (set-face-attribute 'mode-line nil
                     :box '(:line-width 1 :color "#000000"))
 
 (setq default-frame-alist
-      '((left-fringe . 0) (right-fringe . 0)
-         (vertical-scroll-bars . nil)
-        (bottom-divider-width . 0) (right-divider-width . 0)))
-(modify-frame-parameters nil default-frame-alist)
+      '((left-fringe . 0)
+        (right-fringe . 0)
+        (internal-border-width . 20)
+        (vertical-scroll-bars . nil)
+        (bottom-divider-width . 0)
+        (right-divider-width . 0))
+      )
+(add-to-list 'default-frame-alist '(undecorated-round . t))
 
 (defface nano-default-i
   '((t :foreground "white" :background "gray20" :weight bold))
