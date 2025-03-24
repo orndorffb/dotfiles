@@ -13,7 +13,7 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (blink-cursor-mode -1)
-(global-hl-line-mode 1)
+;(global-hl-line-mode 1)
 (global-display-line-numbers-mode 1)
 (pixel-scroll-precision-mode 1)
 (scroll-bar-mode -1)
@@ -25,25 +25,23 @@
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
 
+(load-theme 'modus-operandi)
+
 ;; Theme
-(use-package stimmung-themes
-  :demand t
-  :ensure t
-  :custom
-  (stimmung-themes-constant 'none)
-  (stimmung-themes-type 'none :italic? t)
-  (stimmung-themes-comment 'background :italic? nil)
-  :config (stimmung-themes-load-light))
-
-
-
-(set-face-attribute 'mode-line nil
-                    :box '(:line-width 1 :color "#000000"))
+;; (use-package stimmung-themes
+;;   :demand t
+;;   :ensure t
+;;   :custom
+;;   (stimmung-themes-constant 'none)
+;;   (stimmung-themes-type 'none :italic? t)
+;;   (stimmung-themes-comment 'background :italic? nil)
+;;   :config (stimmung-themes-load-light))
+;; (set-face-attribute 'mode-line nil
+;;                     :box '(:line-width 1 :color "#000000"))
 
 (setq default-frame-alist
       '((left-fringe . 0)
         (right-fringe . 0)
-        (internal-border-width . 20)
         (vertical-scroll-bars . nil)
         (bottom-divider-width . 0)
         (right-divider-width . 0))
@@ -64,23 +62,23 @@
 
 
 
-(setq-default mode-line-format
-  '(:eval
-    (let ((prefix (cond (buffer-read-only     '("RO" . nano-default-i))
-                        ((buffer-modified-p)  '("**" . nano-critical-i))
-                        (t                    '("RW" . nano-faded-i))))
-          (mode (concat "(" (downcase (cond ((consp mode-name) (car mode-name))
-                                            ((stringp mode-name) mode-name)
-                                            (t "unknow")))
-                        " mode)"))
-          (coords (format-mode-line "%c:%l ")))
-      (list
-       (propertize " " 'face (cdr prefix)  'display '(raise -0.25))
-       (propertize (car prefix) 'face (cdr prefix))
-       (propertize " " 'face (cdr prefix) 'display '(raise +0.25))
-       (propertize (format-mode-line " %b "))
-       (propertize " " 'display `(space :align-to (- right ,(length coords))))
-       (propertize coords 'face 'nano-faded)))))
+;; (setq-default mode-line-format
+;;   '(:eval
+;;     (let ((prefix (cond (buffer-read-only     '("RO" . nano-default-i))
+;;                         ((buffer-modified-p)  '("**" . nano-critical-i))
+;;                         (t                    '("RW" . nano-faded-i))))
+;;           (mode (concat "(" (downcase (cond ((consp mode-name) (car mode-name))
+;;                                             ((stringp mode-name) mode-name)
+;;                                             (t "unknow")))
+;;                         " mode)"))
+;;           (coords (format-mode-line "%c:%l ")))
+;;       (list
+;;        (propertize " " 'face (cdr prefix)  'display '(raise -0.25))
+;;        (propertize (car prefix) 'face (cdr prefix))
+;;        (propertize " " 'face (cdr prefix) 'display '(raise +0.25))
+;;        (propertize (format-mode-line " %b "))
+;;        (propertize " " 'display `(space :align-to (- right ,(length coords))))
+;;        (propertize coords 'face 'nano-faded)))))
 
 (use-package olivetti
   :ensure t
@@ -190,15 +188,37 @@
   (global-set-key (kbd "C-c RET") 'gptel-send)
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
+(use-package lsp-mode
+  :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c l"
+        lsp-format-on-save-mode t)
+  (setq lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-disabled-clients '(rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls))
+  :hook
+  (ruby-ts-mode . lsp)
+  (lsp-mode . lsp-enable-which-key-integration)
+  :commands lsp)
+
+(use-package lsp-ui
+  :ensure t
+  :init
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-peek-enable t
+        lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-imenu-enable t))
+
 (use-package eglot
   :ensure t
-  :hook ((ruby-ts-mode . eglot-ensure)
+  :hook (;(ruby-ts-mode . eglot-ensure)
          (rust-mode . eglot-ensure)
          (elixir-mode . eglot-ensure))
   :config
   (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
   (setq eglot-server-programs '(
-                                (ruby-mode . ("ruby-lsp"))
+                                ;;(ruby-mode . ("ruby-lsp"))
                                 (rust-mode . ("rust-analyzer"))
                                 (elixir-mode . ("elixir-ls"))
                                 )))
@@ -427,7 +447,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("d0a4b929a8ca0715fc1db5eda6effc17b2ce4427809f245028a88a949429d50e"
+   '("af238e93bc03da7ee4b2d30f2b3ea6e1553eb05b7d827da83bf35be1f6401992"
+     "b350d78e608ff87218a78f62c9832e1710714c7279321fa72a3da889bfe3d408"
+     "9b59e147dbbde5e638ea1cde5ec0a358d5f269d27bd2b893a0947c4a867e14c1"
+     "aa545934ce1b6fd16b4db2cf6c2ccf126249a66712786dd70f880806a187ac0b"
+     "d0a4b929a8ca0715fc1db5eda6effc17b2ce4427809f245028a88a949429d50e"
      "622a74a498b3362ca51f23eea7b1efba62fc493267f2b0456751b053f3872db0"
      "9e296dbc86374778cca0f22cfd7cd44d35e7c2e678085417be97251ce7c75dcc"
      "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
@@ -440,27 +464,15 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
      default))
- '(package-selected-packages
-   '(ace-window autothemer bind-key catppuccin-theme clipetty codespaces
-				company consult copilot corfu counsel doom-modeline
-				eat ef-themes eglot elixir-mode exec-path-from-shell
-				expand-region git-commit go-mode gptel
-				gruber-darker-theme highlight-indent-guides ht
-				ivy-rich ivy-xref kanagawa-theme kanagawa-themes lv
-				magit marginalia markdown-mode meow modus-themes
-				mood-line moody nano-modeline olivetti orderless rbenv
-				rg robe rspec-mode rust-mode spacious-padding spinner
-				stimmung-themes tree-sitter-langs ultra-scroll
-				vertico-posframe vterm web-mode yaml-mode
-				yasnippet-snippets zoom-window))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
-				   :branch "main")
+		   :branch "main")
      (copilot :url "https://github.com/copilot-emacs/copilot.el"
-			  :branch "main"))))
+	      :branch "main"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:background nil)))))
