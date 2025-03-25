@@ -1,0 +1,27 @@
+# custom theme
+colorscheme gruvbox-dark
+
+# display line numbers
+add-highlighter global/ number-lines -hlcursor -relative -separator "  " -cursor-separator " |"
+
+# show matching symbols
+add-highlighter global/ show-matching
+
+# always keep eight lines and three columns displayed around the cursor
+set-option global scrolloff 8,3
+
+# comment lines
+map global normal <c-v> ":comment-line<ret>"
+
+# copy to system pboard [MAC ONLY]
+map -docstring "copy to system pboard" global user y "<a-|> pbcopy<ret>"
+
+# Install with brew install kakoune-lsp/kakoune-lsp/kakoune-lsp
+eval %sh{kak-lsp}
+lsp-enable
+
+define-command my-file-picker %{
+  prompt -shell-script-candidates 'fd --type file' open: %{ edit -existing %val{text} }
+}
+
+map global user f ':my-file-picker<ret>'
