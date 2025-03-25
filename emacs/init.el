@@ -1,6 +1,11 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
+(defun open-init-file ()
+  "Open the user's Emacs init file."
+  (interactive)
+  (find-file user-init-file))
+
 ;; --- Typography stack -------------------------------------------------------
 
 (add-to-list 'default-frame-alist  '(font . "Essential PragmataPro"))
@@ -20,12 +25,22 @@
 (fringe-mode 10)
 
 ;;--My stuff--------------------------------------------------------------------
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
+(use-package mise
+  :ensure t
+  :config
+  (global-mise-mode))
+
 
 (defadvice load-theme (before clear-previous-themes activate) ; Improve theme loading
   "Clear existing theme settings instead of layering them."
   (mapc #'disable-theme custom-enabled-themes))
 
-(load-theme 'modus-operandi)
+(load-theme 'doom-tomorrow-night t)
 
 ;; Theme
 ;; (use-package stimmung-themes
@@ -47,6 +62,9 @@
         (right-divider-width . 0))
       )
 (add-to-list 'default-frame-alist '(undecorated-round . t))
+
+(add-hook 'window-setup-hook 'toggle-frame-maximized)
+
 
 (defface nano-default-i
   '((t :foreground "white" :background "gray20" :weight bold))
@@ -156,9 +174,6 @@
   :ensure t
   :bind (("C-;" . er/expand-region)))
 
-(use-package exec-path-from-shell
-  :ensure t)
-
 (use-package ultra-scroll
   :vc (:url "https://github.com/jdtsmith/ultra-scroll"
             :rev :newest
@@ -179,6 +194,24 @@
   (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
+(defun my-get-openai-api-key ()
+  "Retrieve OpenAI API key from authinfo."
+  (let ((auth (car (auth-source-search :host "api.openai.com"
+                                       :user "apikey"
+                                       :require '(:secret)))))
+    (when auth
+      (funcall (plist-get auth :secret)))))
+
+(use-package aidermacs
+  :ensure t
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :config
+  (setenv "OPENROUTER_API_KEY" (my-get-openai-api-key))
+  :custom
+  ; See the Configuration section below
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "o1"))
+
 (use-package gptel
   :ensure t
   :config
@@ -195,9 +228,10 @@
         lsp-format-on-save-mode t)
   (setq lsp-headerline-breadcrumb-enable nil)
   (setq lsp-disabled-clients '(rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls))
-  :hook
-  (ruby-ts-mode . lsp)
-  (lsp-mode . lsp-enable-which-key-integration)
+  ;;:hook
+  ;; (ruby-ts-mode . (lambda ()
+  ;;                   (run-at-time 0.5 nil #'lsp)))
+  ;; (lsp-mode . lsp-enable-which-key-integration)
   :commands lsp)
 
 (use-package lsp-ui
@@ -438,16 +472,15 @@
 		(heex "https://github.com/phoenixframework/tree-sitter-heex")
 		(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
-;; Get path settings from zsh
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("af238e93bc03da7ee4b2d30f2b3ea6e1553eb05b7d827da83bf35be1f6401992"
+   '("7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184"
+     "0325a6b5eea7e5febae709dab35ec8648908af12cf2d2b569bedc8da0a3a81c1"
+     "af238e93bc03da7ee4b2d30f2b3ea6e1553eb05b7d827da83bf35be1f6401992"
      "b350d78e608ff87218a78f62c9832e1710714c7279321fa72a3da889bfe3d408"
      "9b59e147dbbde5e638ea1cde5ec0a358d5f269d27bd2b893a0947c4a867e14c1"
      "aa545934ce1b6fd16b4db2cf6c2ccf126249a66712786dd70f880806a187ac0b"
