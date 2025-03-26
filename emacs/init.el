@@ -36,24 +36,6 @@
   (global-mise-mode))
 
 
-(defadvice load-theme (before clear-previous-themes activate) ; Improve theme loading
-  "Clear existing theme settings instead of layering them."
-  (mapc #'disable-theme custom-enabled-themes))
-
-(load-theme 'doom-tomorrow-night t)
-
-;; Theme
-;; (use-package stimmung-themes
-;;   :demand t
-;;   :ensure t
-;;   :custom
-;;   (stimmung-themes-constant 'none)
-;;   (stimmung-themes-type 'none :italic? t)
-;;   (stimmung-themes-comment 'background :italic? nil)
-;;   :config (stimmung-themes-load-light))
-;; (set-face-attribute 'mode-line nil
-;;                     :box '(:line-width 1 :color "#000000"))
-
 (setq default-frame-alist
       '((left-fringe . 0)
         (right-fringe . 0)
@@ -64,43 +46,6 @@
 (add-to-list 'default-frame-alist '(undecorated-round . t))
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
-
-
-(defface nano-default-i
-  '((t :foreground "white" :background "gray20" :weight bold))
-  "Default mode-line face.")
-
-(defface nano-critical-i
-  '((t :foreground "white" :background "orange3" :weight bold))
-  "Face for modified buffers.")
-
-(defface nano-faded-i
-  '((t :foreground "gray70" :background "gray10"))
-  "Face for inactive or low-priority elements.")
-
-
-
-;; (setq-default mode-line-format
-;;   '(:eval
-;;     (let ((prefix (cond (buffer-read-only     '("RO" . nano-default-i))
-;;                         ((buffer-modified-p)  '("**" . nano-critical-i))
-;;                         (t                    '("RW" . nano-faded-i))))
-;;           (mode (concat "(" (downcase (cond ((consp mode-name) (car mode-name))
-;;                                             ((stringp mode-name) mode-name)
-;;                                             (t "unknow")))
-;;                         " mode)"))
-;;           (coords (format-mode-line "%c:%l ")))
-;;       (list
-;;        (propertize " " 'face (cdr prefix)  'display '(raise -0.25))
-;;        (propertize (car prefix) 'face (cdr prefix))
-;;        (propertize " " 'face (cdr prefix) 'display '(raise +0.25))
-;;        (propertize (format-mode-line " %b "))
-;;        (propertize " " 'display `(space :align-to (- right ,(length coords))))
-;;        (propertize coords 'face 'nano-faded)))))
-
-(use-package olivetti
-  :ensure t
-  :custom (olivetti-set-width 100))
 
 ;; Window and buffer management
 (global-set-key (kbd "C-x |") 'split-window-horizontally)
@@ -121,7 +66,6 @@
 ;; no lockfiles
 (setq create-lockfiles nil)
 
-
 ;; Some keybinds for basic stuff
 (global-set-key (kbd "C-c s") 'consult-ripgrep)
 (global-set-key (kbd "C-c p") 'project-find-file)
@@ -139,21 +83,6 @@
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
-(defun setup-term-eat (buffer-name command)
-  "Create a new Eat buffer named BUFFER-NAME and run COMMAND in it."
-  (interactive "sBuffer name: \nsCommand: ")
-  (let ((eat-buffer (get-buffer-create (generate-new-buffer-name buffer-name))))
-    (with-current-buffer eat-buffer
-      (eat-mode) ;; Activate Eat mode
-      (eat-send-input command))
-    eat-buffer))
-
-(defun start-project-terms-eat ()
-  "Setup Eat terminals for various projects."
-  (interactive)
-  (setup-term-eat "rotom-eat" "cd ~/SpringCare/rotom && clear")
-  (setup-term-eat "ehr-eat" "cd ~/SpringCare/spring-ehr-api && clear"))
-
 (defun run-standardrb-on-current-file ()
   "Run <project_root>/bin/standardrb <current_file> --fix-unsafely."
   (interactive)
@@ -165,10 +94,6 @@
     (if (and project-root current-file)
         (shell-command standardrb-command)
       (message "Could not find project root or current file."))))
-
-(use-package zoom-window
-  :ensure t
-  :bind (("C-x C-z" . zoom-window-zoom)))
 
 (use-package expand-region
   :ensure t
@@ -260,13 +185,6 @@
 (setq eglot-workspace-configuration
       '((solargraph (diagnostics . t))))
 
-;; Custom functions
-(defun eglot-restart ()
-  "Shutdown the buffer's lsp server and restarts it"
-  (interactive)
-  (eglot-shutdown)
-  (eglot))
-
 (use-package tree-sitter
   :ensure t
   :config
@@ -295,9 +213,6 @@
                        (setq indent-tabs-mode nil) ; Use spaces instead of tabs
                        (setq rust-format-on-save t)))) ; Format on save
 
-(use-package rbenv
-  :ensure t)
-
 
 ;; Use ruby-ts-mode instead of ruby-mode
 (when (treesit-available-p)
@@ -306,28 +221,8 @@
 (use-package ruby-mode
   :ensure t
   :init
-  (setq ruby-indent-level 2)
-  :config
-  (defun set-ruby-breakpoint ()
-    "Add 'require \"debug\"' at the top of the file and 'binding.break' above the current line."
-    (interactive)
-    (save-excursion
-      ;; Add 'require "debug"' at the top of the file if it's not already present
-      (goto-char (point-min))
-      (unless (search-forward "require \"debug\"" nil t)
-		(goto-char (point-min))
-		(insert "require \"debug\"\n\n"))
-      )
-
-    ;; Add 'binding.break' above the current line
-    (let ((current-line (line-number-at-pos)))
-      (goto-line current-line)
-      (beginning-of-line)
-      (open-line 1)
-      (insert "binding.break")))
-  )
-
-
+  (setq ruby-indent-level 2))
+  
 (use-package ace-window
   :ensure t
   :init (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
@@ -421,7 +316,7 @@
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
          ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
+         ("M-s e" . consult-ipsearch-history)
          :map isearch-mode-map
          ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
          ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
@@ -478,7 +373,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184"
+   '("88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
+     "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184"
      "0325a6b5eea7e5febae709dab35ec8648908af12cf2d2b569bedc8da0a3a81c1"
      "af238e93bc03da7ee4b2d30f2b3ea6e1553eb05b7d827da83bf35be1f6401992"
      "b350d78e608ff87218a78f62c9832e1710714c7279321fa72a3da889bfe3d408"
