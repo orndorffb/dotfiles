@@ -1,3 +1,4 @@
+
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
@@ -9,7 +10,7 @@
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 (set-face-attribute 'default nil
-                    :height 120 :weight 'light :family "Essential PragmataPro")
+                    :height 160 :family "Essential PragmataPro")
 (set-face-attribute 'bold nil :weight 'regular)
 (set-face-attribute 'bold-italic nil :weight 'regular)
 (set-display-table-slot standard-display-table 'truncation (make-glyph-code ?…))
@@ -182,12 +183,6 @@
   :config
   (exec-path-from-shell-initialize))
 
-(use-package mise
-  :ensure t
-  :config
-  (global-mise-mode))
-
-
 (setq default-frame-alist
       '((left-fringe . 0)
         (right-fringe . 0)
@@ -206,7 +201,7 @@
 (global-set-key (kbd "M-<up>") 'scroll-down-line)
 
 (delete-selection-mode 1)
-
+(setq compilation-scroll-output t)
 
 (setq backup-directory-alist '(("." . "~/.saves")))
 (setq backup-by-copying t)
@@ -330,8 +325,8 @@
   (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
   (setq eglot-server-programs '(
                                 ;;(ruby-mode . ("ruby-lsp"))
-                                (rust-mode . ("rust-analyzer"))
-                                (elixir-mode . ("elixir-ls"))
+                                ;;(rust-mode . ("rust-analyzer"))
+                                ;;(elixir-mode . ("elixir-ls"))
                                 )))
 
 (setq eglot-workspace-configuration
@@ -374,6 +369,14 @@
   :ensure t
   :init
   (setq ruby-indent-level 2))
+
+(use-package rspec-mode
+  :ensure t
+  :after ruby-mode
+  :config
+  (setq rspec-use-spring-when-possible nil)
+  (add-hook 'ruby-mode-hook 'rspec-mode))
+
   
 (use-package ace-window
   :ensure t
@@ -545,7 +548,12 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
      default))
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(ace-window aidermacs consult copilot corfu doom-themes eat
+		exec-path-from-shell expand-region gptel lsp-ui magit
+		marginalia mise olivetti orderless rbenv robe
+		rspec-mode rust-mode tree-sitter-langs ultra-scroll
+		vertico-posframe vterm zoom-window))
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
 		   :branch "main")
