@@ -299,11 +299,9 @@
   (setq lsp-keymap-prefix "C-c l"
         lsp-format-on-save-mode t)
   (setq lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-disabled-clients '(rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls))
-  ;;:hook
-  ;; (ruby-ts-mode . (lambda ()
-  ;;                   (run-at-time 0.5 nil #'lsp)))
-  ;; (lsp-mode . lsp-enable-which-key-integration)
+  (setq lsp-disabled-clients '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls))
+  :hook
+   (ruby-ts-mode . lsp)
   :commands lsp)
 
 (use-package lsp-ui
@@ -312,7 +310,7 @@
   (setq lsp-ui-doc-enable t
         lsp-ui-doc-position 'at-point
         lsp-ui-peek-enable t
-        lsp-ui-sideline-enable t
+        lsp-ui-sideline-enable nil
         lsp-ui-sideline-show-hover t
         lsp-ui-imenu-enable t))
 
@@ -551,9 +549,9 @@
  '(package-selected-packages
    '(ace-window aidermacs consult copilot corfu doom-themes eat
 		exec-path-from-shell expand-region gptel lsp-ui magit
-		marginalia mise olivetti orderless rbenv robe
-		rspec-mode rust-mode tree-sitter-langs ultra-scroll
-		vertico-posframe vterm zoom-window))
+		marginalia mise olivetti orderless rbenv rg robe
+		rspec-mode rust-mode stimmung-themes tree-sitter-langs
+		ultra-scroll vertico-posframe vterm zoom-window))
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
 		   :branch "main")

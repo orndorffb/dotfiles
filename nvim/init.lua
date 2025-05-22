@@ -49,8 +49,8 @@ end
 vim.api.nvim_set_keymap('n', '<leader>tb', ':lua ToggleBackground()<CR>', { noremap = true, silent = true })
 
 
-vim.o.background = "dark"
--- vim.o.background = "light"
+-- vim.o.background = "dark"
+ vim.o.background = "light"
 
 vim.opt.list = true
 
@@ -78,6 +78,32 @@ require("lazy").setup({
     config = function()
         vim.cmd.colorscheme('zenbones')
     end
+  },
+  {
+    'projekt0n/github-nvim-theme',
+    name = 'github-theme',
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function()
+      require('github-theme').setup({
+      })
+
+--      vim.cmd('colorscheme github_dark')
+    end,
+  },
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    ---@type Flash.Config
+    opts = {},
+    -- stylua: ignore
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
   },
   {
     "nvim-telescope/telescope.nvim",
@@ -141,6 +167,7 @@ require("lazy").setup({
       require'lspconfig'.elixirls.setup{
         cmd = { "elixir-ls" };
       }
+      require'lspconfig'.ts_ls.setup{}
       require'lspconfig'.ruby_lsp.setup{}
       require'lspconfig'.rust_analyzer.setup({
         settings = {

@@ -4,12 +4,12 @@ local config = wezterm.config_builder()
 
 -- Theme and font
 
-config.color_scheme = 'zenbones_dark'
--- config.color_scheme = 'zenbones'
+--config.color_scheme = 'zenbones_dark'
+ config.color_scheme = 'zenbones'
 -- config.color_scheme = 'Everforest Dark Hard (Gogh)'
-config.font_size = 13
+config.font_size = 12
 
-config.font = wezterm.font("Iosevka Comfy")
+config.font = wezterm.font("Essential PragmataPro")
 
 config.window_decorations = "RESIZE"
 config.tab_bar_at_bottom = true

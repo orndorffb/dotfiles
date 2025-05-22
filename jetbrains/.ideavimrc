@@ -4,6 +4,7 @@ inoremap jk <Esc>
 """ Plugins  --------------------------------
 set surround
 set easymotion
+set clipboard+=unnamed
 
 """ Common settings -------------------------
 set so=5
@@ -22,6 +23,7 @@ map <leader>S <Action>(GotoSymbol)
 
 map <leader>f <Action>(GotoFile)
 map <leader>rf <Action>(RecentFiles)
+map <leader>re <Action>(RecentLocations)
 map alt+o <Action>(EditorSelectWord)
 map alt+i <Action>(EditorUnselectLine)
 
