@@ -10,7 +10,7 @@
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 (set-face-attribute 'default nil
-                    :height 140 :family "Essential PragmataPro")
+                    :height 140 :weight 'regular :family "Essential PragmataPro")
 
 ;; --- Activate / Deactivate modes --------------------------------------------
 (tool-bar-mode -1) (menu-bar-mode -1) (blink-cursor-mode -1)
@@ -445,7 +445,8 @@
 		  ))
   :config
   (vertico-mode)
-  (vertico-multiform-mode))
+  ;(vertico-multiform-mode)
+  )
 
 (use-package vertico-posframe
   :ensure t
@@ -533,23 +534,25 @@
 
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-		(ruby "https://github.com/tree-sitter/tree-sitter-ruby")
-		(cmake "https://github.com/uyha/tree-sitter-cmake")
-		(css "https://github.com/tree-sitter/tree-sitter-css")
-		(elisp "https://github.com/Wilfred/tree-sitter-elisp")
-		(go "https://github.com/tree-sitter/tree-sitter-go")
-		(html "https://github.com/tree-sitter/tree-sitter-html")
-		(javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-		(json "https://github.com/tree-sitter/tree-sitter-json")
-		(make "https://github.com/alemuller/tree-sitter-make")
-		(markdown "https://github.com/ikatyang/tree-sitter-markdown")
-		(python "https://github.com/tree-sitter/tree-sitter-python")
-		(toml "https://github.com/tree-sitter/tree-sitter-toml")
-		(tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-		(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-		(elixir "https://github.com/elixir-lang/tree-sitter-elixir")
-		(heex "https://github.com/phoenixframework/tree-sitter-heex")
-		(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+	(c "https://github.com/tree-sitter/tree-sitter-c")
+	(cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+	(ruby "https://github.com/tree-sitter/tree-sitter-ruby")
+	(cmake "https://github.com/uyha/tree-sitter-cmake")
+	(css "https://github.com/tree-sitter/tree-sitter-css")
+	(elisp "https://github.com/Wilfred/tree-sitter-elisp")
+	(go "https://github.com/tree-sitter/tree-sitter-go")
+	(html "https://github.com/tree-sitter/tree-sitter-html")
+	(javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+	(json "https://github.com/tree-sitter/tree-sitter-json")
+	(make "https://github.com/alemuller/tree-sitter-make")
+	(markdown "https://github.com/ikatyang/tree-sitter-markdown")
+	(python "https://github.com/tree-sitter/tree-sitter-python")
+	(toml "https://github.com/tree-sitter/tree-sitter-toml")
+	(tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+	(typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+	(elixir "https://github.com/elixir-lang/tree-sitter-elixir")
+	(heex "https://github.com/phoenixframework/tree-sitter-heex")
+	(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
