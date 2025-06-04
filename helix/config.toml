@@ -1,4 +1,4 @@
-theme = "ayu_mirage"
+theme = "term16_dark"
 
 [editor]
 rulers = [120]

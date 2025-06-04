@@ -132,13 +132,13 @@ require("lazy").setup({
     lazy = false,
     priority = 1000,
     config = function()
-      require("mini.surround").setup({
-        mappings = {
-          add = "sa", -- Add surrounding with 'sa'
-          delete = "sd", -- Delete surrounding with 'sd'
-          replace = "sr", -- Replace surrounding with 'sr'
-        },
-      })
+      -- require("mini.surround").setup({
+      --   mappings = {
+      --     add = "sa", -- Add surrounding with 'sa'
+      --     delete = "sd", -- Delete surrounding with 'sd'
+      --     replace = "sr", -- Replace surrounding with 'sr'
+      --   },
+      -- })
 
       require("mini.comment").setup()
       require("mini.statusline").setup()
@@ -243,7 +243,7 @@ require("lazy").setup({
   },
   {
     "github/copilot.vim",
-    event = "InsertEnter",
+    --event = "InsertEnter",
     config = function()
     end
   }
