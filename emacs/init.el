@@ -176,6 +176,7 @@
 (use-package exec-path-from-shell
   :ensure t
   :config
+  (setq exec-path-from-shell-shell-name "/bin/zsh")
   (exec-path-from-shell-initialize))
 
 (setq default-frame-alist
