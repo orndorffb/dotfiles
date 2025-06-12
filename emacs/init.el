@@ -1,4 +1,3 @@
-
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
@@ -17,167 +16,22 @@
 (global-hl-line-mode 0) (global-display-line-numbers-mode 1)
 (pixel-scroll-precision-mode 1)
 
-(setq default-frame-alist
-      '((height . 44) (width  . 81) (left-fringe . 0) (right-fringe . 0)
-        (internal-border-width . 20) (vertical-scroll-bars . nil)
-        (bottom-divider-width . 0) (right-divider-width . 0)
-        (undecorated-round . t)))
-(modify-frame-parameters nil default-frame-alist)
-
-;; --- Minimal NANO (not a real) theme ----------------------------------------
-(defface nano-default '((t)) "")   (defface nano-default-i '((t)) "")
-(defface nano-highlight '((t)) "") (defface nano-highlight-i '((t)) "")
-(defface nano-subtle '((t)) "")    (defface nano-subtle-i '((t)) "")
-(defface nano-faded '((t)) "")     (defface nano-faded-i '((t)) "")
-(defface nano-salient '((t)) "")   (defface nano-salient-i '((t)) "")
-(defface nano-popout '((t)) "")    (defface nano-popout-i '((t)) "")
-(defface nano-strong '((t)) "")    (defface nano-strong-i '((t)) "")
-(defface nano-critical '((t)) "")  (defface nano-critical-i '((t)) "")
-
-(defun nano-set-face (name &optional foreground background weight)
-  "Set NAME and NAME-i faces with given FOREGROUND, BACKGROUND and WEIGHT"
-
-  (apply #'set-face-attribute `(,name nil
-                                ,@(when foreground `(:foreground ,foreground))
-                                ,@(when background `(:background ,background))
-                                ,@(when weight `(:weight ,weight))))
-  (apply #'set-face-attribute `(,(intern (concat (symbol-name name) "-i")) nil
-                                :foreground ,(face-background 'nano-default)
-                                ,@(when foreground `(:background ,foreground))
-                                :weight regular)))
-
-(defun nano-link-face (sources faces &optional attributes)
-  "Make FACES to inherit from SOURCES faces and unspecify ATTRIBUTES."
-
-  (let ((attributes (or attributes
-                        '( :foreground :background :family :weight
-                           :height :slant :overline :underline :box))))
-    (dolist (face (seq-filter #'facep faces))
-      (dolist (attribute attributes)
-        (set-face-attribute face nil attribute 'unspecified))
-      (set-face-attribute face nil :inherit sources))))
-
-(defun nano-install-theme ()
-  "Install THEME"
-
-  (set-face-attribute 'default nil
-                      :foreground (face-foreground 'nano-default)
-                      :background (face-background 'nano-default))
-  (dolist (item '((nano-default .  (variable-pitch variable-pitch-text
-                                    fixed-pitch fixed-pitch-serif))
-                  (nano-highlight . (hl-line highlight))
-                  (nano-subtle .    (match region
-                                     lazy-highlight widget-field))
-                  (nano-faded .     (shadow
-                                     font-lock-comment-face
-                                     font-lock-doc-face
-                                     icomplete-section
-                                     completions-annotations))
-                  (nano-popout .    (warning
-                                     font-lock-string-face))
-                  (nano-salient .   (success link
-                                     help-argument-name
-                                     custom-visibility
-                                     font-lock-type-face
-                                     font-lock-keyword-face
-                                     font-lock-builtin-face
-                                     completions-common-part))
-                  (nano-strong .    (font-lock-function-name-face
-                                     font-lock-variable-name-face
-                                     icomplete-first-match
-                                     minibuffer-prompt))
-                  (nano-critical .  (error
-                                     completions-first-difference))
-                  (nano-faded-i .   (help-key-binding))
-                  (nano-default-i . (custom-button-mouse
-                                     isearch))
-                  (nano-critical-i . (isearch-fail))
-                  ((nano-subtle nano-strong) . (custom-button
-                                                icomplete-selected-match))
-                  ((nano-faded-i nano-strong) . (show-paren-match))))
-    (nano-link-face (car item) (cdr item)))
-
-  ;; Mode & header lines 
-  (set-face-attribute 'header-line nil
-                      :background 'unspecified
-                      :underline nil
-                      :box `( :line-width 1
-                              :color ,(face-background 'nano-default))
-                      :inherit 'nano-subtle)
-  (set-face-attribute 'mode-line nil
-                      :background (face-background 'default)
-                      :underline (face-foreground 'nano-faded)
-                      :height 40 :overline nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil
-                      :background (face-background 'default)
-                      :underline (face-foreground 'nano-faded)
-                      :height 40 :overline nil :box nil))
-
-(defun nano-light (&rest args)
-  "NANO light theme (based on material colors)"
-
-  (interactive)
-  (nano-set-face 'nano-default "#37474F" "#FFFFFF") ;; Blue Grey / L800
-  (nano-set-face 'nano-strong "#000000" nil 'regular) ;; Black
-  (nano-set-face 'nano-highlight nil "#FAFAFA") ;; Very Light Grey
-  (nano-set-face 'nano-subtle nil "#ECEFF1") ;; Blue Grey / L50
-  (nano-set-face 'nano-faded "#90A4AE") ;; Blue Grey / L300
-  (nano-set-face 'nano-salient "#673AB7") ;; Deep Purple / L500
-  (nano-set-face 'nano-popout "#C06C55") ;; Deep Orange / L200
-  (nano-set-face 'nano-critical "#FF6F00") ;; Amber / L900
-  (nano-install-theme))
-  
-(defun nano-dark (&rest args)
-  "NANO dark theme (based on nord colors)"
-
-  (interactive)
-  (nano-set-face 'nano-default "#ECEFF4" "#2E3440") ;; Snow Storm 3 
-  (nano-set-face 'nano-strong "#ECEFF4" nil 'regular) ;; Polar Night 0
-  (nano-set-face 'nano-highlight nil "#3B4252")  ;; Polar Night 1
-  (nano-set-face 'nano-subtle nil "#434C5E") ;; Polar Night 2 
-  (nano-set-face 'nano-faded "#677691") ;; 
-  (nano-set-face 'nano-salient "#81A1C1")  ;; Frost 2
-  (nano-set-face 'nano-popout "#D08770") ;; Aurora 1
-  (nano-set-face 'nano-critical "#EBCB8B") ;; Aurora 2
-  (nano-install-theme))
-
-;; --- Header & mode lines ----------------------------------------------------
-(setq-default mode-line-format "")
-(setq-default header-line-format
-  '(:eval
-    (let ((prefix (cond (buffer-read-only     '("RO" . nano-default-i))
-                        ((buffer-modified-p)  '("**" . nano-critical-i))
-                        (t                    '("RW" . nano-faded-i))))
-          (mode (concat "(" (downcase (cond ((consp mode-name) (car mode-name))
-                                            ((stringp mode-name) mode-name)
-                                            (t "unknow")))
-                        " mode)"))
-          (coords (format-mode-line "%c:%l ")))
-      (list
-       (propertize " " 'face (cdr prefix)  'display '(raise -0.25))
-       (propertize (car prefix) 'face (cdr prefix))
-       (propertize " " 'face (cdr prefix) 'display '(raise +0.25))
-       (propertize (format-mode-line " %b ") 'face 'nano-strong)
-       (propertize mode 'face 'header-line)
-       (propertize " " 'display `(space :align-to (- right ,(length coords))))
-       (propertize coords 'face 'nano-faded)))))
-
-;; --- Minibuffer setup -------------------------------------------------------
-(defun nano-minibuffer--setup ()
-  (set-window-margins nil 3 0)
-  
-  (setq truncate-lines t))
-(add-hook 'minibuffer-setup-hook #'nano-minibuffer--setup)
-
-(nano-light)
 
 ;;--My stuff--------------------------------------------------------------------
+
+(setq mac-command-modifier 'meta)
+(setq mac-option-modifier 'none)
 
 (use-package exec-path-from-shell
   :ensure t
   :config
   (setq exec-path-from-shell-shell-name "/bin/zsh")
   (exec-path-from-shell-initialize))
+
+(use-package doric-themes
+  :ensure t
+  :config
+  (load-theme 'doric-marble))
 
 (setq default-frame-alist
       '((left-fringe . 0)
@@ -186,7 +40,9 @@
         (bottom-divider-width . 0)
         (right-divider-width . 0))
       )
-(add-to-list 'default-frame-alist '(undecorated-round . t))
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . dark))
+
 
 (add-hook 'window-setup-hook 'toggle-frame-maximized)
 
@@ -406,7 +262,6 @@
   :config
   (setq rspec-use-spring-when-possible nil)
   (add-hook 'ruby-mode-hook 'rspec-mode))
-
   
 (use-package ace-window
   :ensure t
@@ -440,7 +295,7 @@
   :init
   (setq vertico-multiform-commands
 		'((consult-project-buffer posframe)
-		  (consult-buffer posframe)
+≈		  (consult-buffer posframe)
 		  (execute-extended-command posframe)
 		  (project-find-file posframe)
 		  ))
@@ -561,7 +416,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
+   '("54ba478b95c6a5efbe02642003d68ea9a713cd38f2c03da176a1b69578addf74"
+     "a759f5bf996d821b4e5798c23ec80ff69571fbad7f574beaa75cf429e81579aa"
+     "2082ebeb3b4871bff2d2154f239456fcf165c3de80121f875cd8c7d82bd13803"
+     "b45b0d072e3e328e5e81b19969d6be8958ffc7609d2bfb3814e9c9ca1473daed"
+     "88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
      "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184"
      "0325a6b5eea7e5febae709dab35ec8648908af12cf2d2b569bedc8da0a3a81c1"
      "af238e93bc03da7ee4b2d30f2b3ea6e1553eb05b7d827da83bf35be1f6401992"
@@ -581,12 +440,7 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
      default))
- '(package-selected-packages
-   '(ace-window aidermacs consult copilot corfu doom-themes eat
-		exec-path-from-shell expand-region gptel lsp-ui magit
-		marginalia mise olivetti orderless rbenv rg robe
-		rspec-mode rust-mode stimmung-themes tree-sitter-langs
-		ultra-scroll vertico-posframe vterm zoom-window))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
 		   :branch "main")
