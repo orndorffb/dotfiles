@@ -6,10 +6,48 @@
   (interactive)
   (find-file user-init-file))
 
+(dolist (mode
+         '(tool-bar-mode       ;; Remove toolbar
+           scroll-bar-mode     ;; Remove scollbars
+           menu-bar-mode       ;; Remove menu bar
+           blink-cursor-mode)) ;; Solid cursor, not blinking
+  (funcall mode 0))
+
+(setq inhibit-startup-message           t       ;; No startup message
+      inhibit-startup-echo-area-message t       ;; No startup message in echo area
+      inhibit-startup-screen            t       ;; No default startup screen
+      initial-buffer-choice             t       ;; *scratch* is default startup buffer
+      initial-major-mode                'fundamental-mode
+      ring-bell-function                'ignore ;; No bell
+      display-time-default-load-average nil     ;; Don't show me load time
+      scroll-margin                     0       ;; Space between top/bottom
+      use-dialog-box                    nil)    ;; Disable dialog
+
+(add-to-list 'default-frame-alist     '(fullscreen . maximized))
+;; (add-hook 'window-setup-hook          'toggle-frame-fullscreen t)  ;; F11
+
+(add-to-list 'default-frame-alist '(internal-border-width . 16))
+
+(set-fringe-mode 10)                          ;; Set fringe width to 10
+
+(setq-default fringes-outside-margins nil)
+(setq-default indicate-buffer-boundaries nil) ;; Otherwise shows a corner icon on the edge
+(setq-default indicate-empty-lines nil)       ;; Otherwise there are weird fringes on blank lines
+
+(set-face-attribute 'header-line t :inherit 'default)
+
+(when (eq system-type 'darwin)
+  ; no title bar
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
+  ; don't use proxy icon
+  (setq ns-use-proxy-icon nil)
+  ; don't show buffer name in title bar
+  (setq frame-title-format ""))
+
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 (set-face-attribute 'default nil
-                    :height 140 :weight 'regular :family "Essential PragmataPro")
+                    :height 160 :weight 'regular :family "Essential PragmataPro")
 
 ;; --- Activate / Deactivate modes --------------------------------------------
 (tool-bar-mode -1) (menu-bar-mode -1) (blink-cursor-mode -1)
@@ -21,6 +59,7 @@
 
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'none)
+(global-set-key (kbd "C-c p") 'project-find-file)
 
 (use-package exec-path-from-shell
   :ensure t
@@ -28,24 +67,135 @@
   (setq exec-path-from-shell-shell-name "/bin/zsh")
   (exec-path-from-shell-initialize))
 
-(use-package doric-themes
+
+(use-package nerd-icons
+  :ensure t)
+
+(use-package south-theme
+  :vc (:url "https://github.com/SophieBosio/south"
+       :rev :newest
+       :branch "main"))
+
+(defvar brian/default-dark-theme  'doom-nord)
+(defvar brian/default-light-theme 'south)
+
+(defvar brian/default-dark-accent-colour  "SkyBlue4")
+(defvar brian/default-light-accent-colour "#D9EDFC")
+
+(load-theme brian/default-dark-theme t)
+
+(use-package autothemer
+  :defer t)
+
+(use-package auto-dark
   :ensure t
-  :config
-  (load-theme 'doric-marble))
+  :hook ((auto-dark-dark-mode
+          .
+          (lambda ()
+            (interactive)
+            (progn
+              (custom-set-faces
+               `(eval-sexp-fu-flash
+                 ((t (:background
+                      ,soph/default-dark-accent-colour)))))
+              `(load-theme ,soph/default-dark-theme t))))
+         (auto-dark-light-mode
+          .
+          (lambda ()
+            (interactive)
+            (progn
+              (custom-set-faces
+               `(eval-sexp-fu-flash
+                 ((t (:background
+                      ,soph/default-light-accent-colour)))))
+              `(load-theme ,soph/default-light-theme t)))))
+  :custom
+  (auto-dark-themes                   `((,brian/default-dark-theme) (,brian/default-light-theme)))
+  (auto-dark-polling-interval-seconds 5)
+  (auto-dark-allow-osascript          t)
+  :init (auto-dark-mode t))
 
-(setq default-frame-alist
-      '((left-fringe . 0)
-        (right-fringe . 0)
-        (vertical-scroll-bars . nil)
-        (bottom-divider-width . 0)
-        (right-divider-width . 0))
-      )
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . dark))
 
+(defvar lsp-modeline--code-actions-string nil)
 
-(add-hook 'window-setup-hook 'toggle-frame-maximized)
+(setq-default mode-line-format
+  '("%e"
+	(:propertize " " display (raise +0.4)) ;; Top padding
+	(:propertize " " display (raise -0.4)) ;; Bottom padding
 
+	(:propertize "λ " face font-lock-comment-face)
+	mode-line-frame-identification
+	mode-line-buffer-identification
+
+	;; Version control info
+	(:eval (when-let (vc vc-mode)
+			 ;; Use a pretty branch symbol in front of the branch name
+			 (list (propertize " ≡ " 'face 'font-lock-comment-face)
+                   ;; Truncate branch name to 50 characters
+				   (propertize (truncate-string-to-width
+                                (substring vc 5) 50)
+							   'face 'font-lock-comment-face))))
+
+	;; Add space to align to the right
+	(:eval (propertize
+			 " " 'display
+			 `((space :align-to
+					  (-  (+ right right-fringe right-margin)
+						 ,(+ 3
+                             (string-width (or lsp-modeline--code-actions-string ""))
+                             (string-width "%4l:3%c")))))))
+
+    ;; LSP code actions
+    (:eval (or lsp-modeline--code-actions-string ""))
+	;; Line and column numbers
+    (:propertize "%4l:%c" face mode-line-buffer-id)))
+
+;; Line splitting sutff
+(defun split-window-sensibly-prefer-horizontal (&optional window)
+"Based on `split-window-sensibly', but prefers to split WINDOW side-by-side."
+  (let ((window (or window (selected-window))))
+    (or (and (window-splittable-p window t)
+         ;; Split window horizontally
+         (with-selected-window window
+           (split-window-right)))
+    (and (window-splittable-p window)
+         ;; Split window vertically
+         (with-selected-window window
+           (split-window-below)))
+    (and
+         ;; If WINDOW is the only usable window on its frame (it is
+         ;; the only one or, not being the only one, all the other
+         ;; ones are dedicated) and is not the minibuffer window, try
+         ;; to split it horizontally disregarding the value of
+         ;; `split-height-threshold'.
+         (let ((frame (window-frame window)))
+           (or
+            (eq window (frame-root-window frame))
+            (catch 'done
+              (walk-window-tree (lambda (w)
+                                  (unless (or (eq w window)
+                                              (window-dedicated-p w))
+                                    (throw 'done nil)))
+                                frame)
+              t)))
+     (not (window-minibuffer-p window))
+     (let ((split-width-threshold 0))
+       (when (window-splittable-p window t)
+         (with-selected-window window
+               (split-window-right))))))))
+
+(defun split-window-really-sensibly (&optional window)
+  (let ((window (or window (selected-window))))
+    (if (> (window-total-width window) (* 2 (window-total-height window)))
+        (with-selected-window window (split-window-sensibly-prefer-horizontal window))
+      (with-selected-window window (split-window-sensibly window)))))
+
+(setq split-window-preferred-function 'split-window-really-sensibly)
+
+(setq-default split-height-threshold nil
+              split-width-threshold  nil
+              fill-column            80) ;; Maximum line width
+              ;; window-min-width       80) ;; No smaller windows than this
 
 ;; Window and buffer management
 (global-set-key (kbd "C-x |") 'split-window-horizontally)
@@ -56,6 +206,7 @@
 (delete-selection-mode 1)
 (setq compilation-scroll-output t)
 
+(setq auto-save-default nil)
 (setq backup-directory-alist '(("." . "~/.saves")))
 (setq backup-by-copying t)
 (setq visible-bell       nil
@@ -67,11 +218,7 @@
 (setq create-lockfiles nil)
 
 ;; Some keybinds for basic stuff
-(global-set-key (kbd "C-c s") 'consult-ripgrep)
-(global-set-key (kbd "C-c p") 'project-find-file)
-(global-set-key (kbd "C-c S") 'consult-imenu)
-(global-set-key (kbd "C-c c") 'comment-dwim)
-(global-set-key (kbd "C-c f") 'rg-dwim)
+
 
 ;; Org stuff
 (add-hook 'org-mode-hook 'org-indent-mode)
@@ -95,9 +242,13 @@
         (shell-command standardrb-command)
       (message "Could not find project root or current file."))))
 
+(use-package imenu-list
+  :ensure t
+  :bind  ("M-g i" . imenu-list-smart-toggle))
+
 (use-package expand-region
   :ensure t
-  :bind (("C-;" . er/expand-region)))
+  :bind (("M-q" . er/expand-region)))
 
 ;; Taken from https://github.com/LionyxML/emacs-kick/blob/master/init.el#L301C1-L333C9
 (use-package window
@@ -280,7 +431,7 @@
     (avy-with avy-goto-word-0
 			  (avy-goto-word-0 nil (line-beginning-position) (line-end-position))))
   :bind (
-		 ("C-'" . avy-goto-char-timer)
+		 ("C-c j" . avy-goto-char-timer)
 		 ("C-c w" . avy-goto-word-crt-line)
 		 ))
 
@@ -292,21 +443,27 @@
 
 (use-package vertico
   :ensure t
-  :init
-  (setq vertico-multiform-commands
-		'((consult-project-buffer posframe)
-≈		  (consult-buffer posframe)
-		  (execute-extended-command posframe)
-		  (project-find-file posframe)
-		  ))
   :config
   (vertico-mode)
-  ;(vertico-multiform-mode)
-  )
-
+  (vertico-multiform-mode)
+  (setq read-extended-command-predicate       'command-completion-default-include-p
+        vertico-count                         32  ; Show more candidates
+        read-file-name-completion-ignore-case t   ; Ignore case of file names
+        read-buffer-completion-ignore-case    t   ; Ignore case in buffer completion
+        completion-ignore-case                t)) ; Ignore case in completion
 (use-package vertico-posframe
   :ensure t
-  :init)
+  :init
+  (setq vertico-posframe-parameters   '((left-fringe  . 12)    ;; Fringes
+                                        (right-fringe . 12)
+                                        (undecorated  . nil))) ;; Rounded frame
+  :config
+  (vertico-posframe-mode 1)
+  (setq vertico-posframe-width        96                       ;; Narrow frame
+        vertico-posframe-height       vertico-count            ;; Default height
+        ;; Don't create posframe for these commands
+        vertico-multiform-commands    '((consult-line    (:not posframe))
+                                        (consult-ripgrep (:not posframe)))))
 
 (use-package marginalia
   :ensure t
@@ -322,7 +479,9 @@
          ("C-c h" . consult-history)
          ("C-c m" . consult-man)
          ("C-c i" . consult-info)
-		 ("C-s" . consult-line)
+	 ("C-s" . consult-line)
+	 ("C-c s" . consult-imenu)
+	 ("C-x C-b" . consult-buffer)
          ([remap Info-search] . consult-info)
          ;; C-x bindings in `ctl-x-map'
          ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
@@ -330,43 +489,8 @@
          ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
          ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
          ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
-         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-		 ("C-c d" . consult-flymake)
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ;; M-g bindings in `goto-map'
-         ("M-g e" . consult-compile-error)
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings in `search-map'
-         ("M-s f" . consult-find)                  ;; Alternative: consult-fd
-         ("M-s c" . consult-locate)
-         ("M-s G" . consult-git-grep)
-         ("M-s g" . consult-ripgrsep)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-ipsearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+	 ("C-c d" . consult-flymake))
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :init
 
@@ -416,7 +540,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("54ba478b95c6a5efbe02642003d68ea9a713cd38f2c03da176a1b69578addf74"
+   '("34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec"
+     "3ef71018ff2043d308f8bc266787591acfaf8a0007621ca1304b0e3db6772c19"
+     "54ba478b95c6a5efbe02642003d68ea9a713cd38f2c03da176a1b69578addf74"
      "a759f5bf996d821b4e5798c23ec80ff69571fbad7f574beaa75cf429e81579aa"
      "2082ebeb3b4871bff2d2154f239456fcf165c3de80121f875cd8c7d82bd13803"
      "b45b0d072e3e328e5e81b19969d6be8958ffc7609d2bfb3814e9c9ca1473daed"
@@ -438,14 +564,17 @@
      "61607956384e528c1bc3ca5c9b703b309d4b3a63acfec3edb7f9a26549262add"
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
-     "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185"
-     default))
- '(package-selected-packages nil)
+     "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
+ '(package-selected-packages
+   '(ace-window aidermacs consult copilot corfu default-text-scale doom-themes
+		doric-themes eat exec-path-from-shell expand-region gptel
+		imenu-list lsp-ui magit marginalia mise nerd-icons olivetti
+		orderless rbenv rg robe rspec-mode rust-mode south-theme
+		stimmung-themes tree-sitter-langs ultra-scroll vertico-posframe
+		vterm zoom-window))
  '(package-vc-selected-packages
-   '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
-		   :branch "main")
-     (copilot :url "https://github.com/copilot-emacs/copilot.el"
-	      :branch "main"))))
+   '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch "main")
+     (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
