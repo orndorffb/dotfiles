@@ -46,8 +46,21 @@
 
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
-(set-face-attribute 'default nil
-                    :height 160 :weight 'regular :family "Essential PragmataPro")
+
+(defvar brian/font-height 115)
+
+(when (eq system-type 'darwin)
+  (setq brian/font-height 120))
+
+(when (member "Fragment Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "Fragment Mono" :height brian/font-height)
+  (set-face-attribute 'fixed-pitch nil :family "Fragment Mono"))
+
+(when (member "Open Sans" (font-family-list))
+  (set-face-attribute 'variable-pitch nil :family "Open Sans"))
+
+;; (set-face-attribute 'default nil
+;;                     :height 160 :weight 'regular :family "Essential PragmataPro")
 
 ;; --- Activate / Deactivate modes --------------------------------------------
 (tool-bar-mode -1) (menu-bar-mode -1) (blink-cursor-mode -1)
@@ -56,7 +69,6 @@
 
 
 ;;--My stuff--------------------------------------------------------------------
-
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'none)
 (global-set-key (kbd "C-c p") 'project-find-file)
