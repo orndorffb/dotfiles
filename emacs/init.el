@@ -44,6 +44,8 @@
   ; don't show buffer name in title bar
   (setq frame-title-format ""))
 
+(setq auth-sources '("~/.authinfo"))
+
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 
@@ -62,10 +64,24 @@
 ;; (set-face-attribute 'default nil
 ;;                     :height 160 :weight 'regular :family "Essential PragmataPro")
 
-;; --- Activate / Deactivate modes --------------------------------------------
-(tool-bar-mode -1) (menu-bar-mode -1) (blink-cursor-mode -1)
-(global-hl-line-mode 0) (global-display-line-numbers-mode 1)
-(pixel-scroll-precision-mode 1)
+;;--General editing
+(delete-selection-mode   t) ;; Replace selected text when yanking
+(global-so-long-mode     t) ;; Mitigate performance for long lines
+(global-auto-revert-mode t) ;; Revert buffers automatically when they change
+(recentf-mode            t) ;; Remember recently opened files
+(savehist-mode           t) ;; Remember minibuffer prompt history
+(save-place-mode         t) ;; Remember last cursor location in file
+
+(setq auto-revert-interval         1         ;; Refresh buffers fast
+      auto-revert-verbose          nil       ;; Don't notify me about reverts
+      echo-keystrokes              0.1       ;; Show keystrokes fast
+      frame-inhibit-implied-resize 1         ;; Don't resize frame implicitly
+      sentence-end-double-space    nil       ;; No double spaces
+      recentf-max-saved-items      1000      ;; Show more recent files
+      use-short-answers            t         ;; 'y'/'n' instead of 'yes'/'no' etc.
+      save-interprogram-paste-before-kill t  ;; Save copies between programs
+      history-length               25        ;; Only save the last 25 minibuffer prompts
+      global-auto-revert-non-file-buffers t) ;; Revert Dired and other buffers
 
 
 ;;--My stuff--------------------------------------------------------------------
@@ -260,7 +276,7 @@
 
 (use-package expand-region
   :ensure t
-  :bind (("M-q" . er/expand-region)))
+  :bind (("C-'" . er/expand-region)))
 
 ;; Taken from https://github.com/LionyxML/emacs-kick/blob/master/init.el#L301C1-L333C9
 (use-package window
@@ -373,7 +389,7 @@
   :config
   (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
   (setq eglot-server-programs '(
-                                ;;(ruby-mode . ("ruby-lsp"))
+                                ;;(ruby-mode . ("ruby-lsp")
                                 ;;(rust-mode . ("rust-analyzer"))
                                 ;;(elixir-mode . ("elixir-ls"))
                                 )))
@@ -390,10 +406,43 @@
   :ensure t
   :after tree-sitter)
 
+(use-package transient
+  :ensure t)
+
 (use-package magit
   :ensure t
   :config
   (setq magit-save-repository-buffers nil))
+
+(use-package forge
+  :ensure t
+  :after (magit transient))
+
+(use-package git-link
+  :ensure t
+  :init
+  (setq git-link-use-commit t
+        git-link-open-in-browser t))
+
+(use-package blamer
+  :ensure t
+  :after magit
+  :bind (("C-c g i" . blamer-show-commit-info)
+         ("C-c g b" . blamer-show-posframe-commit-info))
+  :defer 20
+  :config
+  (global-blamer-mode)
+  :custom
+  (blamer-idle-time                 0.3)
+  (blamer-min-offset                4)
+  (blamer-max-commit-message-length 100)
+  (blamer-datetime-formatter        "[%s]")
+  (blamer-commit-formatter          " ● %s")
+  :custom-face
+  (blamer-face ((t :foreground "#7aa2cf"
+                    :background nil
+                    :height 1
+                    :italic nil))))
 
 (use-package corfu
   :ensure t
@@ -577,13 +626,7 @@
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
- '(package-selected-packages
-   '(ace-window aidermacs consult copilot corfu default-text-scale doom-themes
-		doric-themes eat exec-path-from-shell expand-region gptel
-		imenu-list lsp-ui magit marginalia mise nerd-icons olivetti
-		orderless rbenv rg robe rspec-mode rust-mode south-theme
-		stimmung-themes tree-sitter-langs ultra-scroll vertico-posframe
-		vterm zoom-window))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch "main")
      (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
