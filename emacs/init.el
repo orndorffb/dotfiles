@@ -10,7 +10,8 @@
          '(tool-bar-mode       ;; Remove toolbar
            scroll-bar-mode     ;; Remove scollbars
            menu-bar-mode       ;; Remove menu bar
-           blink-cursor-mode)) ;; Solid cursor, not blinking
+           blink-cursor-mode)
+	   global-display-line-numbers-mode) ;; Solid cursor, not blinking
   (funcall mode 0))
 
 (setq inhibit-startup-message           t       ;; No startup message
@@ -23,26 +24,10 @@
       scroll-margin                     0       ;; Space between top/bottom
       use-dialog-box                    nil)    ;; Disable dialog
 
-(add-to-list 'default-frame-alist     '(fullscreen . maximized))
-;; (add-hook 'window-setup-hook          'toggle-frame-fullscreen t)  ;; F11
-
-(add-to-list 'default-frame-alist '(internal-border-width . 16))
-
-(set-fringe-mode 10)                          ;; Set fringe width to 10
-
-(setq-default fringes-outside-margins nil)
-(setq-default indicate-buffer-boundaries nil) ;; Otherwise shows a corner icon on the edge
-(setq-default indicate-empty-lines nil)       ;; Otherwise there are weird fringes on blank lines
-
-(set-face-attribute 'header-line t :inherit 'default)
-
-(when (eq system-type 'darwin)
-  ; no title bar
-  (add-to-list 'default-frame-alist '(undecorated-round . t))
-  ; don't use proxy icon
+(add-to-list 'default-frame-alist     '(fullscreen . maximized))  ; don't use proxy icon
   (setq ns-use-proxy-icon nil)
   ; don't show buffer name in title bar
-  (setq frame-title-format ""))
+  (setq frame-title-format "")
 
 (setq auth-sources '("~/.authinfo"))
 
@@ -127,8 +112,8 @@
               (custom-set-faces
                `(eval-sexp-fu-flash
                  ((t (:background
-                      ,soph/default-dark-accent-colour)))))
-              `(load-theme ,soph/default-dark-theme t))))
+                      ,brian/default-dark-accent-colour)))))
+              `(load-theme ,brian/default-dark-theme t))))
          (auto-dark-light-mode
           .
           (lambda ()
@@ -352,6 +337,11 @@
   ; See the Configuration section below
   (aidermacs-use-architect-mode t)
   (aidermacs-default-model "o1"))
+
+(use-package claude-code :ensure t
+  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+  :config (claude-code-mode)
+  :bind-keymap ("C-c c" . claude-code-command-map))
 
 (use-package gptel
   :ensure t
@@ -629,14 +619,17 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages
-   '(ace-window aidermacs auto-dark blamer consult copilot corfu default-text-scale
-		doom-themes doric-themes eat exec-path-from-shell expand-region
-		forge git-link gptel imenu-list lsp-ui marginalia mise
-		nerd-icons olivetti orderless rbenv rg robe rspec-mode rust-mode
-		south-theme stimmung-themes tree-sitter-langs ultra-scroll
-		vertico-posframe vterm zoom-window))
+   '(ace-window aidermacs auto-dark blamer claude-code consult copilot corfu
+		default-text-scale doom-themes doric-themes eat
+		exec-path-from-shell expand-region forge git-link gptel
+		imenu-list lsp-ui marginalia mise nerd-icons olivetti orderless
+		rbenv rg robe rspec-mode rust-mode south-theme stimmung-themes
+		tree-sitter-langs ultra-scroll vertico-posframe vterm
+		zoom-window))
  '(package-vc-selected-packages
-   '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch "main")
+   '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
+     (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
+		   "main")
      (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
