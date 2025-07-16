@@ -85,6 +85,8 @@
 
 
 ;;--My stuff--------------------------------------------------------------------
+
+(setq package-install-upgrade-built-in t)
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'none)
 (global-set-key (kbd "C-c p") 'project-find-file)
@@ -626,7 +628,13 @@
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(ace-window aidermacs auto-dark blamer consult copilot corfu default-text-scale
+		doom-themes doric-themes eat exec-path-from-shell expand-region
+		forge git-link gptel imenu-list lsp-ui marginalia mise
+		nerd-icons olivetti orderless rbenv rg robe rspec-mode rust-mode
+		south-theme stimmung-themes tree-sitter-langs ultra-scroll
+		vertico-posframe vterm zoom-window))
  '(package-vc-selected-packages
    '((ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch "main")
      (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
