@@ -2,7 +2,6 @@ theme = "term16_dark"
 
 [editor]
 rulers = [120]
-line-number = "relative"
 
 [editor.indent-guides]
 render = true
