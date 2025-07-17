@@ -263,7 +263,7 @@
 
 (use-package expand-region
   :ensure t
-  :bind (("C-'" . er/expand-region)))
+  :bind (("C-c SPC" . er/expand-region)))
 
 ;; Taken from https://github.com/LionyxML/emacs-kick/blob/master/init.el#L301C1-L333C9
 (use-package window
@@ -619,13 +619,16 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages
-   '(ace-window aidermacs auto-dark blamer claude-code consult copilot corfu
-		default-text-scale doom-themes doric-themes eat
-		exec-path-from-shell expand-region forge git-link gptel
-		imenu-list lsp-ui marginalia mise nerd-icons olivetti orderless
-		rbenv rg robe rspec-mode rust-mode south-theme stimmung-themes
-		tree-sitter-langs ultra-scroll vertico-posframe vterm
-		zoom-window))
+   '(ace-window aidermacs auto-dark bind-key blamer catppuccin-theme claude-code
+		company consult copilot corfu counsel crux doom-themes
+		doric-themes eat ef-themes eglot elixir-mode
+		exec-path-from-shell expand-region forge git-commit git-link
+		go-mode gptel gruber-darker-theme imenu-list ivy-rich ivy-xref
+		kanagawa-themes lsp-ui marginalia meow mise modus-themes moody
+		nano-theme nerd-icons olivetti orderless rbenv rg robe
+		rspec-mode rust-mode south-theme standard-themes stimmung-themes
+		sublime-themes tree-sitter-langs ultra-scroll vertico-posframe
+		vterm zoom-window))
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
@@ -636,4 +639,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
+ '(default ((t (:background nil))))
+ '(eval-sexp-fu-flash ((t (:background "SkyBlue4")))))
