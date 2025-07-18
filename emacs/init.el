@@ -39,9 +39,9 @@
 (when (eq system-type 'darwin)
   (setq brian/font-height 120))
 
-(when (member "Fragment Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "Fragment Mono" :height brian/font-height)
-  (set-face-attribute 'fixed-pitch nil :family "Fragment Mono"))
+(when (member "Essential PragmataPro" (font-family-list))
+  (set-face-attribute 'default nil :font "Essential PragmataPro" :height brian/font-height)
+  (set-face-attribute 'fixed-pitch nil :family "Essential PragmataPro"))
 
 (when (member "Open Sans" (font-family-list))
   (set-face-attribute 'variable-pitch nil :family "Open Sans"))
@@ -101,6 +101,12 @@
 
 (use-package autothemer
   :defer t)
+
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  ("M-n" . mc/mark-next-like-this)
+  ("M-p" . mc/mark-previous-like-this))
 
 (use-package auto-dark
   :ensure t
@@ -422,8 +428,6 @@
   :bind (("C-c g i" . blamer-show-commit-info)
          ("C-c g b" . blamer-show-posframe-commit-info))
   :defer 20
-  :config
-  (global-blamer-mode)
   :custom
   (blamer-idle-time                 0.3)
   (blamer-min-offset                4)
@@ -625,10 +629,10 @@
 		exec-path-from-shell expand-region forge git-commit git-link
 		go-mode gptel gruber-darker-theme imenu-list ivy-rich ivy-xref
 		kanagawa-themes lsp-ui marginalia meow mise modus-themes moody
-		nano-theme nerd-icons olivetti orderless rbenv rg robe
-		rspec-mode rust-mode south-theme standard-themes stimmung-themes
-		sublime-themes tree-sitter-langs ultra-scroll vertico-posframe
-		vterm zoom-window))
+		multiple-cursors nano-theme nerd-icons olivetti orderless rbenv
+		rg robe rspec-mode rust-mode south-theme standard-themes
+		stimmung-themes sublime-themes tree-sitter-langs ultra-scroll
+		vertico-posframe vterm zoom-window))
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
