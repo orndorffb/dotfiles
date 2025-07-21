@@ -10,8 +10,8 @@
          '(tool-bar-mode       ;; Remove toolbar
            scroll-bar-mode     ;; Remove scollbars
            menu-bar-mode       ;; Remove menu bar
-           blink-cursor-mode)
-	   global-display-line-numbers-mode) ;; Solid cursor, not blinking
+           blink-cursor-mode))
+  
   (funcall mode 0))
 
 (setq inhibit-startup-message           t       ;; No startup message
@@ -95,15 +95,20 @@
 (defvar brian/default-light-theme 'south)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
-(defvar brian/default-light-accent-colour "#D9EDFC")
+(defvar brian/default-light-accent-color "#8fafe3")
 
-(load-theme brian/default-dark-theme t)
+(load-theme brian/default-light-theme t)
 
 (use-package autothemer
   :defer t)
 
 (use-package multiple-cursors
   :ensure t
+  :functions
+  mc/remove-fake-cursors
+  mc/save-excursion
+  mc/create-fake-cursor-at-point
+  mc/maybe-multiple-cursors-mode
   :bind
   ("M-n" . mc/mark-next-like-this)
   ("M-p" . mc/mark-previous-like-this))
@@ -128,8 +133,8 @@
               (custom-set-faces
                `(eval-sexp-fu-flash
                  ((t (:background
-                      ,soph/default-light-accent-colour)))))
-              `(load-theme ,soph/default-light-theme t)))))
+                      ,brian/default-light-accent-colour)))))
+              `(load-theme ,brian/default-light-theme t)))))
   :custom
   (auto-dark-themes                   `((,brian/default-dark-theme) (,brian/default-light-theme)))
   (auto-dark-polling-interval-seconds 5)
