@@ -351,7 +351,9 @@
 
 (use-package claude-code :ensure t
   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
-  :config (claude-code-mode)
+  :config
+  (claude-code-mode)
+  (setq claude-code-terminal-backend 'vterm)
   :bind-keymap ("C-c c" . claude-code-command-map))
 
 (use-package gptel
