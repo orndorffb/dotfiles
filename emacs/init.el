@@ -33,11 +33,11 @@
 
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
-
-(defvar brian/font-height 115)
+(setq custom-safe-themes t)
+(defvar brian/font-height 160)
 
 (when (eq system-type 'darwin)
-  (setq brian/font-height 120))
+  (setq brian/font-height 160))
 
 (when (member "Essential PragmataPro" (font-family-list))
   (set-face-attribute 'default nil :font "Essential PragmataPro" :height brian/font-height)
@@ -93,6 +93,95 @@
     (display-line-numbers-mode 0)))
 (add-hook 'vterm-mode-hook #'my/maybe-disable-line-numbers)
 (add-hook 'after-change-major-mode-hook #'my/maybe-disable-line-numbers)
+
+(use-package meow
+  :ensure t
+  :config
+(defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  (meow-motion-define-key
+   '("j" . meow-next)
+   '("k" . meow-prev)
+   '("<escape>" . ignore))
+  (meow-leader-define-key
+   ;; Use SPC (0-9) for digit arguments.
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)
+   '("/" . meow-keypad-describe-key)
+   '("?" . meow-cheatsheet))
+  (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("9" . meow-expand-9)
+   '("8" . meow-expand-8)
+   '("7" . meow-expand-7)
+   '("6" . meow-expand-6)
+   '("5" . meow-expand-5)
+   '("4" . meow-expand-4)
+   '("3" . meow-expand-3)
+   '("2" . meow-expand-2)
+   '("1" . meow-expand-1)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("[" . meow-beginning-of-thing)
+   '("]" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("d" . meow-delete)
+   '("D" . meow-backward-delete)
+   '("e" . meow-next-word)
+   '("E" . meow-next-symbol)
+   '("f" . meow-find)
+   '("g" . meow-cancel-selection)
+   '("G" . meow-grab)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-next)
+   '("J" . meow-next-expand)
+   '("k" . meow-prev)
+   '("K" . meow-prev-expand)
+   '("l" . meow-right)
+   '("L" . meow-right-expand)
+   '("m" . meow-join)
+   '("n" . meow-search)
+   '("o" . meow-block)
+   '("O" . meow-to-block)
+   '("p" . meow-yank)
+   '("q" . meow-quit)
+   '("Q" . meow-goto-line)
+   '("r" . meow-replace)
+   '("R" . meow-swap-grab)
+   '("s" . meow-kill)
+   '("t" . meow-till)
+   '("u" . meow-undo)
+   '("U" . meow-undo-in-selection)
+   '("v" . meow-visit)
+   '("w" . meow-mark-word)
+   '("W" . meow-mark-symbol)
+   '("x" . meow-line)
+   '("X" . meow-goto-line)
+   '("y" . meow-save)
+   '("Y" . meow-sync-grab)
+   '("z" . meow-pop-selection)
+   '("'" . repeat)
+   '("<escape>" . ignore)))
+  (meow-setup)
+  (meow-global-mode 1))
+
 
 
 (use-package exec-path-from-shell
@@ -380,7 +469,7 @@
   :config
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
-  (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
+  (global-set-key (kbd "C-c C-RET") 'gptel-menu)
   (global-set-key (kbd "C-c RET") 'gptel-send)
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
@@ -648,17 +737,7 @@
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
- '(package-selected-packages
-   '(ace-window aidermacs auto-dark bind-key blamer catppuccin-theme claude-code
-		company consult copilot corfu counsel crux doom-themes
-		doric-themes eat ef-themes eglot elixir-mode
-		exec-path-from-shell expand-region forge git-commit git-link
-		go-mode gptel gruber-darker-theme imenu-list ivy-rich ivy-xref
-		kanagawa-themes lsp-ui marginalia meow mise modus-themes moody
-		multiple-cursors nano-theme nerd-icons olivetti orderless rbenv
-		rg robe rspec-mode rust-mode south-theme standard-themes
-		stimmung-themes sublime-themes tree-sitter-langs ultra-scroll
-		vertico-posframe vterm zoom-window))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
