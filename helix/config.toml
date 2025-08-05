@@ -21,6 +21,7 @@ j = { k = "normal_mode" }
 [editor.lsp]
 display-messages = true
 display-inlay-hints = true
+auto-signature-help = false
 
 [editor.statusline]
 left = ["mode", "spinner", "file-name", "file-type", "total-line-numbers", "file-encoding"]

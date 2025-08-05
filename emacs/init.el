@@ -76,6 +76,25 @@
 (setq mac-option-modifier 'none)
 (global-set-key (kbd "C-c p") 'project-find-file)
 
+(defun my-minibuffer-setup-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun my-minibuffer-exit-hook ()
+  (setq gc-cons-threshold 800000))
+
+(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
+
+;; Enable global line numbers
+(global-display-line-numbers-mode t)
+(defun my/maybe-disable-line-numbers ()
+  (when (or (derived-mode-p 'vterm-mode)
+            (string-match-p "claude" (downcase (buffer-name))))
+    (display-line-numbers-mode 0)))
+(add-hook 'vterm-mode-hook #'my/maybe-disable-line-numbers)
+(add-hook 'after-change-major-mode-hook #'my/maybe-disable-line-numbers)
+
+
 (use-package exec-path-from-shell
   :ensure t
   :config
