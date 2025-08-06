@@ -100,6 +100,24 @@
   (setq exec-path-from-shell-shell-name "/bin/zsh")
   (exec-path-from-shell-initialize))
 
+(use-package denote
+  :ensure t
+  :hook (dired-mode . denote-dired-mode)
+  :bind
+  (("C-c n n" . denote)
+   ("C-c n r" . denote-rename-file)
+   ("C-c n l" . denote-link)
+   ("C-c n b" . denote-backlinks)
+   ("C-c n d" . denote-dired)
+   ("C-c n g" . denote-grep))
+  :config
+  (setq denote-directory (expand-file-name "~/Documents/notes/"))
+
+  ;; Automatically rename Denote buffers when opening them so that
+  ;; instead of their long file name they have, for example, a literal
+  ;; "[D]" followed by the file's title.  Read the doc string of
+  ;; `denote-rename-buffer-format' for how to modify this.
+  (denote-rename-buffer-mode 1))
 
 (use-package nerd-icons
   :ensure t)
@@ -647,7 +665,17 @@
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(ace-window aidermacs auto-dark bind-key blamer catppuccin-theme claude-code
+		company consult copilot corfu counsel crux denote doom-themes
+		doric-themes eat ef-themes eglot elixir-mode
+		exec-path-from-shell expand-region forge git-commit git-link
+		go-mode gptel gruber-darker-theme imenu-list ivy-rich ivy-xref
+		kanagawa-themes lsp-ui marginalia meow mise modus-themes moody
+		multiple-cursors nano-theme nerd-icons olivetti orderless rbenv
+		rg robe rspec-mode rust-mode south-theme standard-themes
+		stimmung-themes sublime-themes tree-sitter-langs ultra-scroll
+		vertico-posframe vterm zoom-window))
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
