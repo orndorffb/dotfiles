@@ -26,7 +26,11 @@
       use-dialog-box                    nil)    ;; Disable dialog
 
 (add-to-list 'default-frame-alist     '(fullscreen . maximized))  ; don't use proxy icon
-  (setq ns-use-proxy-icon nil)
+(setq ns-use-proxy-icon nil)
+(add-to-list 'default-frame-alist '(internal-border-width . 20))
+(add-to-list 'default-frame-alist '(left-fringe . 0))
+(add-to-list 'default-frame-alist '(right-fringe . 0))
+(add-to-list 'default-frame-alist '(undecorated-round . t))
   ; don't show buffer name in title bar
   (setq frame-title-format "")
 
@@ -71,20 +75,9 @@
 
 
 ;;--My stuff--------------------------------------------------------------------
-
-(setq package-install-upgrade-built-in t)
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'none)
 (global-set-key (kbd "C-c p") 'project-find-file)
-
-(defun my-minibuffer-setup-hook ()
-  (setq gc-cons-threshold most-positive-fixnum))
-
-(defun my-minibuffer-exit-hook ()
-  (setq gc-cons-threshold 800000))
-
-(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
-(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 ;; Enable global line numbers
 (global-display-line-numbers-mode t)
@@ -125,32 +118,162 @@
    ("C-c n r" . denote-rename-file)
    ("C-c n l" . denote-link)
    ("C-c n b" . denote-backlinks)
-   ("C-c n d" . denote-dired)
-   ("C-c n g" . denote-grep))
+   ("C-c n d" . denote-dired))
   :config
   (setq denote-directory (expand-file-name "~/Documents/notes/"))
-
-  ;; Automatically rename Denote buffers when opening them so that
-  ;; instead of their long file name they have, for example, a literal
-  ;; "[D]" followed by the file's title.  Read the doc string of
-  ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1))
+
+(use-package consult-denote
+  :ensure t
+  :bind
+  (("C-c n f" . consult-denote-find)
+   ("C-c n g" . consult-denote-grep))
+  :config
+  (consult-denote-mode 1))
 
 (use-package nerd-icons
   :ensure t)
 
-(use-package south-theme
-  :vc (:url "https://github.com/SophieBosio/south"
-       :rev :newest
-       :branch "main"))
+;;----Theme Stuff-----
+;; --- Minimal NANO (not a real) theme ----------------------------------------
+(defface nano-default '((t)) "")   (defface nano-default-i '((t)) "")
+(defface nano-highlight '((t)) "") (defface nano-highlight-i '((t)) "")
+(defface nano-subtle '((t)) "")    (defface nano-subtle-i '((t)) "")
+(defface nano-faded '((t)) "")     (defface nano-faded-i '((t)) "")
+(defface nano-salient '((t)) "")   (defface nano-salient-i '((t)) "")
+(defface nano-popout '((t)) "")    (defface nano-popout-i '((t)) "")
+(defface nano-strong '((t)) "")    (defface nano-strong-i '((t)) "")
+(defface nano-critical '((t)) "")  (defface nano-critical-i '((t)) "")
 
-(defvar brian/default-dark-theme  'doom-nord)
-(defvar brian/default-light-theme 'south)
+(defun nano-set-face (name &optional foreground background weight)
+  "Set NAME and NAME-i faces with given FOREGROUND, BACKGROUND and WEIGHT"
 
-(defvar brian/default-dark-accent-colour  "SkyBlue4")
-(defvar brian/default-light-accent-color "#8fafe3")
+  (apply #'set-face-attribute `(,name nil
+                                ,@(when foreground `(:foreground ,foreground))
+                                ,@(when background `(:background ,background))
+                                ,@(when weight `(:weight ,weight))))
+  (apply #'set-face-attribute `(,(intern (concat (symbol-name name) "-i")) nil
+                                :foreground ,(face-background 'nano-default)
+                                ,@(when foreground `(:background ,foreground))
+                                :weight regular)))
 
-(load-theme brian/default-light-theme t)
+(defun nano-link-face (sources faces &optional attributes)
+  "Make FACES to inherit from SOURCES faces and unspecify ATTRIBUTES."
+
+  (let ((attributes (or attributes
+                        '( :foreground :background :family :weight
+                           :height :slant :overline :underline :box))))
+    (dolist (face (seq-filter #'facep faces))
+      (dolist (attribute attributes)
+        (set-face-attribute face nil attribute 'unspecified))
+      (set-face-attribute face nil :inherit sources))))
+
+(defun nano-install-theme ()
+  "Install THEME"
+
+  (set-face-attribute 'default nil
+                      :foreground (face-foreground 'nano-default)
+                      :background (face-background 'nano-default))
+  (dolist (item '((nano-default .  (variable-pitch variable-pitch-text
+                                    fixed-pitch fixed-pitch-serif))
+                  (nano-highlight . (hl-line highlight))
+                  (nano-subtle .    (match region
+                                     lazy-highlight widget-field))
+                  (nano-faded .     (shadow
+                                     font-lock-comment-face
+                                     font-lock-doc-face
+                                     icomplete-section
+                                     completions-annotations))
+                  (nano-popout .    (warning
+                                     font-lock-string-face))
+                  (nano-salient .   (success link
+                                     help-argument-name
+                                     custom-visibility
+                                     font-lock-type-face
+                                     font-lock-keyword-face
+                                     font-lock-builtin-face
+                                     completions-common-part))
+                  (nano-strong .    (font-lock-function-name-face
+                                     font-lock-variable-name-face
+                                     icomplete-first-match
+                                     minibuffer-prompt))
+                  (nano-critical .  (error
+                                     completions-first-difference))
+                  (nano-faded-i .   (help-key-binding))
+                  (nano-default-i . (custom-button-mouse
+                                     isearch))
+                  (nano-critical-i . (isearch-fail))
+                  ((nano-subtle nano-strong) . (custom-button
+                                                icomplete-selected-match))
+                  ((nano-faded-i nano-strong) . (show-paren-match))))
+    (nano-link-face (car item) (cdr item)))
+
+  ;; Mode & header lines 
+  (set-face-attribute 'header-line nil
+                      :background 'unspecified
+                      :underline nil
+                      :box `( :line-width 1
+                              :color ,(face-background 'nano-default))
+                      :inherit 'nano-subtle)
+  (set-face-attribute 'mode-line nil
+                      :background (face-background 'default)
+                      :underline (face-foreground 'nano-faded)
+                      :height 40 :overline nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil
+                      :background (face-background 'default)
+                      :underline (face-foreground 'nano-faded)
+                      :height 40 :overline nil :box nil))
+
+(defun nano-light (&rest args)
+  "NANO light theme (based on material colors)"
+
+  (interactive)
+  (nano-set-face 'nano-default "#37474F" "#FFFFFF") ;; Blue Grey / L800
+  (nano-set-face 'nano-strong "#000000" nil 'regular) ;; Black
+  (nano-set-face 'nano-highlight nil "#FAFAFA") ;; Very Light Grey
+  (nano-set-face 'nano-subtle nil "#ECEFF1") ;; Blue Grey / L50
+  (nano-set-face 'nano-faded "#90A4AE") ;; Blue Grey / L300
+  (nano-set-face 'nano-salient "#673AB7") ;; Deep Purple / L500
+  (nano-set-face 'nano-popout "#FFAB91") ;; Deep Orange / L200
+  (nano-set-face 'nano-critical "#FF6F00") ;; Amber / L900
+  (nano-install-theme))
+  
+(defun nano-dark (&rest args)
+  "NANO dark theme (based on nord colors)"
+
+  (interactive)
+  (nano-set-face 'nano-default "#ECEFF4" "#2E3440") ;; Snow Storm 3 
+  (nano-set-face 'nano-strong "#ECEFF4" nil 'regular) ;; Polar Night 0
+  (nano-set-face 'nano-highlight nil "#3B4252")  ;; Polar Night 1
+  (nano-set-face 'nano-subtle nil "#434C5E") ;; Polar Night 2 
+  (nano-set-face 'nano-faded "#677691") ;; 
+  (nano-set-face 'nano-salient "#81A1C1")  ;; Frost 2
+  (nano-set-face 'nano-popout "#D08770") ;; Aurora 1
+  (nano-set-face 'nano-critical "#EBCB8B") ;; Aurora 2
+  (nano-install-theme))
+
+;; --- Header & mode lines ----------------------------------------------------
+(setq-default mode-line-format "")
+(setq-default header-line-format
+  '(:eval
+    (let ((prefix (cond (buffer-read-only     '("RO" . nano-default-i))
+                        ((buffer-modified-p)  '("**" . nano-critical-i))
+                        (t                    '("RW" . nano-faded-i))))
+          (mode (concat "(" (downcase (cond ((consp mode-name) (car mode-name))
+                                            ((stringp mode-name) mode-name)
+                                            (t "unknow")))
+                        " mode)"))
+          (coords (format-mode-line "%c:%l ")))
+      (list
+       (propertize " " 'face (cdr prefix)  'display '(raise -0.25))
+       (propertize (car prefix) 'face (cdr prefix))
+       (propertize " " 'face (cdr prefix) 'display '(raise +0.25))
+       (propertize (format-mode-line " %b ") 'face 'nano-strong)
+       (propertize mode 'face 'header-line)
+       (propertize " " 'display `(space :align-to (- right ,(length coords))))
+       (propertize coords 'face 'nano-faded)))))
+
+(nano-light)
 
 (use-package autothemer
   :defer t)
@@ -166,68 +289,7 @@
   ("M-n" . mc/mark-next-like-this)
   ("M-p" . mc/mark-previous-like-this))
 
-(use-package auto-dark
-  :ensure t
-  :hook ((auto-dark-dark-mode
-          .
-          (lambda ()
-            (interactive)
-            (progn
-              (custom-set-faces
-               `(eval-sexp-fu-flash
-                 ((t (:background
-                      ,brian/default-dark-accent-colour)))))
-              `(load-theme ,brian/default-dark-theme t))))
-         (auto-dark-light-mode
-          .
-          (lambda ()
-            (interactive)
-            (progn
-              (custom-set-faces
-               `(eval-sexp-fu-flash
-                 ((t (:background
-                      ,brian/default-light-accent-colour)))))
-              `(load-theme ,brian/default-light-theme t)))))
-  :custom
-  (auto-dark-themes                   `((,brian/default-dark-theme) (,brian/default-light-theme)))
-  (auto-dark-polling-interval-seconds 5)
-  (auto-dark-allow-osascript          t)
-  :init (auto-dark-mode t))
-
-
 (defvar lsp-modeline--code-actions-string nil)
-
-(setq-default mode-line-format
-  '("%e"
-	(:propertize " " display (raise +0.4)) ;; Top padding
-	(:propertize " " display (raise -0.4)) ;; Bottom padding
-
-	(:propertize "λ " face font-lock-comment-face)
-	mode-line-frame-identification
-	mode-line-buffer-identification
-
-	;; Version control info
-	(:eval (when-let (vc vc-mode)
-			 ;; Use a pretty branch symbol in front of the branch name
-			 (list (propertize " ≡ " 'face 'font-lock-comment-face)
-                   ;; Truncate branch name to 50 characters
-				   (propertize (truncate-string-to-width
-                                (substring vc 5) 50)
-							   'face 'font-lock-comment-face))))
-
-	;; Add space to align to the right
-	(:eval (propertize
-			 " " 'display
-			 `((space :align-to
-					  (-  (+ right right-fringe right-margin)
-						 ,(+ 3
-                             (string-width (or lsp-modeline--code-actions-string ""))
-                             (string-width "%4l:3%c")))))))
-
-    ;; LSP code actions
-    (:eval (or lsp-modeline--code-actions-string ""))
-	;; Line and column numbers
-    (:propertize "%4l:%c" face mode-line-buffer-id)))
 
 ;; Line splitting sutff
 (defun split-window-sensibly-prefer-horizontal (&optional window)
@@ -684,13 +746,13 @@
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages
    '(ace-window adaptive-wrap aidermacs auto-dark blamer claude-code consult
-		copilot corfu default-text-scale denote doom-themes doric-themes
-		eat exec-path-from-shell expand-region forge git-link gptel
-		imenu-list lsp-ui marginalia meow mise mixed-pitch
-		multiple-cursors nerd-icons olivetti orderless rbenv rg robe
-		rspec-mode rust-mode south-theme stimmung-themes
-		tree-sitter-langs ultra-scroll vertico-posframe vterm
-		zoom-window))
+		consult-denote copilot corfu default-text-scale denote
+		doom-themes doric-themes eat exec-path-from-shell expand-region
+		forge git-link gptel imenu-list lsp-ui marginalia meow mise
+		mixed-pitch multiple-cursors nerd-icons olivetti orderless
+		ox-slack rbenv rg robe rspec-mode rust-mode south-theme
+		stimmung-themes tree-sitter-langs ultra-scroll vertico-posframe
+		vterm zoom-window))
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
