@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
@@ -93,6 +94,22 @@
     (display-line-numbers-mode 0)))
 (add-hook 'vterm-mode-hook #'my/maybe-disable-line-numbers)
 (add-hook 'after-change-major-mode-hook #'my/maybe-disable-line-numbers)
+
+(use-package mixed-pitch
+  :ensure t
+  :hook ((org-mode   . mixed-pitch-mode)
+         (LaTeX-mode . mixed-pitch-mode)))
+
+(use-package olivetti
+  :ensure t
+  :bind
+  (("C-c o" . olivetti-mode))
+  :config
+  (setq olivetti-style t))
+
+(use-package adaptive-wrap
+  :ensure t
+  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 
 (use-package exec-path-from-shell
   :ensure t
@@ -397,8 +414,8 @@
   :config
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
-  (global-set-key (kbd "C-c C-RET") 'gptel-menu)
-  (global-set-key (kbd "C-c RET") 'gptel-send)
+  (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
+  (global-set-key (kbd "C-c <return>") 'gptel-send)
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
 (use-package lsp-mode
@@ -666,16 +683,14 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages
-   '(ace-window aidermacs auto-dark bind-key blamer catppuccin-theme claude-code
-		company consult copilot corfu counsel crux denote doom-themes
-		doric-themes eat ef-themes eglot elixir-mode
-		exec-path-from-shell expand-region forge git-commit git-link
-		go-mode gptel gruber-darker-theme imenu-list ivy-rich ivy-xref
-		kanagawa-themes lsp-ui marginalia meow mise modus-themes moody
-		multiple-cursors nano-theme nerd-icons olivetti orderless rbenv
-		rg robe rspec-mode rust-mode south-theme standard-themes
-		stimmung-themes sublime-themes tree-sitter-langs ultra-scroll
-		vertico-posframe vterm zoom-window))
+   '(ace-window adaptive-wrap aidermacs auto-dark blamer claude-code consult
+		copilot corfu default-text-scale denote doom-themes doric-themes
+		eat exec-path-from-shell expand-region forge git-link gptel
+		imenu-list lsp-ui marginalia meow mise mixed-pitch
+		multiple-cursors nerd-icons olivetti orderless rbenv rg robe
+		rspec-mode rust-mode south-theme stimmung-themes
+		tree-sitter-langs ultra-scroll vertico-posframe vterm
+		zoom-window))
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
