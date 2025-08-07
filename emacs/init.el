@@ -234,7 +234,7 @@
   (nano-set-face 'nano-subtle nil "#ECEFF1") ;; Blue Grey / L50
   (nano-set-face 'nano-faded "#90A4AE") ;; Blue Grey / L300
   (nano-set-face 'nano-salient "#673AB7") ;; Deep Purple / L500
-  (nano-set-face 'nano-popout "#FFAB91") ;; Deep Orange / L200
+  (nano-set-face 'nano-popout "#F97D5D") ;; Deep Orange / L200
   (nano-set-face 'nano-critical "#FF6F00") ;; Amber / L900
   (nano-install-theme))
   
@@ -454,21 +454,11 @@
     (when auth
       (funcall (plist-get auth :secret)))))
 
-(use-package aidermacs
-  :ensure t
-  :bind (("C-c a" . aidermacs-transient-menu))
-  :config
-  (setenv "OPENROUTER_API_KEY" (my-get-openai-api-key))
-  :custom
-  ; See the Configuration section below
-  (aidermacs-use-architect-mode t)
-  (aidermacs-default-model "o1"))
-
 (use-package claude-code :ensure t
   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
   :config
   (claude-code-mode)
-  (setq claude-code-terminal-backend 'vterm)
+  (setq claude-code-terminal-backend 'eat)
   :bind-keymap ("C-c c" . claude-code-command-map))
 
 (use-package gptel
@@ -630,19 +620,20 @@
         read-file-name-completion-ignore-case t   ; Ignore case of file names
         read-buffer-completion-ignore-case    t   ; Ignore case in buffer completion
         completion-ignore-case                t)) ; Ignore case in completion
-(use-package vertico-posframe
-  :ensure t
-  :init
-  (setq vertico-posframe-parameters   '((left-fringe  . 12)    ;; Fringes
-                                        (right-fringe . 12)
-                                        (undecorated  . nil))) ;; Rounded frame
-  :config
-  (vertico-posframe-mode 1)
-  (setq vertico-posframe-width        96                       ;; Narrow frame
-        vertico-posframe-height       vertico-count            ;; Default height
-        ;; Don't create posframe for these commands
-        vertico-multiform-commands    '((consult-line    (:not posframe))
-                                        (consult-ripgrep (:not posframe)))))
+
+;; (use-package vertico-posframe
+;;   :ensure t
+;;   :init
+;;   (setq vertico-posframe-parameters   '((left-fringe  . 12)    ;; Fringes
+;;                                         (right-fringe . 12)
+;;                                         (undecorated  . nil))) ;; Rounded frame
+;;   :config
+;;   (vertico-posframe-mode 1)
+;;   (setq vertico-posframe-width        96                       ;; Narrow frame
+;;         vertico-posframe-height       vertico-count            ;; Default height
+;;         ;; Don't create posframe for these commands
+;;         vertico-multiform-commands    '((consult-line    (:not posframe))
+;;                                         (consult-ripgrep (:not posframe)))))
 
 (use-package marginalia
   :ensure t
