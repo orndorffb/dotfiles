@@ -31,24 +31,21 @@
 (add-to-list 'default-frame-alist '(left-fringe . 0))
 (add-to-list 'default-frame-alist '(right-fringe . 0))
   ; don't show buffer name in title bar
-  (setq frame-title-format "")
+(setq frame-title-format "")
+(add-to-list
+  'default-frame-alist'(ns-transparent-titlebar . t))
+(add-to-list
+  'default-frame-alist'(ns-appearance . light))
 
 (setq auth-sources '("~/.authinfo"))
 
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 (setq custom-safe-themes t)
-(defvar brian/font-height 140)
 
-(when (eq system-type 'darwin)
-  (setq brian/font-height 140))
-
-(when (member "Essential PragmataPro" (font-family-list))
-  (set-face-attribute 'default nil :font "Essential PragmataPro" :height brian/font-height)
-  (set-face-attribute 'fixed-pitch nil :family "Essential PragmataPro"))
-
-(when (member "Open Sans" (font-family-list))
-  (set-face-attribute 'variable-pitch nil :family "Open Sans"))
+(set-face-attribute 'default nil :family "Essential PragmataPro" :height 140)
+(set-face-attribute 'fixed-pitch nil :family "Essential PragmataPro")
+(set-face-attribute 'variable-pitch nil :family "Open Sans")
 
 ;; (set-face-attribute 'default nil
 ;;                     :height 160 :weight 'regular :family "Essential PragmataPro")
@@ -111,15 +108,41 @@
 
 (use-package denote
   :ensure t
-  :hook (dired-mode . denote-dired-mode)
+  :hook
+  ((text-mode . denote-fontify-links-mode-maybe)
+   (dired-mode . denote-dired-mode))
   :bind
-  (("C-c n n" . denote)
-   ("C-c n r" . denote-rename-file)
-   ("C-c n l" . denote-link)
-   ("C-c n b" . denote-backlinks)
-   ("C-c n d" . denote-dired))
+  ( :map global-map
+    ("C-c n n" . denote)
+    ("C-c n d" . denote-dired)
+    ("C-c n g" . denote-grep)
+    ("C-c n l" . denote-link)
+    ("C-c n L" . denote-add-links)
+    ("C-c n b" . denote-backlinks)
+    ("C-c n q c" . denote-query-contents-link) ; create link that triggers a grep
+    ("C-c n q f" . denote-query-filenames-link) ; create link that triggers a dired
+    ("C-c n r" . denote-rename-file)
+    ("C-c n R" . denote-rename-file-using-front-matter)
+
+    ;; Key bindings specifically for Dired.
+    :map dired-mode-map
+    ("C-c C-d C-i" . denote-dired-link-marked-notes)
+    ("C-c C-d C-r" . denote-dired-rename-files)
+    ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
+    ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
+
   :config
   (setq denote-directory (expand-file-name "~/Documents/notes/"))
+  (setq denote-save-buffers nil)
+  (setq denote-known-keywords '("emacs"))
+  (setq denote-infer-keywords t)
+  (setq denote-sort-keywords t)
+  (setq denote-prompts '(title keywords))
+  (setq denote-excluded-directories-regexp nil)
+  (setq denote-excluded-keywords-regexp nil)
+  (setq denote-rename-confirmations '(rewrite-front-matter modify-file-name))
+
+  (setq denote-date-prompt-use-org-read-date t)
   (denote-rename-buffer-mode 1))
 
 (use-package consult-denote
@@ -130,6 +153,9 @@
   :config
   (consult-denote-mode 1))
 
+(use-package denote-menu
+  :ensure t)
+
 (use-package nerd-icons
   :ensure t)
 
@@ -139,8 +165,11 @@
        :rev :newest
        :branch "main"))
 
-(defvar brian/default-dark-theme  'doom-nord)
-(defvar brian/default-light-theme 'south)
+(use-package poet-theme
+  :ensure t)
+
+(defvar brian/default-dark-theme  'poet-dark-monochrome)
+(defvar brian/default-light-theme 'poet-monochrome)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
@@ -668,14 +697,17 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages
-   '(ace-window adaptive-wrap aidermacs auto-dark blamer claude-code consult
-		consult-denote copilot corfu default-text-scale denote
-		doom-themes doric-themes eat exec-path-from-shell expand-region
-		forge git-link gptel imenu-list lsp-ui marginalia meow mise
-		mixed-pitch multiple-cursors nerd-icons olivetti orderless
-		ox-slack rbenv rg robe rspec-mode rust-mode south-theme
-		stimmung-themes tree-sitter-langs ultra-scroll vertico-posframe
-		vterm zoom-window))
+   '(ace-window adaptive-wrap aidermacs auto-dark bind-key blamer catppuccin-theme
+		claude-code company consult-denote copilot corfu counsel crux
+		denote-menu doom-themes doric-themes eat ef-themes eglot
+		elixir-mode exec-path-from-shell expand-region forge git-commit
+		git-link go-mode gptel gruber-darker-theme imenu-list ivy-rich
+		ivy-xref kanagawa-themes lsp-ui marginalia meow mise mixed-pitch
+		modus-themes moody multiple-cursors nano-theme nerd-icons
+		olivetti orderless poet-theme rbenv rg robe rspec-mode rust-mode
+		south-theme standard-themes stimmung-themes sublime-themes
+		tree-sitter-langs ultra-scroll vertico-posframe vterm
+		zoom-window))
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
