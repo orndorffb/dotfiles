@@ -168,8 +168,13 @@
 (use-package poet-theme
   :ensure t)
 
-(defvar brian/default-dark-theme  'poet-dark-monochrome)
-(defvar brian/default-light-theme 'poet-monochrome)
+(use-package tao-theme
+  :ensure t
+  :config
+  (setq tao-theme-use-boxes nil))
+
+(defvar brian/default-dark-theme  'tao-yin)
+(defvar brian/default-light-theme 'tao-yang)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
@@ -671,7 +676,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec"
+   '("acfe7ff6aacb9432f124cde4e35d6d2b4bc52916411de73a6ccded9750c9fa97"
+     "34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec"
      "3ef71018ff2043d308f8bc266787591acfaf8a0007621ca1304b0e3db6772c19"
      "54ba478b95c6a5efbe02642003d68ea9a713cd38f2c03da176a1b69578addf74"
      "a759f5bf996d821b4e5798c23ec80ff69571fbad7f574beaa75cf429e81579aa"
@@ -706,7 +712,7 @@
 		modus-themes moody multiple-cursors nano-theme nerd-icons
 		olivetti orderless poet-theme rbenv rg robe rspec-mode rust-mode
 		south-theme standard-themes stimmung-themes sublime-themes
-		tree-sitter-langs ultra-scroll vertico-posframe vterm
+		tao-theme tree-sitter-langs ultra-scroll vertico-posframe vterm
 		zoom-window))
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
