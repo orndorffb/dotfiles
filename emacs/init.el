@@ -27,10 +27,9 @@
 
 (add-to-list 'default-frame-alist     '(fullscreen . maximized))  ; don't use proxy icon
 (setq ns-use-proxy-icon nil)
-(add-to-list 'default-frame-alist '(internal-border-width . 20))
+(add-to-list 'default-frame-alist '(internal-border-width . 10))
 (add-to-list 'default-frame-alist '(left-fringe . 0))
 (add-to-list 'default-frame-alist '(right-fringe . 0))
-(add-to-list 'default-frame-alist '(undecorated-round . t))
   ; don't show buffer name in title bar
   (setq frame-title-format "")
 
@@ -39,10 +38,10 @@
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 (setq custom-safe-themes t)
-(defvar brian/font-height 160)
+(defvar brian/font-height 140)
 
 (when (eq system-type 'darwin)
-  (setq brian/font-height 160))
+  (setq brian/font-height 140))
 
 (when (member "Essential PragmataPro" (font-family-list))
   (set-face-attribute 'default nil :font "Essential PragmataPro" :height brian/font-height)
@@ -391,7 +390,7 @@
   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
   :config
   (claude-code-mode)
-  (setq claude-code-terminal-backend 'eat)
+  (setq claude-code-terminal-backend 'vterm)
   :bind-keymap ("C-c c" . claude-code-command-map))
 
 (use-package gptel
