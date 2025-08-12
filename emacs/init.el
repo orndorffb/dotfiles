@@ -173,8 +173,11 @@
   :config
   (setq tao-theme-use-boxes nil))
 
-(defvar brian/default-dark-theme  'tao-yin)
-(defvar brian/default-light-theme 'tao-yang)
+(use-package stimmung-themes
+  :ensure t)
+
+(defvar brian/default-dark-theme  'stimmung-themes-dark)
+(defvar brian/default-light-theme 'stimmung-themes-light)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
