@@ -77,12 +77,14 @@
 
 ;; Enable global line numbers
 (global-display-line-numbers-mode t)
-(defun my/maybe-disable-line-numbers ()
-  (when (or (derived-mode-p 'vterm-mode)
-            (string-match-p "claude" (downcase (buffer-name))))
-    (display-line-numbers-mode 0)))
-(add-hook 'vterm-mode-hook #'my/maybe-disable-line-numbers)
-(add-hook 'after-change-major-mode-hook #'my/maybe-disable-line-numbers)
+ (dolist (mode '(org-mode-hook
+                 term-mode-hook
+                 vterm-mode-hook
+		 eat-mode-hook
+                 shell-mode-hook
+                 treemacs-mode-hook
+                 eshell-mode-hook))
+      (add-hook mode (lambda() (display-line-numbers-mode 0))))
 
 (use-package mixed-pitch
   :ensure t
@@ -173,8 +175,8 @@
   :config
   (setq tao-theme-use-boxes nil))
 
-(defvar brian/default-dark-theme  'tao-yin)
-(defvar brian/default-light-theme 'tao-yang)
+(defvar brian/default-dark-theme  'doric-obsidian)
+(defvar brian/default-light-theme 'doric-marble)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
@@ -237,7 +239,7 @@
                              (string-width "%4l:3%c")))))))
 
     ;; LSP code actions
-    (:eval (or lsp-modeline--code-actions-string ""))
+    ;(:eval (or lsp-modeline--code-actions-string ""))
 	;; Line and column numbers
     (:propertize "%4l:%c" face mode-line-buffer-id)))
 
@@ -337,6 +339,14 @@
         ("j" "Journal" entry (file+datetree "~/org/journal.org")
          "* %?\nEntered on %U\n  %i\n  %a")))
 
+(org-babel-do-load-languages
+    'org-babel-load-languages
+        '(
+            (shell . t)
+            ;; Other languages...
+        )
+    )
+
 (defun run-standardrb-on-current-file ()
   "Run <project_root>/bin/standardrb <current_file> --fix-unsafely."
   (interactive)
@@ -420,12 +430,23 @@
     (when auth
       (funcall (plist-get auth :secret)))))
 
-(use-package claude-code :ensure t
-  :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+;; (use-package claude-code :ensure t
+;;   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
+;;   :config
+;;   (claude-code-mode)
+;;   (setq claude-code-terminal-backend 'vterm)
+;;   :bind-keymap ("C-c c" . claude-code-command-map))
+
+(use-package claude-code-ide
+  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+  :bind
+  (("C-c C-'" . claude-code-ide-menu)
+   ("C-c c s" . claude-code-ide-send-prompt))
   :config
-  (claude-code-mode)
-  (setq claude-code-terminal-backend 'vterm)
-  :bind-keymap ("C-c c" . claude-code-command-map))
+  (setq claude-code-ide-window-side 'right
+	claude-code-ide-window-width 100
+	claude-code-ide-terminal-backend 'eat)
+  (claude-code-ide-emacs-tools-setup))
 
 (use-package gptel
   :ensure t
@@ -436,36 +457,38 @@
   (global-set-key (kbd "C-c <return>") 'gptel-send)
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
-(use-package lsp-mode
-  :ensure t
-  :init
-  (setq lsp-keymap-prefix "C-c l"
-        lsp-format-on-save-mode t)
-  (setq lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-disabled-clients '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls))
-  :hook
-   (ruby-ts-mode . lsp)
-  :commands lsp)
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l"
+;;         lsp-format-on-save-mode t)
+;;   (setq lsp-headerline-breadcrumb-enable nil)
+;;   (setq lsp-disabled-clients '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls))
+;;   :hook
+;;    (ruby-ts-mode . lsp)
+;;   :commands lsp)
 
-(use-package lsp-ui
-  :ensure t
-  :init
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-position 'at-point
-        lsp-ui-peek-enable t
-        lsp-ui-sideline-enable nil
-        lsp-ui-sideline-show-hover t
-        lsp-ui-imenu-enable t))
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :init
+;;   (setq lsp-ui-doc-enable t
+;;         lsp-ui-doc-position 'at-point
+;;         lsp-ui-peek-enable t
+;;         lsp-ui-sideline-enable nil
+;;         lsp-ui-sideline-show-hover t
+;;         lsp-ui-imenu-enable t))
 
 (use-package eglot
   :ensure t
-  :hook (;(ruby-ts-mode . eglot-ensure)
+  :hook ((ruby-ts-mode . eglot-ensure)
          (rust-mode . eglot-ensure)
+	 (python-ts-mode . eglot-ensure)
          (elixir-mode . eglot-ensure))
   :config
   (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
   (setq eglot-server-programs '(
-                                ;;(ruby-mode . ("ruby-lsp")
+                                (ruby-mode . ("ruby-lsp"))
+				(python-ts-mode . ("pyright-langserver" "--stdio"))
                                 ;;(rust-mode . ("rust-analyzer"))
                                 ;;(elixir-mode . ("elixir-ls"))
                                 )))
@@ -481,6 +504,14 @@
 (use-package tree-sitter-langs
   :ensure t
   :after tree-sitter)
+
+(use-package direnv
+ :ensure t
+ :config
+ (direnv-mode))
+
+(setq major-mode-remap-alist
+      '((python-mode . python-ts-mode)))
 
 (use-package transient
   :ensure t)
@@ -676,7 +707,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("acfe7ff6aacb9432f124cde4e35d6d2b4bc52916411de73a6ccded9750c9fa97"
+   '("a60b04e5c0fef30209f9576f04651938472b57cb1dae0375d80a53a78f515f69"
+     "6f177b9a2579197e650918c8e53440997063b543fc854763e3597b5a4c33860d"
      "34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec"
      "3ef71018ff2043d308f8bc266787591acfaf8a0007621ca1304b0e3db6772c19"
      "54ba478b95c6a5efbe02642003d68ea9a713cd38f2c03da176a1b69578addf74"
@@ -702,18 +734,7 @@
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
- '(package-selected-packages
-   '(ace-window adaptive-wrap aidermacs auto-dark bind-key blamer catppuccin-theme
-		claude-code company consult-denote copilot corfu counsel crux
-		denote-menu doom-themes doric-themes eat ef-themes eglot
-		elixir-mode exec-path-from-shell expand-region forge git-commit
-		git-link go-mode gptel gruber-darker-theme imenu-list ivy-rich
-		ivy-xref kanagawa-themes lsp-ui marginalia meow mise mixed-pitch
-		modus-themes moody multiple-cursors nano-theme nerd-icons
-		olivetti orderless poet-theme rbenv rg robe rspec-mode rust-mode
-		south-theme standard-themes stimmung-themes sublime-themes
-		tao-theme tree-sitter-langs ultra-scroll vertico-posframe vterm
-		zoom-window))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
