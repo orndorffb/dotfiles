@@ -1,7 +1,7 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
-alias nv="nvim"
+alias nv=" ~/nvim-binary/nvim-macos-arm64/bin/nvim"
 alias dc='docker-compose'
 # Some tmux-related shell aliases
 alias t='tmux attach || tmux new-session'
