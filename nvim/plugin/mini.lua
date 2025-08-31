@@ -9,7 +9,7 @@ local mini = require("mini")
 require("mini.comment").setup()
 
 -- Statusline
-require("mini.statusline").setup()
+-- require("mini.statusline").setup()
 
 -- Pairs (auto-close brackets, quotes, etc.)
 require("mini.pairs").setup()
