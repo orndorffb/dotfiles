@@ -50,6 +50,10 @@ lspconfig.ts_ls.setup({
   on_attach = on_attach,
 })
 
+lspconfig.pyright.setup({
+  on_attach = on_attach,
+})
+
 lspconfig.ruby_lsp.setup({
   on_attach = on_attach,
 })
