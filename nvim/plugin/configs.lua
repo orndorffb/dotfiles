@@ -21,6 +21,6 @@ vim.opt.scrolloff = 8
 vim.opt.updatetime = 50
 vim.opt.list = true
 
-vim.o.background = "light"
-vim.cmd.colorscheme("zenbones")
+vim.o.background = "dark"
+vim.cmd.colorscheme("techbase")
 

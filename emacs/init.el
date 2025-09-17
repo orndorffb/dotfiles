@@ -175,8 +175,8 @@
   :config
   (setq tao-theme-use-boxes nil))
 
-(defvar brian/default-dark-theme  'doric-obsidian)
-(defvar brian/default-light-theme 'doric-marble)
+(defvar brian/default-dark-theme  'doom-one)
+(defvar brian/default-light-theme 'doom-one)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
@@ -245,6 +245,7 @@
 
 (use-package autothemer
   :defer t)
+
 
 (use-package multiple-cursors
   :ensure t
@@ -457,44 +458,65 @@
   (global-set-key (kbd "C-c <return>") 'gptel-send)
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :init
-;;   (setq lsp-keymap-prefix "C-c l"
-;;         lsp-format-on-save-mode t)
-;;   (setq lsp-headerline-breadcrumb-enable nil)
-;;   (setq lsp-disabled-clients '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls))
-;;   :hook
-;;    (ruby-ts-mode . lsp)
-;;   :commands lsp)
-
-;; (use-package lsp-ui
-;;   :ensure t
-;;   :init
-;;   (setq lsp-ui-doc-enable t
-;;         lsp-ui-doc-position 'at-point
-;;         lsp-ui-peek-enable t
-;;         lsp-ui-sideline-enable nil
-;;         lsp-ui-sideline-show-hover t
-;;         lsp-ui-imenu-enable t))
-
-(use-package eglot
+(use-package lsp-mode
   :ensure t
-  :hook ((ruby-ts-mode . eglot-ensure)
-         (rust-mode . eglot-ensure)
-	 (python-ts-mode . eglot-ensure)
-         (elixir-mode . eglot-ensure))
-  :config
-  (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
-  (setq eglot-server-programs '(
-                                (ruby-mode . ("ruby-lsp"))
-				(python-ts-mode . ("pyright-langserver" "--stdio"))
-                                ;;(rust-mode . ("rust-analyzer"))
-                                ;;(elixir-mode . ("elixir-ls"))
-                                )))
+  :init
+  (setq lsp-keymap-prefix "C-c l"
+        lsp-headerline-breadcrumb-enable nil)
+  ;; Prefer Pyright over other Python servers
+  (setq lsp-disabled-clients
+        '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls
+          pylsp mspyls)) ;; disable pylsp / old MS server so Pyright wins
+  :hook ((ruby-ts-mode   . lsp)
+         (python-mode    . lsp-deferred)   ;; Emacs 28/29
+         (python-ts-mode . lsp-deferred))  ;; Emacs 29/30 (treesitter)
+  :commands (lsp lsp-deferred))
 
-(setq eglot-workspace-configuration
-      '((solargraph (diagnostics . t))))
+(use-package lsp-pyright
+  :ensure t
+  :after lsp-mode
+  :hook ((python-mode
+          . (lambda ()
+              (require 'lsp-pyright)  ;; ensure client is loaded
+              (lsp-deferred)))
+         (python-ts-mode
+          . (lambda ()
+              (require 'lsp-pyright)
+              (lsp-deferred))))
+  :init
+  ;; Tweak to taste:
+  (setq lsp-pyright-python-executable-cmd "python3"    ;; or your venv's python
+        lsp-pyright-typechecking-mode "basic"          ;; "off" | "basic" | "standard" | "strict"
+        lsp-pyright-auto-import-completions t
+        lsp-pyright-use-library-code-for-types t))
+
+(use-package lsp-ui
+  :ensure t
+  :init
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-peek-enable t
+        lsp-ui-sideline-enable nil
+        lsp-ui-sideline-show-hover t
+        lsp-ui-imenu-enable t))
+
+;; (use-package eglot
+;;   :ensure t
+;;   :hook ((ruby-ts-mode . eglot-ensure)
+;;          (rust-mode . eglot-ensure)
+;; 	 (python-ts-mode . eglot-ensure)
+;;          (elixir-mode . eglot-ensure))
+;;   :config
+;;   (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
+;;   (setq eglot-server-programs '(
+;;                                 (ruby-mode . ("ruby-lsp"))
+;; 				(python-ts-mode . ("pyright-langserver" "--stdio"))
+;;                                 ;;(rust-mode . ("rust-analyzer"))
+;;                                 ;;(elixir-mode . ("elixir-ls"))
+;;                                 )))
+
+;; (setq eglot-workspace-configuration
+;;       '((solargraph (diagnostics . t))))
 
 (use-package tree-sitter
   :ensure t
@@ -736,7 +758,8 @@
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages nil)
  '(package-vc-selected-packages
-   '((claude-code :url "https://github.com/stevemolitor/claude-code.el")
+   '((nano :url "https://github.com/rougier/nano-emacs")
+     (claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
 		   "main")
      (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
