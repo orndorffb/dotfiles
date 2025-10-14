@@ -175,8 +175,12 @@
   :config
   (setq tao-theme-use-boxes nil))
 
-(defvar brian/default-dark-theme  'doom-one)
-(defvar brian/default-light-theme 'doom-one)
+(use-package catppuccin-theme
+  :ensure t
+  :config)
+
+(defvar brian/default-dark-theme  'catppuccin)
+(defvar brian/default-light-theme 'catppuccin)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
@@ -431,23 +435,29 @@
     (when auth
       (funcall (plist-get auth :secret)))))
 
-;; (use-package claude-code :ensure t
-;;   :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
-;;   :config
-;;   (claude-code-mode)
-;;   (setq claude-code-terminal-backend 'vterm)
-;;   :bind-keymap ("C-c c" . claude-code-command-map))
+(use-package shell-maker
+  :ensure t)
 
-(use-package claude-code-ide
-  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+(use-package acp
+  :vc (:url "https://github.com/xenodium/acp.el"))
+
+(use-package agent-shell
+  :vc (:url "https://github.com/xenodium/agent-shell"))
+
+(use-package agent-shell-sidebar
+  :after agent-shell
+  :vc (:url "https://github.com/cmacrae/agent-shell-sidebar")
+  :custom
+  (agent-shell-sidebar-width "25%")
+  (agent-shell-sidebar-minimum-width 80)
+  (agent-shell-sidebar-maximum-width "50%")
+  (agent-shell-sidebar-position 'right)
+  (agent-shell-sidebar-locked t)
+  (agent-shell-sidebar-default-config
+   (agent-shell-anthropic-make-claude-code-config))
   :bind
-  (("C-c C-'" . claude-code-ide-menu)
-   ("C-c c s" . claude-code-ide-send-prompt))
-  :config
-  (setq claude-code-ide-window-side 'right
-	claude-code-ide-window-width 100
-	claude-code-ide-terminal-backend 'eat)
-  (claude-code-ide-emacs-tools-setup))
+  (("C-c a s" . agent-shell-sidebar-toggle)
+   ("C-c a f" . agent-shell-sidebar-toggle-focus)))
 
 (use-package gptel
   :ensure t
@@ -463,6 +473,8 @@
   :init
   (setq lsp-keymap-prefix "C-c l"
         lsp-headerline-breadcrumb-enable nil)
+  (setq lsp-signature-render-documentation nil)
+  (setq lsp-signature-auto-activate nil)
   ;; Prefer Pyright over other Python servers
   (setq lsp-disabled-clients
         '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls
@@ -500,7 +512,7 @@
         lsp-ui-sideline-show-hover t
         lsp-ui-imenu-enable t))
 
-;; (use-package eglot
+;; (use-package Eglot
 ;;   :ensure t
 ;;   :hook ((ruby-ts-mode . eglot-ensure)
 ;;          (rust-mode . eglot-ensure)
@@ -640,20 +652,6 @@
         read-buffer-completion-ignore-case    t   ; Ignore case in buffer completion
         completion-ignore-case                t)) ; Ignore case in completion
 
-;; (use-package vertico-posframe
-;;   :ensure t
-;;   :init
-;;   (setq vertico-posframe-parameters   '((left-fringe  . 12)    ;; Fringes
-;;                                         (right-fringe . 12)
-;;                                         (undecorated  . nil))) ;; Rounded frame
-;;   :config
-;;   (vertico-posframe-mode 1)
-;;   (setq vertico-posframe-width        96                       ;; Narrow frame
-;;         vertico-posframe-height       vertico-count            ;; Default height
-;;         ;; Don't create posframe for these commands
-;;         vertico-multiform-commands    '((consult-line    (:not posframe))
-;;                                         (consult-ripgrep (:not posframe)))))
-
 (use-package marginalia
   :ensure t
   :bind (:map minibuffer-local-map
@@ -756,9 +754,23 @@
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(ace-window acp adaptive-wrap agent-shell agent-shell-sidebar aidermacs
+		auto-dark blamer catppuccin-theme claude-code claude-code-ide
+		consult-denote copilot corfu default-text-scale denote-menu
+		direnv doom-themes doric-themes eat ef-themes
+		exec-path-from-shell expand-region forge git-link gptel
+		imenu-list lsp-pyright lsp-ui marginalia meow mise mixed-pitch
+		multiple-cursors nerd-icons olivetti orderless ox-slack
+		poet-theme rbenv rg robe rspec-mode rust-mode shell-maker
+		south-theme standard-themes stimmung-themes tao-theme
+		tree-sitter-langs ultra-scroll verb vertico-posframe vterm
+		zoom-window))
  '(package-vc-selected-packages
-   '((nano :url "https://github.com/rougier/nano-emacs")
+   '((agent-shell-sidebar :url "https://github.com/cmacrae/agent-shell-sidebar")
+     (agent-shell :url "https://github.com/xenodium/agent-shell")
+     (acp :url "https://github.com/xenodium/acp.el")
+     (nano :url "https://github.com/rougier/nano-emacs")
      (claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
 		   "main")

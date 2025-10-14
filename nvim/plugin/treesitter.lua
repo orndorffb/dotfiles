@@ -5,7 +5,7 @@ vim.pack.add({
 require("nvim-treesitter.configs").setup({
   ensure_installed = {
     "c", "lua", "vim", "vimdoc", "query",
-    "elixir", "heex", "javascript", "html", "ruby"
+    "elixir", "heex", "javascript", "html", "ruby", "python"
   },
   sync_install = false,
   highlight = { enable = true },
