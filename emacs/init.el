@@ -502,10 +502,14 @@
   :vc (:url "https://github.com/copilot-emacs/copilot.el"
             :rev :newest
             :branch "main")
+  :after evil
   :config
   (setq copilot-node-executable "node")
   (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+
+  ;; Evil leader binding for copilot
+  (evil-define-key 'normal 'global (kbd "<leader>at") 'copilot-mode))
 
 (defun my-get-openai-api-key ()
   "Retrieve OpenAI API key from authinfo."
@@ -525,7 +529,7 @@
   :vc (:url "https://github.com/xenodium/agent-shell"))
 
 (use-package agent-shell-sidebar
-  :after agent-shell
+  :after (agent-shell evil)
   :vc (:url "https://github.com/cmacrae/agent-shell-sidebar")
   :custom
   (agent-shell-sidebar-width "25%")
@@ -535,18 +539,25 @@
   (agent-shell-sidebar-locked t)
   (agent-shell-sidebar-default-config
    (agent-shell-anthropic-make-claude-code-config))
-  :bind
-  (("C-c a s" . agent-shell-sidebar-toggle)
-   ("C-c a f" . agent-shell-sidebar-toggle-focus)))
+  :config
+  ;; Evil leader bindings for agent-shell
+  (evil-define-key 'normal 'global (kbd "<leader>ac") 'agent-shell-sidebar-toggle)
+  (evil-define-key 'normal 'global (kbd "<leader>af") 'agent-shell-sidebar-toggle-focus))
 
 (use-package gptel
   :ensure t
+  :after evil
   :config
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
   (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
   (global-set-key (kbd "C-c <return>") 'gptel-send)
-  (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
+  (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
+
+  ;; Evil leader bindings for gptel
+  (evil-define-key 'normal 'global (kbd "<leader>aa") 'gptel)           ; Open gptel buffer
+  (evil-define-key 'normal 'global (kbd "<leader>am") 'gptel-menu)     ; Open gptel menu
+  (evil-define-key '(normal visual) 'global (kbd "<leader>as") 'gptel-send))  ; Send to gptel
 
 (use-package lsp-mode
   :ensure t
@@ -788,6 +799,7 @@
   (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
   (evil-define-key 'normal 'global (kbd "<leader>s") 'consult-line)
   (evil-define-key 'normal 'global (kbd "<leader>d") 'consult-flymake)
+  (evil-define-key 'normal 'global (kbd "<leader>S") 'consult-imenu)
   )
 
 (setq treesit-language-source-alist
