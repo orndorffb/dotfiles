@@ -72,8 +72,6 @@
 
 
 ;;--My stuff--------------------------------------------------------------------
-(setq mac-command-modifier 'meta)
-(setq mac-option-modifier 'none)
 (global-set-key (kbd "C-c p") 'project-find-file)
 
 ;; Enable global line numbers
