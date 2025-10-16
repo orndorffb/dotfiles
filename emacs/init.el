@@ -57,6 +57,7 @@
 (recentf-mode            t) ;; Remember recently opened files
 (savehist-mode           t) ;; Remember minibuffer prompt history
 (save-place-mode         t) ;; Remember last cursor location in file
+(which-key-mode          t)
 
 (setq auto-revert-interval         1         ;; Refresh buffers fast
       auto-revert-verbose          nil       ;; Don't notify me about reverts
@@ -84,7 +85,83 @@
                  shell-mode-hook
                  treemacs-mode-hook
                  eshell-mode-hook))
-      (add-hook mode (lambda() (display-line-numbers-mode 0))))
+   (add-hook mode (lambda() (display-line-numbers-mode 0))))
+
+;;; --- Evil (modal editing) ---------------------------------------------------
+;; Put this early so packages can see Evil's vars during their init.
+(use-package evil
+  :ensure t
+  :demand t  ; Load immediately, don't defer
+  :init
+  ;; ALL settings that other packages need must be in :init
+  (setq evil-want-integration t               ; integrate with Emacs packages
+        evil-want-keybinding nil              ; we'll use evil-collection for keys
+        evil-want-C-u-scroll t
+        evil-want-C-d-scroll t
+        evil-want-Y-yank-to-eol t
+        evil-undo-system 'undo-redo           ; Emacs 28+ native undo
+        evil-respect-visual-line-mode t
+        ;; Keep TAB for completion frameworks (C-i is TAB on many keyboards)
+        evil-want-C-i-jump nil)
+  :config
+  ;; Now activate evil-mode
+  (evil-mode 1)
+
+  ;; Set leader key AFTER evil-mode is active
+  (evil-set-leader '(normal visual motion) (kbd "SPC"))
+  (evil-define-key 'normal 'global (kbd "<leader>SPC") 'execute-extended-command)
+  (evil-define-key 'normal 'global (kbd "<leader>pp") 'project-switch-project)
+  (evil-define-key 'normal 'global (kbd "<leader>f") 'project-find-file)
+
+  ;; Quit prompts/mini-windows with ESC everywhere
+  (global-set-key (kbd "<escape>") #'keyboard-escape-quit)
+
+  ;; Start in Emacs/Insert state in terminal-ish buffers where modal keys are awkward
+  (dolist (m '(term-mode vterm-mode eshell-mode shell-mode eat-mode))
+    (add-to-list 'evil-emacs-state-modes m)
+    (add-hook (intern (format "%s-hook" m)) #'evil-emacs-state))
+
+  ;; Treemacs is better in motion state
+  (with-eval-after-load 'treemacs
+    (add-to-list 'evil-motion-state-modes 'treemacs-mode))
+
+  ;; Make j/k move by visual lines when wrapping is on (you already use visual-line-mode for Org)
+  (evil-define-key 'normal global-map (kbd "j") #'evil-next-visual-line)
+  (evil-define-key 'normal global-map (kbd "k") #'evil-previous-visual-line)
+  )
+
+;; Collection of Evil keybindings for many modes (Magit, Help, dired, etc.)
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  ;; enable a broad set, including magit/vertico/help/etc.
+  (evil-collection-init))
+
+;; Text objects and quick commenting (super handy, low surface area)
+(use-package evil-surround
+  :ensure t
+  :after evil
+  :config (global-evil-surround-mode 1))
+
+(use-package evil-nerd-commenter
+  :ensure t
+  :after evil
+  :bind (("M-/" . evilnc-comment-or-uncomment-lines)) ; keep your hands on home row
+  :config
+  ;; Also map gc in normal/visual like Vim
+  (define-key evil-normal-state-map (kbd "gc") #'evilnc-comment-operator)
+  (define-key evil-visual-state-map (kbd "gc") #'evilnc-comment-operator))
+
+;; Optional: nicer Org keybindings on top of Evil
+(use-package evil-org
+  :ensure t
+  :after (evil org)
+  :hook (org-mode . (lambda ()
+                      (evil-org-mode 1)
+                      (evil-org-set-key-theme
+                       '(navigation insert textobjects additional)))))
+
 
 (use-package mixed-pitch
   :ensure t
@@ -552,7 +629,9 @@
 
 (use-package magit
   :ensure t
+  :after evil  ; Load after evil since we define evil keybindings
   :config
+  (evil-define-key 'normal 'global (kbd "<leader>g") 'magit-status)
   (setq magit-save-repository-buffers nil))
 
 (use-package forge
@@ -624,12 +703,17 @@
 
 (use-package avy
   :ensure t
+  :after evil  ; Load after evil since we define evil keybindings
+  :demand t
   :config
   (defun avy-goto-word-crt-line ()
     "Jump to a word start on the current line only."
     (interactive)
     (avy-with avy-goto-word-0
 			  (avy-goto-word-0 nil (line-beginning-position) (line-end-position))))
+  
+  (evil-define-key 'normal 'global (kbd "<leader>jj") 'avy-goto-char-timer)
+  (evil-define-key 'normal 'global (kbd "<leader>jw") 'avy-goto-word-crt-line)
   :bind (
 		 ("C-c j" . avy-goto-char-timer)
 		 ("C-c w" . avy-goto-word-crt-line)
@@ -661,6 +745,7 @@
 
 (use-package consult
   :ensure t
+  :after evil  ; Load after evil since we define evil keybindings
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -697,6 +782,9 @@
    :preview-key '(:debounce 0.4 any))
 
   (setq consult-narrow-key "<") ;; "C-+"
+  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>s") 'consult-line)
+  (evil-define-key 'normal 'global (kbd "<leader>d") 'consult-flymake)
   )
 
 (setq treesit-language-source-alist
@@ -755,20 +843,19 @@
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages
-   '(ace-window acp adaptive-wrap agent-shell agent-shell-sidebar aidermacs
-		auto-dark blamer catppuccin-theme claude-code claude-code-ide
-		consult-denote copilot corfu default-text-scale denote-menu
-		direnv doom-themes doric-themes eat ef-themes
-		exec-path-from-shell expand-region forge git-link gptel
-		imenu-list lsp-pyright lsp-ui marginalia meow mise mixed-pitch
-		multiple-cursors nerd-icons olivetti orderless ox-slack
-		poet-theme rbenv rg robe rspec-mode rust-mode shell-maker
-		south-theme standard-themes stimmung-themes tao-theme
-		tree-sitter-langs ultra-scroll verb vertico-posframe vterm
-		zoom-window))
+   '(ace-window acp adaptive-wrap agent-shell-sidebar aidermacs auto-dark blamer
+		catppuccin-theme claude-code claude-code-ide consult-denote
+		copilot corfu default-text-scale denote-menu direnv doom-themes
+		doric-themes eat ef-themes evil-collection evil-leader
+		evil-nerd-commenter evil-org evil-surround exec-path-from-shell
+		expand-region forge git-link gptel imenu-list lsp-pyright lsp-ui
+		marginalia meow mise mixed-pitch multiple-cursors nerd-icons
+		olivetti orderless ox-slack poet-theme rbenv rg robe rspec-mode
+		rust-mode shell-maker south-theme standard-themes
+		stimmung-themes tao-theme tree-sitter-langs ultra-scroll verb
+		vertico-posframe vterm zoom-window))
  '(package-vc-selected-packages
-   '((agent-shell-sidebar :url "https://github.com/cmacrae/agent-shell-sidebar")
-     (agent-shell :url "https://github.com/xenodium/agent-shell")
+   '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
      (nano :url "https://github.com/rougier/nano-emacs")
      (claude-code :url "https://github.com/stevemolitor/claude-code.el")
