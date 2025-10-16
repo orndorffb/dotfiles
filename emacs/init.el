@@ -116,6 +116,9 @@
   ;; Quit prompts/mini-windows with ESC everywhere
   (global-set-key (kbd "<escape>") #'keyboard-escape-quit)
 
+  ;; Map jk to escape in insert mode
+  (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
+
   ;; Start in Emacs/Insert state in terminal-ish buffers where modal keys are awkward
   (dolist (m '(term-mode vterm-mode eshell-mode shell-mode eat-mode))
     (add-to-list 'evil-emacs-state-modes m)
