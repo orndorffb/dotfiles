@@ -22,5 +22,5 @@ vim.opt.updatetime = 50
 vim.opt.list = true
 
 vim.o.background = "dark"
-vim.cmd.colorscheme("catppuccin-mocha")
+vim.cmd.colorscheme("zenbones")
 

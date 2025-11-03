@@ -107,9 +107,35 @@
 
   ;; Set leader key AFTER evil-mode is active
   (evil-set-leader '(normal visual motion) (kbd "SPC"))
+
+  ;; ---- Leader key bindings ----
+  ;; General
   (evil-define-key 'normal 'global (kbd "<leader>SPC") 'execute-extended-command)
+
+  ;; Project
   (evil-define-key 'normal 'global (kbd "<leader>pp") 'project-switch-project)
   (evil-define-key 'normal 'global (kbd "<leader>f") 'project-find-file)
+
+  ;; Buffers & Navigation (consult - loaded lazily)
+  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>s") 'consult-line)
+  (evil-define-key 'normal 'global (kbd "<leader>S") 'consult-imenu)
+  (evil-define-key 'normal 'global (kbd "<leader>d") 'consult-flymake)
+
+  ;; Git (magit - loaded lazily)
+  (evil-define-key 'normal 'global (kbd "<leader>g") 'magit-status)
+
+  ;; Jump (avy - loaded lazily)
+  (evil-define-key 'normal 'global (kbd "<leader>jj") 'avy-goto-char-timer)
+  (evil-define-key 'normal 'global (kbd "<leader>jw") 'avy-goto-word-crt-line)
+
+  ;; AI/LLM prefix <leader>a
+  (evil-define-key 'normal 'global (kbd "<leader>aa") 'gptel)              ; gptel chat
+  (evil-define-key 'normal 'global (kbd "<leader>am") 'gptel-menu)         ; gptel menu
+  (evil-define-key '(normal visual) 'global (kbd "<leader>as") 'gptel-send) ; gptel send
+  (evil-define-key 'normal 'global (kbd "<leader>ac") 'agent-shell-sidebar-toggle)  ; Claude Code
+  (evil-define-key 'normal 'global (kbd "<leader>af") 'agent-shell-sidebar-toggle-focus) ; Focus Claude
+  (evil-define-key 'normal 'global (kbd "<leader>at") 'copilot-mode)       ; Toggle copilot
 
   ;; Quit prompts/mini-windows with ESC everywhere
   (global-set-key (kbd "<escape>") #'keyboard-escape-quit)
@@ -500,14 +526,10 @@
   :vc (:url "https://github.com/copilot-emacs/copilot.el"
             :rev :newest
             :branch "main")
-  :after evil
   :config
   (setq copilot-node-executable "node")
   (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
-
-  ;; Evil leader binding for copilot
-  (evil-define-key 'normal 'global (kbd "<leader>at") 'copilot-mode))
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
 
 (defun my-get-openai-api-key ()
   "Retrieve OpenAI API key from authinfo."
@@ -527,7 +549,7 @@
   :vc (:url "https://github.com/xenodium/agent-shell"))
 
 (use-package agent-shell-sidebar
-  :after (agent-shell evil)
+  :after agent-shell
   :vc (:url "https://github.com/cmacrae/agent-shell-sidebar")
   :custom
   (agent-shell-sidebar-width "25%")
@@ -536,26 +558,16 @@
   (agent-shell-sidebar-position 'right)
   (agent-shell-sidebar-locked t)
   (agent-shell-sidebar-default-config
-   (agent-shell-anthropic-make-claude-code-config))
-  :config
-  ;; Evil leader bindings for agent-shell
-  (evil-define-key 'normal 'global (kbd "<leader>ac") 'agent-shell-sidebar-toggle)
-  (evil-define-key 'normal 'global (kbd "<leader>af") 'agent-shell-sidebar-toggle-focus))
+   (agent-shell-anthropic-make-claude-code-config)))
 
 (use-package gptel
   :ensure t
-  :after evil
   :config
   (setq gptel-default-model "gpt-4")
   (setq gptel-system-message "You are a helpful assistant.")
   (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
   (global-set-key (kbd "C-c <return>") 'gptel-send)
-  (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
-
-  ;; Evil leader bindings for gptel
-  (evil-define-key 'normal 'global (kbd "<leader>aa") 'gptel)           ; Open gptel buffer
-  (evil-define-key 'normal 'global (kbd "<leader>am") 'gptel-menu)     ; Open gptel menu
-  (evil-define-key '(normal visual) 'global (kbd "<leader>as") 'gptel-send))  ; Send to gptel
+  (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
 (use-package lsp-mode
   :ensure t
@@ -641,9 +653,7 @@
 
 (use-package magit
   :ensure t
-  :after evil  ; Load after evil since we define evil keybindings
   :config
-  (evil-define-key 'normal 'global (kbd "<leader>g") 'magit-status)
   (setq magit-save-repository-buffers nil))
 
 (use-package forge
@@ -757,7 +767,6 @@
 
 (use-package consult
   :ensure t
-  :after evil  ; Load after evil since we define evil keybindings
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
          ("C-c h" . consult-history)
@@ -777,7 +786,6 @@
 	 ("C-c d" . consult-flymake))
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :init
-
   (setq register-preview-delay 0.5
         register-preview-function #'consult-register-format)
 
@@ -793,12 +801,7 @@
    consult--source-recent-file consult--source-project-recent-file
    :preview-key '(:debounce 0.4 any))
 
-  (setq consult-narrow-key "<") ;; "C-+"
-  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
-  (evil-define-key 'normal 'global (kbd "<leader>s") 'consult-line)
-  (evil-define-key 'normal 'global (kbd "<leader>d") 'consult-flymake)
-  (evil-define-key 'normal 'global (kbd "<leader>S") 'consult-imenu)
-  )
+  (setq consult-narrow-key "<"))  ; "C-+"
 
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
