@@ -9,6 +9,9 @@ vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.smartindent = true
 
+-- Use system clipboard for all yank/paste operations
+vim.opt.clipboard = "unnamedplus"
+
 vim.opt.hidden = true
 vim.opt.swapfile = false
 vim.opt.backup = false
