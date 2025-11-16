@@ -27,7 +27,7 @@
 
 (add-to-list 'default-frame-alist     '(fullscreen . maximized))  ; don't use proxy icon
 (setq ns-use-proxy-icon nil)
-(add-to-list 'default-frame-alist '(internal-border-width . 10))
+(add-to-list 'default-frame-alist '(internal-border-width . 0))
 (add-to-list 'default-frame-alist '(left-fringe . 0))
 (add-to-list 'default-frame-alist '(right-fringe . 0))
   ; don't show buffer name in title bar
@@ -42,13 +42,11 @@
 ;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
 ;; --- Typography stack -------------------------------------------------------
 (setq custom-safe-themes t)
+(defvar my/font-family "Essential PragmataPro"
+  "Default font family used for both default and fixed-pitch faces.")
 
-(set-face-attribute 'default nil :family "Essential PragmataPro" :height 140)
-(set-face-attribute 'fixed-pitch nil :family "Essential PragmataPro")
-(set-face-attribute 'variable-pitch nil :family "Open Sans")
-
-;; (set-face-attribute 'default nil
-;;                     :height 160 :weight 'regular :family "Essential PragmataPro")
+(add-to-list 'default-frame-alist
+             `(font . ,(format "%s-16" my/font-family)))
 
 ;;--General editing
 (delete-selection-mode   t) ;; Replace selected text when yanking
@@ -85,6 +83,9 @@
                  eshell-mode-hook))
    (add-hook mode (lambda() (display-line-numbers-mode 0))))
 
+(global-set-key (kbd "C-=")
+                (lambda () (interactive) (global-text-scale-adjust 1)))
+
 ;;; --- Evil (modal editing) ---------------------------------------------------
 ;; Put this early so packages can see Evil's vars during their init.
 (use-package evil
@@ -103,7 +104,7 @@
         evil-want-C-i-jump nil)
   :config
   ;; Now activate evil-mode
-  (evil-mode 1)
+  ;; (evil-mode 1)
 
   ;; Set leader key AFTER evil-mode is active
   (evil-set-leader '(normal visual motion) (kbd "SPC"))
@@ -266,94 +267,54 @@
   :ensure t)
 
 ;;----Theme Stuff-----
-(use-package south-theme
-  :vc (:url "https://github.com/SophieBosio/south"
-       :rev :newest
-       :branch "main"))
-
-(use-package poet-theme
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+(use-package doom-themes
   :ensure t)
 
-(use-package tao-theme
+(use-package doom-modeline
   :ensure t
-  :config
-  (setq tao-theme-use-boxes nil))
+  :init
+  (doom-modeline-mode 1)
+  :custom
+  (doom-modeline-major-mode-icon t)
+  (doom-modeline-lsp-icon t)
+  (doom-modeline-major-mode-color-icon t)
+  (doom-modeline-height 25)
+  (doom-modeline-icon t))
 
-(use-package catppuccin-theme
-  :ensure t
-  :config)
-
-(defvar brian/default-dark-theme  'catppuccin)
-(defvar brian/default-light-theme 'catppuccin)
+(defvar brian/default-dark-theme  'compline)
+(defvar brian/default-light-theme 'compline)
 
 (defvar brian/default-dark-accent-colour  "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
 (load-theme brian/default-light-theme t)
 
-
 (use-package auto-dark
   :ensure t
-  :hook ((auto-dark-dark-mode
-          .
-          (lambda ()
-            (interactive)
-            (progn
-              (custom-set-faces
-               `(eval-sexp-fu-flash
-                 ((t (:background
-                      ,brian/default-dark-accent-colour)))))
-              `(load-theme ,brian/default-dark-theme t))))
-         (auto-dark-light-mode
-          .
-          (lambda ()
-            (interactive)
-            (progn
-              (custom-set-faces
-               `(eval-sexp-fu-flash
-                 ((t (:background
-                      ,brian/default-light-accent-colour)))))
-              `(load-theme ,brian/default-light-theme t)))))
+  :init
+  (auto-dark-mode t)
+  :hook
+  (auto-dark-dark-mode
+   . (lambda ()
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme brian/default-dark-theme t)
+       (custom-set-faces
+        `(eval-sexp-fu-flash ((t (:background ,brian/default-dark-accent-colour)))))))
+
+  (auto-dark-light-mode
+   . (lambda ()
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme brian/default-light-theme t)
+       (custom-set-faces
+        `(eval-sexp-fu-flash ((t (:background ,brian/default-light-accent-colour)))))))
+
   :custom
-  (auto-dark-themes                   `((,brian/default-dark-theme) (,brian/default-light-theme)))
+  (auto-dark-themes `((,brian/default-dark-theme) (,brian/default-light-theme)))
   (auto-dark-polling-interval-seconds 5)
-  (auto-dark-allow-osascript          t)
-  :init (auto-dark-mode t))
-
-(setq-default mode-line-format
-  '("%e"
-	(:propertize " " display (raise +0.4)) ;; Top padding
-	(:propertize " " display (raise -0.4)) ;; Bottom padding
-
-	(:propertize "λ " face font-lock-comment-face)
-	mode-line-frame-identification
-	mode-line-buffer-identification
-
-	;; Version control info
-	(:eval (when-let (vc vc-mode)
-			 ;; Use a pretty branch symbol in front of the branch name
-			 (list (propertize " ≡ " 'face 'font-lock-comment-face)
-                   ;; Truncate branch name to 50 characters
-				   (propertize (truncate-string-to-width
-                                (substring vc 5) 50)
-							   'face 'font-lock-comment-face))))
-
-	;; Add space to align to the right
-	(:eval (propertize
-			 " " 'display
-			 `((space :align-to
-					  (-  (+ right right-fringe right-margin)
-						 ,(+ 3
-                             (string-width (or lsp-modeline--code-actions-string ""))
-                             (string-width "%4l:3%c")))))))
-
-    ;; LSP code actions
-    ;(:eval (or lsp-modeline--code-actions-string ""))
-	;; Line and column numbers
-    (:propertize "%4l:%c" face mode-line-buffer-id)))
+  (auto-dark-allow-osascript t))
 
 (use-package autothemer
   :defer t)
-
 
 (use-package multiple-cursors
   :ensure t
@@ -831,7 +792,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("a60b04e5c0fef30209f9576f04651938472b57cb1dae0375d80a53a78f515f69"
+   '("9b0b957f7d1d066ac9741a1a17ffcb805a76a209efd28fb976dad1899d28f0b5"
+     "f2c6cb504edc275422116ba35e3897632974f9222b2bed4f5a81a6fd5bc76a13"
+     "a60b04e5c0fef30209f9576f04651938472b57cb1dae0375d80a53a78f515f69"
      "6f177b9a2579197e650918c8e53440997063b543fc854763e3597b5a4c33860d"
      "34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec"
      "3ef71018ff2043d308f8bc266787591acfaf8a0007621ca1304b0e3db6772c19"
@@ -858,18 +821,7 @@
      "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
      "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
      "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
- '(package-selected-packages
-   '(ace-window acp adaptive-wrap agent-shell-sidebar aidermacs auto-dark blamer
-		catppuccin-theme claude-code claude-code-ide consult-denote
-		copilot corfu default-text-scale denote-menu direnv doom-themes
-		doric-themes eat ef-themes evil-collection evil-leader
-		evil-nerd-commenter evil-org evil-surround exec-path-from-shell
-		expand-region forge git-link gptel imenu-list lsp-pyright lsp-ui
-		marginalia meow mise mixed-pitch multiple-cursors nerd-icons
-		olivetti orderless ox-slack poet-theme rbenv rg robe rspec-mode
-		rust-mode shell-maker south-theme standard-themes
-		stimmung-themes tao-theme tree-sitter-langs ultra-scroll verb
-		vertico-posframe vterm zoom-window))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
