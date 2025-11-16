@@ -1,408 +1,152 @@
 ;; -*- lexical-binding: t; -*-
+
+;;; ---------------------------------------------------------------------------
+;;; 0. Package system bootstrap
+;;; ---------------------------------------------------------------------------
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-(defun open-init-file ()
-  "Open the user's Emacs init file."
-  (interactive)
-  (find-file user-init-file))
+;;; ---------------------------------------------------------------------------
+;;; 1. Frame / UI basics
+;;; ---------------------------------------------------------------------------
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t
+      inhibit-startup-screen t
+      initial-buffer-choice t
+      initial-major-mode 'fundamental-mode
+      ring-bell-function 'ignore
+      display-time-default-load-average nil
+      scroll-margin 0
+      use-dialog-box nil
+      frame-title-format ""
+      ns-use-proxy-icon nil)
 
-(dolist (mode
-         '(tool-bar-mode       ;; Remove toolbar
-           scroll-bar-mode     ;; Remove scollbars
-           menu-bar-mode       ;; Remove menu bar
-           blink-cursor-mode))
-  
-  (funcall mode 0))
-
-(setq inhibit-startup-message           t       ;; No startup message
-      inhibit-startup-echo-area-message t       ;; No startup message in echo area
-      inhibit-startup-screen            t       ;; No default startup screen
-      initial-buffer-choice             t       ;; *scratch* is default startup buffer
-      initial-major-mode                'fundamental-mode
-      ring-bell-function                'ignore ;; No bell
-      display-time-default-load-average nil     ;; Don't show me load time
-      scroll-margin                     0       ;; Space between top/bottom
-      use-dialog-box                    nil)    ;; Disable dialog
-
-(add-to-list 'default-frame-alist     '(fullscreen . maximized))  ; don't use proxy icon
-(setq ns-use-proxy-icon nil)
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(internal-border-width . 0))
 (add-to-list 'default-frame-alist '(left-fringe . 0))
 (add-to-list 'default-frame-alist '(right-fringe . 0))
-  ; don't show buffer name in title bar
-(setq frame-title-format "")
-(add-to-list
-  'default-frame-alist'(ns-transparent-titlebar . t))
-(add-to-list
-  'default-frame-alist'(ns-appearance . light))
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . light))
 
-(setq auth-sources '("~/.authinfo"))
+(dolist (mode '(tool-bar-mode scroll-bar-mode menu-bar-mode blink-cursor-mode))
+  (funcall mode 0))
 
-;;--https://gist.github.com/rougier/8d5a712aa43e3cc69e7b0e325c84eab4
-;; --- Typography stack -------------------------------------------------------
-(setq custom-safe-themes t)
-(defvar my/font-family "Essential PragmataPro"
-  "Default font family used for both default and fixed-pitch faces.")
+(setq auth-sources '("~/.authinfo")
+      custom-safe-themes t)
 
-(add-to-list 'default-frame-alist
-             `(font . ,(format "%s-16" my/font-family)))
+;;; ---------------------------------------------------------------------------
+;;; 2. Fonts / typography
+;;; ---------------------------------------------------------------------------
+(defvar my/font-family "Essential PragmataPro")
+(add-to-list 'default-frame-alist `(font . ,(format "%s-16" my/font-family)))
 
-;;--General editing
-(delete-selection-mode   t) ;; Replace selected text when yanking
-(global-so-long-mode     t) ;; Mitigate performance for long lines
-(global-auto-revert-mode t) ;; Revert buffers automatically when they change
-(recentf-mode            t) ;; Remember recently opened files
-(savehist-mode           t) ;; Remember minibuffer prompt history
-(save-place-mode         t) ;; Remember last cursor location in file
-(which-key-mode          t)
+;;; ---------------------------------------------------------------------------
+;;; 3. Core editing behavior
+;;; ---------------------------------------------------------------------------
+(delete-selection-mode 1)
+(global-so-long-mode 1)
+(global-auto-revert-mode 1)
+(recentf-mode 1)
+(savehist-mode 1)
+(save-place-mode 1)
+(which-key-mode 1)
 
-(setq auto-revert-interval         1         ;; Refresh buffers fast
-      auto-revert-verbose          nil       ;; Don't notify me about reverts
-      echo-keystrokes              0.1       ;; Show keystrokes fast
-      frame-inhibit-implied-resize 1         ;; Don't resize frame implicitly
-      sentence-end-double-space    nil       ;; No double spaces
-      recentf-max-saved-items      1000      ;; Show more recent files
-      use-short-answers            t         ;; 'y'/'n' instead of 'yes'/'no' etc.
-      save-interprogram-paste-before-kill t  ;; Save copies between programs
-      history-length               25        ;; Only save the last 25 minibuffer prompts
-      global-auto-revert-non-file-buffers t) ;; Revert Dired and other buffers
+(setq auto-revert-interval 1
+      auto-revert-verbose nil
+      echo-keystrokes 0.1
+      frame-inhibit-implied-resize 1
+      sentence-end-double-space nil
+      recentf-max-saved-items 1000
+      use-short-answers t
+      save-interprogram-paste-before-kill t
+      history-length 25
+      global-auto-revert-non-file-buffers t
+      auto-save-default nil
+      backup-directory-alist '(("." . "~/.saves"))
+      backup-by-copying t
+      visible-bell nil
+      ring-bell-function #'ignore
+      create-lockfiles nil)
 
+(global-display-line-numbers-mode 1)
+(dolist (hook '(org-mode-hook term-mode-hook vterm-mode-hook eat-mode-hook
+                shell-mode-hook treemacs-mode-hook eshell-mode-hook))
+  (add-hook hook (lambda () (display-line-numbers-mode 0))))
 
-;;--My stuff--------------------------------------------------------------------
+;;; ---------------------------------------------------------------------------
+;;; 4. Global keybindings
+;;; ---------------------------------------------------------------------------
 (global-set-key (kbd "C-c p") 'project-find-file)
+(global-set-key (kbd "C-=") (lambda () (interactive) (global-text-scale-adjust 1)))
+(global-set-key (kbd "M-<down>") 'scroll-up-line)
+(global-set-key (kbd "M-<up>") 'scroll-down-line)
 
-;; Enable global line numbers
-(global-display-line-numbers-mode t)
- (dolist (mode '(org-mode-hook
-                 term-mode-hook
-                 vterm-mode-hook
-		 eat-mode-hook
-                 shell-mode-hook
-                 treemacs-mode-hook
-                 eshell-mode-hook))
-   (add-hook mode (lambda() (display-line-numbers-mode 0))))
-
-(global-set-key (kbd "C-=")
-                (lambda () (interactive) (global-text-scale-adjust 1)))
-
-;;; --- Evil (modal editing) ---------------------------------------------------
-;; Put this early so packages can see Evil's vars during their init.
+;;; ---------------------------------------------------------------------------
+;;; 5. Evil ecosystem
+;;; ---------------------------------------------------------------------------
 (use-package evil
-  :ensure t
-  :demand t  ; Load immediately, don't defer
+  :ensure t :demand t
   :init
-  ;; ALL settings that other packages need must be in :init
-  (setq evil-want-integration t               ; integrate with Emacs packages
-        evil-want-keybinding nil              ; we'll use evil-collection for keys
+  (setq evil-want-integration t
+        evil-want-keybinding nil
         evil-want-C-u-scroll t
         evil-want-C-d-scroll t
         evil-want-Y-yank-to-eol t
-        evil-undo-system 'undo-redo           ; Emacs 28+ native undo
+        evil-undo-system 'undo-redo
         evil-respect-visual-line-mode t
-        ;; Keep TAB for completion frameworks (C-i is TAB on many keyboards)
         evil-want-C-i-jump nil)
   :config
-  ;; Now activate evil-mode
-  ;; (evil-mode 1)
-
-  ;; Set leader key AFTER evil-mode is active
   (evil-set-leader '(normal visual motion) (kbd "SPC"))
-
-  ;; ---- Leader key bindings ----
-  ;; General
-  (evil-define-key 'normal 'global (kbd "<leader>SPC") 'execute-extended-command)
-
-  ;; Project
-  (evil-define-key 'normal 'global (kbd "<leader>pp") 'project-switch-project)
-  (evil-define-key 'normal 'global (kbd "<leader>f") 'project-find-file)
-
-  ;; Buffers & Navigation (consult - loaded lazily)
-  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
-  (evil-define-key 'normal 'global (kbd "<leader>s") 'consult-line)
-  (evil-define-key 'normal 'global (kbd "<leader>S") 'consult-imenu)
-  (evil-define-key 'normal 'global (kbd "<leader>d") 'consult-flymake)
-
-  ;; Git (magit - loaded lazily)
-  (evil-define-key 'normal 'global (kbd "<leader>g") 'magit-status)
-
-  ;; Jump (avy - loaded lazily)
-  (evil-define-key 'normal 'global (kbd "<leader>jj") 'avy-goto-char-timer)
-  (evil-define-key 'normal 'global (kbd "<leader>jw") 'avy-goto-word-crt-line)
-
-  ;; AI/LLM prefix <leader>a
-  (evil-define-key 'normal 'global (kbd "<leader>aa") 'gptel)              ; gptel chat
-  (evil-define-key 'normal 'global (kbd "<leader>am") 'gptel-menu)         ; gptel menu
-  (evil-define-key '(normal visual) 'global (kbd "<leader>as") 'gptel-send) ; gptel send
-  (evil-define-key 'normal 'global (kbd "<leader>ac") 'agent-shell-sidebar-toggle)  ; Claude Code
-  (evil-define-key 'normal 'global (kbd "<leader>af") 'agent-shell-sidebar-toggle-focus) ; Focus Claude
-  (evil-define-key 'normal 'global (kbd "<leader>at") 'copilot-mode)       ; Toggle copilot
-
-  ;; Quit prompts/mini-windows with ESC everywhere
   (global-set-key (kbd "<escape>") #'keyboard-escape-quit)
-
-  ;; Map jk to escape in insert mode
   (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
-
-  ;; Start in Emacs/Insert state in terminal-ish buffers where modal keys are awkward
   (dolist (m '(term-mode vterm-mode eshell-mode shell-mode eat-mode))
     (add-to-list 'evil-emacs-state-modes m)
     (add-hook (intern (format "%s-hook" m)) #'evil-emacs-state))
 
-  ;; Treemacs is better in motion state
-  (with-eval-after-load 'treemacs
-    (add-to-list 'evil-motion-state-modes 'treemacs-mode))
+  ;; Leader keys
+  (evil-define-key 'normal 'global (kbd "<leader>SPC") 'execute-extended-command)
+  (evil-define-key 'normal 'global (kbd "<leader>pp") 'project-switch-project)
+  (evil-define-key 'normal 'global (kbd "<leader>f") 'project-find-file)
+  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>s") 'consult-line)
+  (evil-define-key 'normal 'global (kbd "<leader>S") 'consult-imenu)
+  (evil-define-key 'normal 'global (kbd "<leader>d") 'consult-flymake)
+  (evil-define-key 'normal 'global (kbd "<leader>g") 'magit-status)
+  (evil-define-key 'normal 'global (kbd "<leader>jj") 'avy-goto-char-timer)
+  (evil-define-key 'normal 'global (kbd "<leader>jw") 'avy-goto-word-0)
+  (evil-define-key '(normal visual) 'global (kbd "<leader>as") 'gptel-send)
+  (evil-define-key 'normal 'global (kbd "<leader>aa") 'gptel)
+  (evil-define-key 'normal 'global (kbd "<leader>am") 'gptel-menu)
+  (evil-define-key 'normal 'global (kbd "<leader>ac") 'agent-shell-sidebar-toggle)
+  (evil-define-key 'normal 'global (kbd "<leader>af") 'agent-shell-sidebar-toggle-focus)
+  (evil-define-key 'normal 'global (kbd "<leader>at") 'copilot-mode)
 
-  ;; Make j/k move by visual lines when wrapping is on (you already use visual-line-mode for Org)
+  ;; Visual line j/k
   (evil-define-key 'normal global-map (kbd "j") #'evil-next-visual-line)
-  (evil-define-key 'normal global-map (kbd "k") #'evil-previous-visual-line)
-  )
+  (evil-define-key 'normal global-map (kbd "k") #'evil-previous-visual-line))
 
-;; Collection of Evil keybindings for many modes (Magit, Help, dired, etc.)
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :config
-  ;; enable a broad set, including magit/vertico/help/etc.
-  (evil-collection-init))
-
-;; Text objects and quick commenting (super handy, low surface area)
-(use-package evil-surround
-  :ensure t
-  :after evil
-  :config (global-evil-surround-mode 1))
-
+(use-package evil-collection :ensure t :after evil :config (evil-collection-init))
+(use-package evil-surround :ensure t :after evil :config (global-evil-surround-mode 1))
 (use-package evil-nerd-commenter
-  :ensure t
-  :after evil
-  :bind (("M-/" . evilnc-comment-or-uncomment-lines)) ; keep your hands on home row
+  :ensure t :after evil
+  :bind (("M-/" . evilnc-comment-or-uncomment-lines))
   :config
-  ;; Also map gc in normal/visual like Vim
   (define-key evil-normal-state-map (kbd "gc") #'evilnc-comment-operator)
   (define-key evil-visual-state-map (kbd "gc") #'evilnc-comment-operator))
 
-;; Optional: nicer Org keybindings on top of Evil
 (use-package evil-org
-  :ensure t
-  :after (evil org)
-  :hook (org-mode . (lambda ()
-                      (evil-org-mode 1)
+  :ensure t :after (evil org)
+  :hook (org-mode . (lambda () (evil-org-mode 1)
                       (evil-org-set-key-theme
                        '(navigation insert textobjects additional)))))
 
-
-(use-package mixed-pitch
-  :ensure t
-  :hook ((org-mode   . mixed-pitch-mode)
-         (LaTeX-mode . mixed-pitch-mode)))
-
-(use-package olivetti
-  :ensure t
-  :bind
-  (("C-c o" . olivetti-mode))
-  :config
-  (setq olivetti-style t))
-
-(use-package adaptive-wrap
-  :ensure t
-  :hook (visual-line-mode . adaptive-wrap-prefix-mode))
-
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (setq exec-path-from-shell-shell-name "/bin/zsh")
-  (exec-path-from-shell-initialize))
-
-(use-package denote
-  :ensure t
-  :hook
-  ((text-mode . denote-fontify-links-mode-maybe)
-   (dired-mode . denote-dired-mode))
-  :bind
-  ( :map global-map
-    ("C-c n n" . denote)
-    ("C-c n d" . denote-dired)
-    ("C-c n g" . denote-grep)
-    ("C-c n l" . denote-link)
-    ("C-c n L" . denote-add-links)
-    ("C-c n b" . denote-backlinks)
-    ("C-c n q c" . denote-query-contents-link) ; create link that triggers a grep
-    ("C-c n q f" . denote-query-filenames-link) ; create link that triggers a dired
-    ("C-c n r" . denote-rename-file)
-    ("C-c n R" . denote-rename-file-using-front-matter)
-
-    ;; Key bindings specifically for Dired.
-    :map dired-mode-map
-    ("C-c C-d C-i" . denote-dired-link-marked-notes)
-    ("C-c C-d C-r" . denote-dired-rename-files)
-    ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
-    ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
-
-  :config
-  (setq denote-directory (expand-file-name "~/Documents/notes/"))
-  (setq denote-save-buffers nil)
-  (setq denote-known-keywords '("emacs"))
-  (setq denote-infer-keywords t)
-  (setq denote-sort-keywords t)
-  (setq denote-prompts '(title keywords))
-  (setq denote-excluded-directories-regexp nil)
-  (setq denote-excluded-keywords-regexp nil)
-  (setq denote-rename-confirmations '(rewrite-front-matter modify-file-name))
-
-  (setq denote-date-prompt-use-org-read-date t)
-  (denote-rename-buffer-mode 1))
-
-(use-package consult-denote
-  :ensure t
-  :bind
-  (("C-c n f" . consult-denote-find)
-   ("C-c n g" . consult-denote-grep))
-  :config
-  (consult-denote-mode 1))
-
-(use-package denote-menu
-  :ensure t)
-
-(use-package nerd-icons
-  :ensure t)
-
-;;----Theme Stuff-----
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-(use-package doom-themes
-  :ensure t)
-
-(use-package doom-modeline
-  :ensure t
-  :init
-  (doom-modeline-mode 1)
-  :custom
-  (doom-modeline-major-mode-icon t)
-  (doom-modeline-lsp-icon t)
-  (doom-modeline-major-mode-color-icon t)
-  (doom-modeline-height 25)
-  (doom-modeline-icon t))
-
-(defvar brian/default-dark-theme  'compline)
-(defvar brian/default-light-theme 'compline)
-
-(defvar brian/default-dark-accent-colour  "SkyBlue4")
-(defvar brian/default-light-accent-color "#8fafe3")
-(load-theme brian/default-light-theme t)
-
-(use-package auto-dark
-  :ensure t
-  :init
-  (auto-dark-mode t)
-  :hook
-  (auto-dark-dark-mode
-   . (lambda ()
-       (mapc #'disable-theme custom-enabled-themes)
-       (load-theme brian/default-dark-theme t)
-       (custom-set-faces
-        `(eval-sexp-fu-flash ((t (:background ,brian/default-dark-accent-colour)))))))
-
-  (auto-dark-light-mode
-   . (lambda ()
-       (mapc #'disable-theme custom-enabled-themes)
-       (load-theme brian/default-light-theme t)
-       (custom-set-faces
-        `(eval-sexp-fu-flash ((t (:background ,brian/default-light-accent-colour)))))))
-
-  :custom
-  (auto-dark-themes `((,brian/default-dark-theme) (,brian/default-light-theme)))
-  (auto-dark-polling-interval-seconds 5)
-  (auto-dark-allow-osascript t))
-
-(use-package autothemer
-  :defer t)
-
-(use-package multiple-cursors
-  :ensure t
-  :functions
-  mc/remove-fake-cursors
-  mc/save-excursion
-  mc/create-fake-cursor-at-point
-  mc/maybe-multiple-cursors-mode
-  :bind
-  ("M-n" . mc/mark-next-like-this)
-  ("M-p" . mc/mark-previous-like-this))
-
-(defvar lsp-modeline--code-actions-string nil)
-
-;; Line splitting sutff
-(defun split-window-sensibly-prefer-horizontal (&optional window)
-"Based on `split-window-sensibly', but prefers to split WINDOW side-by-side."
-  (let ((window (or window (selected-window))))
-    (or (and (window-splittable-p window t)
-         ;; Split window horizontally
-         (with-selected-window window
-           (split-window-right)))
-    (and (window-splittable-p window)
-         ;; Split window vertically
-         (with-selected-window window
-           (split-window-below)))
-    (and
-         ;; If WINDOW is the only usable window on its frame (it is
-         ;; the only one or, not being the only one, all the other
-         ;; ones are dedicated) and is not the minibuffer window, try
-         ;; to split it horizontally disregarding the value of
-         ;; `split-height-threshold'.
-         (let ((frame (window-frame window)))
-           (or
-            (eq window (frame-root-window frame))
-            (catch 'done
-              (walk-window-tree (lambda (w)
-                                  (unless (or (eq w window)
-                                              (window-dedicated-p w))
-                                    (throw 'done nil)))
-                                frame)
-              t)))
-     (not (window-minibuffer-p window))
-     (let ((split-width-threshold 0))
-       (when (window-splittable-p window t)
-         (with-selected-window window
-               (split-window-right))))))))
-
-(defun split-window-really-sensibly (&optional window)
-  (let ((window (or window (selected-window))))
-    (if (> (window-total-width window) (* 2 (window-total-height window)))
-        (with-selected-window window (split-window-sensibly-prefer-horizontal window))
-      (with-selected-window window (split-window-sensibly window)))))
-
-(setq split-window-preferred-function 'split-window-really-sensibly)
-
-(setq-default split-height-threshold nil
-              split-width-threshold  nil
-              fill-column            80) ;; Maximum line width
-              ;; window-min-width       80) ;; No smaller windows than this
-
-;; Window and buffer management
-(global-set-key (kbd "C-x |") 'split-window-horizontally)
-(global-set-key (kbd "C-x -") 'split-window-vertically)
-(global-set-key (kbd "M-<down>") 'scroll-up-line)
-(global-set-key (kbd "M-<up>") 'scroll-down-line)
-
-(delete-selection-mode 1)
-(setq compilation-scroll-output t)
-
-(setq auto-save-default nil)
-(setq backup-directory-alist '(("." . "~/.saves")))
-(setq backup-by-copying t)
-(setq visible-bell       nil
-      ring-bell-function #'ignore)
-
-;; no backup files
-(setq-default make-backup-files nil)
-;; no lockfiles
-(setq create-lockfiles nil)
-
-;; Some keybinds for basic stuff
-
-
-;; Org stuff
+;;; ---------------------------------------------------------------------------
+;;; 6. Org mode
+;;; ---------------------------------------------------------------------------
 (add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
 (global-set-key (kbd "C-c C-c") 'org-capture)
+
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
          "* TODO %?\n  %i\n  %a")
@@ -410,360 +154,159 @@
          "* %?\nEntered on %U\n  %i\n  %a")))
 
 (org-babel-do-load-languages
-    'org-babel-load-languages
-        '(
-            (shell . t)
-            ;; Other languages...
-        )
-    )
+ 'org-babel-load-languages
+ '((shell . t)))
 
-(defun run-standardrb-on-current-file ()
-  "Run <project_root>/bin/standardrb <current_file> --fix-unsafely."
-  (interactive)
-  (let* ((project-root (locate-dominating-file default-directory ".git")) ; Adjust this to your project's root indicator
-         (current-file (buffer-file-name))
-         (standardrb-command (concat (expand-file-name "bin/standardrb" project-root)
-                                     " " (shell-quote-argument current-file)
-                                     " --fix-unsafely")))
-    (if (and project-root current-file)
-        (shell-command standardrb-command)
-      (message "Could not find project root or current file."))))
-
-(use-package imenu-list
+(use-package mixed-pitch
   :ensure t
-  :bind  ("M-g i" . imenu-list-smart-toggle))
+  :hook ((org-mode . mixed-pitch-mode)
+         (LaTeX-mode . mixed-pitch-mode)))
 
-(use-package expand-region
+;;; ---------------------------------------------------------------------------
+;;; 7. UI packages (themes, modeline, auto-dark)
+;;; ---------------------------------------------------------------------------
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+
+(use-package doom-themes :ensure t)
+
+(use-package doom-modeline
+  :ensure t :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-major-mode-icon t)
+           (doom-modeline-lsp-icon t)
+           (doom-modeline-major-mode-color-icon t)
+           (doom-modeline-height 25)
+           (doom-modeline-icon t)))
+
+(defvar brian/default-dark-theme 'compline)
+(defvar brian/default-light-theme 'compline)
+(defvar brian/default-dark-accent-colour "SkyBlue4")
+(defvar brian/default-light-accent-color "#8fafe3")
+
+(load-theme brian/default-light-theme t)
+
+(use-package auto-dark
+  :ensure t :init (auto-dark-mode 1)
+  :hook
+  (auto-dark-dark-mode
+   . (lambda ()
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme brian/default-dark-theme t)
+       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-dark-accent-colour)))))))
+  (auto-dark-light-mode
+   . (lambda ()
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme brian/default-light-theme t)
+       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-light-accent-color))))))))
+
+(use-package olivetti :ensure t :bind (("C-c o" . olivetti-mode)))
+(use-package adaptive-wrap :ensure t :hook (visual-line-mode . adaptive-wrap-prefix-mode))
+(use-package nerd-icons :ensure t)
+(use-package autothemer :defer t)
+
+;;; ---------------------------------------------------------------------------
+;;; 8. Completion / navigation stack
+;;; ---------------------------------------------------------------------------
+(use-package vertico :ensure t :config (vertico-mode) (vertico-multiform-mode))
+(use-package marginalia :ensure t :init (marginalia-mode))
+(use-package orderless :ensure t :custom (completion-styles '(orderless basic)))
+(use-package consult
   :ensure t
-  :bind (("C-c SPC" . er/expand-region)))
+  :bind (("C-s"     . consult-line)
+         ("C-x C-b" . consult-buffer)
+         ("C-c h"   . consult-history)
+         ("C-c s"   . consult-imenu)
+         ("C-c d"   . consult-flymake)))
 
-;; Taken from https://github.com/LionyxML/emacs-kick/blob/master/init.el#L301C1-L333C9
-(use-package window
-  :ensure nil       ;; This is built-in, no need to fetch it.
+;;; ---------------------------------------------------------------------------
+;;; 9. Window management
+;;; ---------------------------------------------------------------------------
+(use-package window :ensure nil
   :custom
   (display-buffer-alist
-   '(
-     ;; ("\\*.*e?shell\\*"
-     ;;  (display-buffer-in-side-window)
-     ;;  (window-height . 0.25)
-     ;;  (side . bottom)
-     ;;  (slot . -1))
-
-     ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|[Hh]elp\\|Messages\\|Bookmark List\\|Ibuffer\\|Occur\\|eldoc.*\\)\\*"
-      (display-buffer-in-side-window)
-      (window-height . 0.25)
-      (side . bottom)
-      (slot . 0))
-
-     ;; Example configuration for the LSP help buffer,
-     ;; keeps it always on bottom using 25% of the available space:
-     ("\\*\\(lsp-help\\)\\*"
-      (display-buffer-in-side-window)
-      (window-height . 0.25)
-      (side . bottom)
-      (slot . 0))
-
-     ;; Configuration for displaying various diagnostic buffers on
-     ;; bottom 25%:
+   '(("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|[Hh]elp\\|Messages\\|Bookmark List\\|Ibuffer\\|Occur\\|eldoc.*\\)\\*"
+      (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 0))
+     ("\\*\\(lsp-help\\)\\*" 
+      (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 0))
      ("\\*\\(Flymake diagnostics\\|xref\\|ivy\\|Swiper\\|Completions\\)"
-      (display-buffer-in-side-window)
-      (window-height . 0.25)
-      (side . bottom)
-      (slot . 1))
-     )))
+      (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 1)))))
+
+(use-package ace-window :ensure t :bind (("M-o" . ace-window)))
+(use-package avy :ensure t :bind (("C-c j" . avy-goto-char-timer)
+                                  ("C-c w" . avy-goto-word-0)))
 
 (use-package ultra-scroll
-  :vc (:url "https://github.com/jdtsmith/ultra-scroll"
-            :rev :newest
-            :branch "main")
-  :init
-  (setq scroll-conservatively 101 ; important!
-        scroll-margin 0)
+  :vc (:url "https://github.com/jdtsmith/ultra-scroll" :rev :newest)
+  :init (setq scroll-conservatively 101 scroll-margin 0)
+  :config (ultra-scroll-mode 1))
+
+;;; ---------------------------------------------------------------------------
+;;; 10. AI tools
+;;; ---------------------------------------------------------------------------
+(use-package gptel :ensure t
   :config
-  (ultra-scroll-mode 1))
-
-
-(use-package copilot
-  :vc (:url "https://github.com/copilot-emacs/copilot.el"
-            :rev :newest
-            :branch "main")
-  :config
-  (setq copilot-node-executable "node")
-  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion))
-
-(defun my-get-openai-api-key ()
-  "Retrieve OpenAI API key from authinfo."
-  (let ((auth (car (auth-source-search :host "api.openai.com"
-                                       :user "apikey"
-                                       :require '(:secret)))))
-    (when auth
-      (funcall (plist-get auth :secret)))))
-
-(use-package shell-maker
-  :ensure t)
-
-(use-package acp
-  :vc (:url "https://github.com/xenodium/acp.el"))
-
-(use-package agent-shell
-  :vc (:url "https://github.com/xenodium/agent-shell"))
-
-(use-package agent-shell-sidebar
-  :after agent-shell
-  :vc (:url "https://github.com/cmacrae/agent-shell-sidebar")
-  :custom
-  (agent-shell-sidebar-width "25%")
-  (agent-shell-sidebar-minimum-width 80)
-  (agent-shell-sidebar-maximum-width "50%")
-  (agent-shell-sidebar-position 'right)
-  (agent-shell-sidebar-locked t)
-  (agent-shell-sidebar-default-config
-   (agent-shell-anthropic-make-claude-code-config)))
-
-(use-package gptel
-  :ensure t
-  :config
-  (setq gptel-default-model "gpt-4")
-  (setq gptel-system-message "You are a helpful assistant.")
-  (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
+  (setq gptel-default-model "gpt-4"
+        gptel-system-message "You are a helpful assistant.")
   (global-set-key (kbd "C-c <return>") 'gptel-send)
+  (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
+(use-package shell-maker :ensure t)
+(use-package acp :vc (:url "https://github.com/xenodium/acp.el"))
+(use-package agent-shell :vc (:url "https://github.com/xenodium/agent-shell"))
+(use-package agent-shell-sidebar
+  :after agent-shell
+  :vc (:url "https://github.com/cmacrae/agent-shell-sidebar"))
+
+(use-package copilot
+  :vc (:url "https://github.com/copilot-emacs/copilot.el")
+  :config
+  (setq copilot-node-executable "node")
+  (define-key copilot-completion-map (kbd "<tab>") #'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") #'copilot-accept-completion))
+
+;;; ---------------------------------------------------------------------------
+;;; 11. LSP + programming languages
+;;; ---------------------------------------------------------------------------
 (use-package lsp-mode
   :ensure t
   :init
   (setq lsp-keymap-prefix "C-c l"
-        lsp-headerline-breadcrumb-enable nil)
-  (setq lsp-signature-render-documentation nil)
-  (setq lsp-signature-auto-activate nil)
-  ;; Prefer Pyright over other Python servers
-  (setq lsp-disabled-clients
-        '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls srb-ls semgrep-ls stree-ls
-          pylsp mspyls)) ;; disable pylsp / old MS server so Pyright wins
-  :hook ((ruby-ts-mode   . lsp)
-         (python-mode    . lsp-deferred)   ;; Emacs 28/29
-         (python-ts-mode . lsp-deferred))  ;; Emacs 29/30 (treesitter)
-  :commands (lsp lsp-deferred))
+        lsp-headerline-breadcrumb-enable nil
+        lsp-signature-render-documentation nil
+        lsp-signature-auto-activate nil
+        lsp-disabled-clients '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls
+                               srb-ls semgrep-ls stree-ls pylsp mspyls))
+  :hook ((ruby-ts-mode . lsp)
+         (python-mode . lsp-deferred)
+         (python-ts-mode . lsp-deferred)))
 
-(use-package lsp-pyright
-  :ensure t
-  :after lsp-mode
-  :hook ((python-mode
-          . (lambda ()
-              (require 'lsp-pyright)  ;; ensure client is loaded
-              (lsp-deferred)))
-         (python-ts-mode
-          . (lambda ()
-              (require 'lsp-pyright)
-              (lsp-deferred))))
-  :init
-  ;; Tweak to taste:
-  (setq lsp-pyright-python-executable-cmd "python3"    ;; or your venv's python
-        lsp-pyright-typechecking-mode "basic"          ;; "off" | "basic" | "standard" | "strict"
-        lsp-pyright-auto-import-completions t
-        lsp-pyright-use-library-code-for-types t))
+(use-package lsp-pyright :ensure t :after lsp-mode)
+(use-package lsp-ui :ensure t)
 
-(use-package lsp-ui
-  :ensure t
-  :init
-  (setq lsp-ui-doc-enable t
-        lsp-ui-doc-position 'at-point
-        lsp-ui-peek-enable t
-        lsp-ui-sideline-enable nil
-        lsp-ui-sideline-show-hover t
-        lsp-ui-imenu-enable t))
+(use-package tree-sitter :ensure t :config (global-tree-sitter-mode))
+(use-package tree-sitter-langs :ensure t :after tree-sitter)
 
-;; (use-package Eglot
-;;   :ensure t
-;;   :hook ((ruby-ts-mode . eglot-ensure)
-;;          (rust-mode . eglot-ensure)
-;; 	 (python-ts-mode . eglot-ensure)
-;;          (elixir-mode . eglot-ensure))
-;;   :config
-;;   (setq eglot-ignored-server-capabilities '(:documentHighlightProvider))
-;;   (setq eglot-server-programs '(
-;;                                 (ruby-mode . ("ruby-lsp"))
-;; 				(python-ts-mode . ("pyright-langserver" "--stdio"))
-;;                                 ;;(rust-mode . ("rust-analyzer"))
-;;                                 ;;(elixir-mode . ("elixir-ls"))
-;;                                 )))
-
-;; (setq eglot-workspace-configuration
-;;       '((solargraph (diagnostics . t))))
-
-(use-package tree-sitter
-  :ensure t
-  :config
-  (global-tree-sitter-mode))
-
-(use-package tree-sitter-langs
-  :ensure t
-  :after tree-sitter)
-
-(use-package direnv
- :ensure t
- :config
- (direnv-mode))
-
-(setq major-mode-remap-alist
-      '((python-mode . python-ts-mode)))
-
-(use-package transient
-  :ensure t)
-
-(use-package magit
-  :ensure t
-  :config
-  (setq magit-save-repository-buffers nil))
-
-(use-package forge
-  :ensure t
-  :after (magit transient))
-
-(use-package git-link
-  :ensure t
-  :init
-  (setq git-link-use-commit t
-        git-link-open-in-browser t))
-
-(use-package blamer
-  :ensure t
-  :after magit
-  :bind (("C-c g i" . blamer-show-commit-info)
-         ("C-c g b" . blamer-show-posframe-commit-info))
-  :defer 20
-  :custom
-  (blamer-idle-time                 0.3)
-  (blamer-min-offset                4)
-  (blamer-max-commit-message-length 100)
-  (blamer-datetime-formatter        "[%s]")
-  (blamer-commit-formatter          " ● %s")
-  :custom-face
-  (blamer-face ((t :foreground "#7aa2cf"
-                    :background nil
-                    :height 1
-                    :italic nil))))
-
-(use-package corfu
-  :ensure t
-  :custom
-  (corfu-auto t)                 ;; Enable auto completion
-  :init
-  (global-corfu-mode))
-
-;; Rust mode setup
-(use-package rust-mode
-  :ensure t
-  :hook (rust-mode . (lambda ()
-                       (setq indent-tabs-mode nil) ; Use spaces instead of tabs
-                       (setq rust-format-on-save t)))) ; Format on save
-
-
-;; Use ruby-ts-mode instead of ruby-mode
+(setq major-mode-remap-alist '((python-mode . python-ts-mode)))
 (when (treesit-available-p)
   (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode)))
 
-(use-package ruby-mode
-  :ensure t
-  :init
-  (setq ruby-indent-level 2))
+(use-package ruby-mode :ensure t :init (setq ruby-indent-level 2))
+(use-package rspec-mode :ensure t :after ruby-mode)
+(use-package rust-mode :ensure t :hook (rust-mode . (lambda ()
+                                                      (setq indent-tabs-mode nil
+                                                            rust-format-on-save t))))
 
-(use-package rspec-mode
-  :ensure t
-  :after ruby-mode
-  :config
-  (setq rspec-use-spring-when-possible nil)
-  (add-hook 'ruby-mode-hook 'rspec-mode))
-  
-(use-package ace-window
-  :ensure t
-  :init (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-  (setq aw-ignore-current t)
-  (setq aw-dispatch-always nil)
-  (setq aw-minibuffer-flag t)
-  :bind (( "M-o" . ace-window)))
+;;; ---------------------------------------------------------------------------
+;;; 12. Git tooling
+;;; ---------------------------------------------------------------------------
+(use-package magit :ensure t)
+(use-package forge :ensure t :after magit)
+(use-package git-link :ensure t)
+(use-package blamer :ensure t)
 
-(use-package avy
-  :ensure t
-  :after evil  ; Load after evil since we define evil keybindings
-  :demand t
-  :config
-  (defun avy-goto-word-crt-line ()
-    "Jump to a word start on the current line only."
-    (interactive)
-    (avy-with avy-goto-word-0
-			  (avy-goto-word-0 nil (line-beginning-position) (line-end-position))))
-  
-  (evil-define-key 'normal 'global (kbd "<leader>jj") 'avy-goto-char-timer)
-  (evil-define-key 'normal 'global (kbd "<leader>jw") 'avy-goto-word-crt-line)
-  :bind (
-		 ("C-c j" . avy-goto-char-timer)
-		 ("C-c w" . avy-goto-word-crt-line)
-		 ))
-
-(use-package orderless
-  :ensure t
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
-
-(use-package vertico
-  :ensure t
-  :config
-  (vertico-mode)
-  (vertico-multiform-mode)
-  (setq read-extended-command-predicate       'command-completion-default-include-p
-        vertico-count                         32  ; Show more candidates
-        read-file-name-completion-ignore-case t   ; Ignore case of file names
-        read-buffer-completion-ignore-case    t   ; Ignore case in buffer completion
-        completion-ignore-case                t)) ; Ignore case in completion
-
-(use-package marginalia
-  :ensure t
-  :bind (:map minibuffer-local-map
-              ("M-A" . marginalia-cycle))
-  :init
-  (marginalia-mode))
-
-(use-package consult
-  :ensure t
-  :bind (;; C-c bindings in `mode-specific-map'
-         ("C-c M-x" . consult-mode-command)
-         ("C-c h" . consult-history)
-         ("C-c m" . consult-man)
-         ("C-c i" . consult-info)
-	 ("C-s" . consult-line)
-	 ("C-c s" . consult-imenu)
-	 ("C-x C-b" . consult-buffer)
-         ([remap Info-search] . consult-info)
-         ;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
-         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-	 ("C-c d" . consult-flymake))
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-  :init
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-
-  (advice-add #'register-preview :override #'consult-register-window)
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
-  :config
-  (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   :preview-key '(:debounce 0.4 any))
-
-  (setq consult-narrow-key "<"))  ; "C-+"
-
+;;; ---------------------------------------------------------------------------
+;;; 13. Treesitter language sources
+;;; ---------------------------------------------------------------------------
 (setq treesit-language-source-alist
       '((bash "https://github.com/tree-sitter/tree-sitter-bash")
 	(c "https://github.com/tree-sitter/tree-sitter-c")
@@ -786,6 +329,31 @@
 	(heex "https://github.com/phoenixframework/tree-sitter-heex")
 	(yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
+;;; ---------------------------------------------------------------------------
+;;; 14. Misc utilities
+;;; ---------------------------------------------------------------------------
+(use-package imenu-list :ensure t :bind (("M-g i" . imenu-list-smart-toggle)))
+(use-package expand-region :ensure t :bind (("C-c SPC" . er/expand-region)))
+
+;;; ---------------------------------------------------------------------------
+;;; 15. Custom functions
+;;; ---------------------------------------------------------------------------
+(defun open-init-file () (interactive) (find-file user-init-file))
+
+(defun run-standardrb-on-current-file ()
+  (interactive)
+  (let* ((project-root (locate-dominating-file default-directory ".git"))
+         (current-file (buffer-file-name))
+         (cmd (concat (expand-file-name "bin/standardrb" project-root)
+                      " " (shell-quote-argument current-file)
+                      " --fix-unsafely")))
+    (if (and project-root current-file)
+        (shell-command cmd)
+      (message "Could not find project root or current file."))))
+
+;;; ---------------------------------------------------------------------------
+;;; 16. Custom (auto-generated)
+;;; ---------------------------------------------------------------------------
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
