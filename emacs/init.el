@@ -22,7 +22,7 @@
       ns-use-proxy-icon nil)
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(internal-border-width . 0))
+(add-to-list 'default-frame-alist '(internal-border-width . 8))
 (add-to-list 'default-frame-alist '(left-fringe . 0))
 (add-to-list 'default-frame-alist '(right-fringe . 0))
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -34,11 +34,20 @@
 (setq auth-sources '("~/.authinfo")
       custom-safe-themes t)
 
+(use-package spacious-padding
+  :ensure t
+  :config
+  ;;(spacious-padding-mode)
+)
+
 ;;; ---------------------------------------------------------------------------
 ;;; 2. Fonts / typography
 ;;; ---------------------------------------------------------------------------
-(defvar my/font-family "Essential PragmataPro")
-(add-to-list 'default-frame-alist `(font . ,(format "%s-16" my/font-family)))
+(defvar my/variable-pitch-font "Aporetic Sans")
+(defvar my/fixed-pitch-font "Aporetic Sans Mono")
+
+(add-to-list 'default-frame-alist `(font . ,(format "%s-14" my/fixed-pitch-font)))
+(add-to-list 'default-frame-alist `(variable-pitch . ,(format "%s-14" my/variable-pitch-font)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; 3. Core editing behavior
@@ -77,7 +86,7 @@
 ;;; 4. Global keybindings
 ;;; ---------------------------------------------------------------------------
 (global-set-key (kbd "C-c p") 'project-find-file)
-(global-set-key (kbd "C-=") (lambda () (interactive) (global-text-scale-adjust 1)))
+(global-set-key (kbd "s-=") (lambda () (interactive) (global-text-scale-adjust 1)))
 (global-set-key (kbd "M-<down>") 'scroll-up-line)
 (global-set-key (kbd "M-<up>") 'scroll-down-line)
 
@@ -143,9 +152,21 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 6. Org mode
 ;;; ---------------------------------------------------------------------------
-(add-hook 'org-mode-hook 'org-indent-mode)
-(add-hook 'org-mode-hook 'visual-line-mode)
 (global-set-key (kbd "C-c C-c") 'org-capture)
+
+(use-package org-modern
+  :ensure t
+  :after org
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq org-modern-list '(bullet checklist))
+  (setq org-modern-star '("•"))
+  (setq org-modern-block-fringe t
+        org-modern-block-name t
+        org-modern-timestamp t
+        org-modern-keyword t
+        org-modern-table t))
+
 
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
@@ -165,20 +186,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-
-(use-package doom-themes :ensure t)
-
-(use-package doom-modeline
-  :ensure t :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-major-mode-icon t)
-           (doom-modeline-lsp-icon t)
-           (doom-modeline-major-mode-color-icon t)
-           (doom-modeline-height 25)
-           (doom-modeline-icon t)))
-
-(defvar brian/default-dark-theme 'compline)
-(defvar brian/default-light-theme 'compline)
+(defvar brian/default-dark-theme 'modus-vivendi)
+(defvar brian/default-light-theme 'modus-operandi-tinted)
 (defvar brian/default-dark-accent-colour "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
 
@@ -198,7 +207,12 @@
        (load-theme brian/default-light-theme t)
        (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-light-accent-color))))))))
 
-(use-package olivetti :ensure t :bind (("C-c o" . olivetti-mode)))
+(use-package olivetti
+  :ensure t
+  :config
+  (setq olivetti-body-width 0.8)
+  :bind (("C-c o" . olivetti-mode)))
+
 (use-package adaptive-wrap :ensure t :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 (use-package nerd-icons :ensure t)
 (use-package autothemer :defer t)
@@ -359,45 +373,16 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("9b0b957f7d1d066ac9741a1a17ffcb805a76a209efd28fb976dad1899d28f0b5"
-     "f2c6cb504edc275422116ba35e3897632974f9222b2bed4f5a81a6fd5bc76a13"
-     "a60b04e5c0fef30209f9576f04651938472b57cb1dae0375d80a53a78f515f69"
-     "6f177b9a2579197e650918c8e53440997063b543fc854763e3597b5a4c33860d"
-     "34cf3305b35e3a8132a0b1bdf2c67623bc2cb05b125f8d7d26bd51fd16d547ec"
-     "3ef71018ff2043d308f8bc266787591acfaf8a0007621ca1304b0e3db6772c19"
-     "54ba478b95c6a5efbe02642003d68ea9a713cd38f2c03da176a1b69578addf74"
-     "a759f5bf996d821b4e5798c23ec80ff69571fbad7f574beaa75cf429e81579aa"
-     "2082ebeb3b4871bff2d2154f239456fcf165c3de80121f875cd8c7d82bd13803"
-     "b45b0d072e3e328e5e81b19969d6be8958ffc7609d2bfb3814e9c9ca1473daed"
-     "88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
-     "7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184"
-     "0325a6b5eea7e5febae709dab35ec8648908af12cf2d2b569bedc8da0a3a81c1"
-     "af238e93bc03da7ee4b2d30f2b3ea6e1553eb05b7d827da83bf35be1f6401992"
-     "b350d78e608ff87218a78f62c9832e1710714c7279321fa72a3da889bfe3d408"
-     "9b59e147dbbde5e638ea1cde5ec0a358d5f269d27bd2b893a0947c4a867e14c1"
-     "aa545934ce1b6fd16b4db2cf6c2ccf126249a66712786dd70f880806a187ac0b"
-     "d0a4b929a8ca0715fc1db5eda6effc17b2ce4427809f245028a88a949429d50e"
-     "622a74a498b3362ca51f23eea7b1efba62fc493267f2b0456751b053f3872db0"
-     "9e296dbc86374778cca0f22cfd7cd44d35e7c2e678085417be97251ce7c75dcc"
-     "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
-     "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6"
-     "fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c"
-     "2e7dc2838b7941ab9cabaa3b6793286e5134f583c04bde2fba2f4e20f2617cf7"
-     "0f76f9e0af168197f4798aba5c5ef18e07c926f4e7676b95f2a13771355ce850"
-     "61607956384e528c1bc3ca5c9b703b309d4b3a63acfec3edb7f9a26549262add"
-     "e8195801e30a76a2db6cbebfadde82311cfcdd365aaeacee915658fa099d661f"
-     "01a9797244146bbae39b18ef37e6f2ca5bebded90d9fe3a2f342a9e863aaa4fd"
-     "b29ba9bfdb34d71ecf3322951425a73d825fb2c002434282d2e0e8c44fce8185" default))
  '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
-     (nano :url "https://github.com/rougier/nano-emacs")
-     (claude-code :url "https://github.com/stevemolitor/claude-code.el")
-     (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
-		   "main")
-     (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
+     (claude-code :url
+		  "https://github.com/stevemolitor/claude-code.el")
+     (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
+		   :branch "main")
+     (copilot :url "https://github.com/copilot-emacs/copilot.el"
+	      :branch "main"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
