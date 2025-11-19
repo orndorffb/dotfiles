@@ -91,68 +91,21 @@
 (global-set-key (kbd "M-<up>") 'scroll-down-line)
 
 ;;; ---------------------------------------------------------------------------
-;;; 5. Evil ecosystem
-;;; ---------------------------------------------------------------------------
-(use-package evil
-  :ensure t :demand t
-  :init
-  (setq evil-want-integration t
-        evil-want-keybinding nil
-        evil-want-C-u-scroll t
-        evil-want-C-d-scroll t
-        evil-want-Y-yank-to-eol t
-        evil-undo-system 'undo-redo
-        evil-respect-visual-line-mode t
-        evil-want-C-i-jump nil)
-  :config
-  (evil-set-leader '(normal visual motion) (kbd "SPC"))
-  (global-set-key (kbd "<escape>") #'keyboard-escape-quit)
-  (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state)
-  (dolist (m '(term-mode vterm-mode eshell-mode shell-mode eat-mode))
-    (add-to-list 'evil-emacs-state-modes m)
-    (add-hook (intern (format "%s-hook" m)) #'evil-emacs-state))
-
-  ;; Leader keys
-  (evil-define-key 'normal 'global (kbd "<leader>SPC") 'execute-extended-command)
-  (evil-define-key 'normal 'global (kbd "<leader>pp") 'project-switch-project)
-  (evil-define-key 'normal 'global (kbd "<leader>f") 'project-find-file)
-  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
-  (evil-define-key 'normal 'global (kbd "<leader>s") 'consult-line)
-  (evil-define-key 'normal 'global (kbd "<leader>S") 'consult-imenu)
-  (evil-define-key 'normal 'global (kbd "<leader>d") 'consult-flymake)
-  (evil-define-key 'normal 'global (kbd "<leader>g") 'magit-status)
-  (evil-define-key 'normal 'global (kbd "<leader>jj") 'avy-goto-char-timer)
-  (evil-define-key 'normal 'global (kbd "<leader>jw") 'avy-goto-word-0)
-  (evil-define-key '(normal visual) 'global (kbd "<leader>as") 'gptel-send)
-  (evil-define-key 'normal 'global (kbd "<leader>aa") 'gptel)
-  (evil-define-key 'normal 'global (kbd "<leader>am") 'gptel-menu)
-  (evil-define-key 'normal 'global (kbd "<leader>ac") 'agent-shell-sidebar-toggle)
-  (evil-define-key 'normal 'global (kbd "<leader>af") 'agent-shell-sidebar-toggle-focus)
-  (evil-define-key 'normal 'global (kbd "<leader>at") 'copilot-mode)
-
-  ;; Visual line j/k
-  (evil-define-key 'normal global-map (kbd "j") #'evil-next-visual-line)
-  (evil-define-key 'normal global-map (kbd "k") #'evil-previous-visual-line))
-
-(use-package evil-collection :ensure t :after evil :config (evil-collection-init))
-(use-package evil-surround :ensure t :after evil :config (global-evil-surround-mode 1))
-(use-package evil-nerd-commenter
-  :ensure t :after evil
-  :bind (("M-/" . evilnc-comment-or-uncomment-lines))
-  :config
-  (define-key evil-normal-state-map (kbd "gc") #'evilnc-comment-operator)
-  (define-key evil-visual-state-map (kbd "gc") #'evilnc-comment-operator))
-
-(use-package evil-org
-  :ensure t :after (evil org)
-  :hook (org-mode . (lambda () (evil-org-mode 1)
-                      (evil-org-set-key-theme
-                       '(navigation insert textobjects additional)))))
-
-;;; ---------------------------------------------------------------------------
 ;;; 6. Org mode
 ;;; ---------------------------------------------------------------------------
-(global-set-key (kbd "C-c C-c") 'org-capture)
+
+;; Org-agenda configuration
+(setq org-agenda-files '("~/org/roam")
+      org-agenda-start-on-weekday nil
+      org-agenda-span 7
+      org-deadline-warning-days 7
+      org-agenda-skip-deadline-if-done t
+      org-agenda-skip-scheduled-if-done t)
+
+;; Keybindings for org
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(global-set-key (kbd "C-c l") 'org-store-link)
 
 (use-package org-modern
   :ensure t
@@ -167,12 +120,44 @@
         org-modern-keyword t
         org-modern-table t))
 
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/org/roam"))
+  :bind (("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ("C-c n l" . org-roam-buffer-toggle))
+  :config
+  (org-roam-setup)
 
+  ;; Org-roam capture templates (for new notes)
+  (setq org-roam-capture-templates
+        '(("d" "default" plain "%?"
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t)
+          ("n" "note" plain "%?"
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t)
+          ("j" "journal" plain "* %<%H:%M> %?\n"
+           :target (file+head "journal/%<%Y%m%d>.org"
+                              "#+title: %<%Y-%m-%d %A>\n#+filetags: :journal:\n\n")
+           :unnarrowed t))))
+
+;; Org-capture for todos (simple append to todo.org)
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
-         "* TODO %?\n  %i\n  %a")
-        ("j" "Journal" entry (file+datetree "~/org/journal.org")
-         "* %?\nEntered on %U\n  %i\n  %a")))
+      '(("t" "Todo" entry
+         (file "~/org/roam/todo.org")
+         "* TODO %?\nDEADLINE: %^{Deadline}t\n%i\n%a"
+         :empty-lines 1
+         :prepend t)
+        ("T" "Todo (no deadline)" entry
+         (file "~/org/roam/todo.org")
+         "* TODO %?\n%i\n%a"
+         :empty-lines 1
+         :prepend t)))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -231,6 +216,22 @@
          ("C-c s"   . consult-imenu)
          ("C-c d"   . consult-flymake)))
 
+(use-package company
+  :ensure t
+  :init
+  (global-company-mode)
+  :custom
+  (company-idle-delay 0.2)
+  (company-minimum-prefix-length 2)
+  (company-selection-wrap-around t)
+  (company-tooltip-align-annotations t)
+  (company-require-match nil)
+  :bind (:map company-active-map
+              ("TAB" . company-complete-selection)
+              ([tab] . company-complete-selection)
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)))
+
 ;;; ---------------------------------------------------------------------------
 ;;; 9. Window management
 ;;; ---------------------------------------------------------------------------
@@ -264,12 +265,8 @@
   (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
-(use-package shell-maker :ensure t)
-(use-package acp :vc (:url "https://github.com/xenodium/acp.el"))
-(use-package agent-shell :vc (:url "https://github.com/xenodium/agent-shell"))
-(use-package agent-shell-sidebar
-  :after agent-shell
-  :vc (:url "https://github.com/cmacrae/agent-shell-sidebar"))
+(use-package agent-shell
+  :vc (:url "https://github.com/xenodium/agent-shell"))
 
 (use-package copilot
   :vc (:url "https://github.com/copilot-emacs/copilot.el")
@@ -373,7 +370,17 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(ace-window adaptive-wrap agent-shell-sidebar auto-dark blamer cape
+		catppuccin-theme claude-code-ide company
+		consult-denote copilot corfu denote-menu direnv eat
+		evil-collection evil-nerd-commenter evil-org
+		evil-surround exec-path-from-shell expand-region forge
+		git-link gptel imenu-list lsp-pyright lsp-ui
+		marginalia mixed-pitch multiple-cursors nerd-icons
+		olivetti orderless org-modern org-roam poet-theme rg
+		rspec-mode rust-mode south-theme spacious-padding
+		tao-theme tree-sitter-langs ultra-scroll vertico vterm))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
@@ -389,4 +396,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:background nil))))
- '(eval-sexp-fu-flash ((t (:background "SkyBlue4")))))
+ '(eval-sexp-fu-flash ((t (:background "#8fafe3")))))
