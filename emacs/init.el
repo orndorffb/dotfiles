@@ -22,9 +22,9 @@
       ns-use-proxy-icon nil)
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(internal-border-width . 8))
-(add-to-list 'default-frame-alist '(left-fringe . 0))
-(add-to-list 'default-frame-alist '(right-fringe . 0))
+;(add-to-list 'default-frame-alist '(internal-border-width . 8))
+;(add-to-list 'default-frame-alist '(left-fringe . 0))
+;(add-to-list 'default-frame-alist '(right-fringe . 0))
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . light))
 
@@ -37,8 +37,27 @@
 (use-package spacious-padding
   :ensure t
   :config
-  ;;(spacious-padding-mode)
-)
+  (setq spacious-padding-widths
+        '( :internal-border-width 15
+           :header-line-width 4
+           :mode-line-width 2
+           :tab-width 4
+           :right-divider-width 2
+           :scroll-bar-width 8
+           :fringe-width 8))
+  (setq spacious-padding-subtle-frame-lines
+        `( :mode-line-active 'default
+           :mode-line-inactive vertical-border))
+  (spacious-padding-mode 1))
+
+(defun my/theme-adjust-vertical-border ()
+  (let ((border (face-background 'default)))
+    (set-face-attribute 'vertical-border nil
+                        :background border
+                        :foreground border)))
+
+(add-hook 'after-load-theme-hook #'my/theme-adjust-vertical-border)
+
 
 ;;; ---------------------------------------------------------------------------
 ;;; 2. Fonts / typography
