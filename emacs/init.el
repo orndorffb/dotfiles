@@ -22,7 +22,7 @@
       ns-use-proxy-icon nil)
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-;(add-to-list 'default-frame-alist '(internal-border-width . 8))
+(add-to-list 'default-frame-alist '(internal-border-width . 8))
 ;(add-to-list 'default-frame-alist '(left-fringe . 0))
 ;(add-to-list 'default-frame-alist '(right-fringe . 0))
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
