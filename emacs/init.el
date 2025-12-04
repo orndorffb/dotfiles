@@ -201,8 +201,6 @@
 ;;; ---------------------------------------------------------------------------
 (defvar brian/default-dark-theme 'modus-vivendi)
 (defvar brian/default-light-theme 'modus-operandi-tinted)
-(defvar brian/default-dark-theme 'gruber-darker)
-(defvar brian/default-light-theme 'gruber-darker)
 (defvar brian/default-dark-accent-colour "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
 
