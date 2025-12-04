@@ -6,6 +6,15 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
+;;; 1. Environment (PATH etc.)
+(use-package exec-path-from-shell
+  :ensure t
+  :init
+  ;; Load PATH and other env vars from your login shell
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+
 ;;; ---------------------------------------------------------------------------
 ;;; 1. Frame / UI basics
 ;;; ---------------------------------------------------------------------------
@@ -192,6 +201,8 @@
 ;;; ---------------------------------------------------------------------------
 (defvar brian/default-dark-theme 'modus-vivendi)
 (defvar brian/default-light-theme 'modus-operandi-tinted)
+(defvar brian/default-dark-theme 'gruber-darker)
+(defvar brian/default-light-theme 'gruber-darker)
 (defvar brian/default-dark-accent-colour "SkyBlue4")
 (defvar brian/default-light-accent-color "#8fafe3")
 
@@ -231,6 +242,7 @@
   :ensure t
   :bind (("C-s"     . consult-line)
          ("C-x C-b" . consult-buffer)
+	 ("C-x b"   . consult-buffer)
          ("C-c h"   . consult-history)
          ("C-c s"   . consult-imenu)
          ("C-c d"   . consult-flymake)))
@@ -395,11 +407,12 @@
 		consult-denote copilot corfu denote-menu direnv eat
 		evil-collection evil-nerd-commenter evil-org
 		evil-surround exec-path-from-shell expand-region forge
-		git-link gptel imenu-list lsp-pyright lsp-ui
-		marginalia mixed-pitch multiple-cursors nerd-icons
-		olivetti orderless org-modern org-roam poet-theme rg
-		rspec-mode rust-mode south-theme spacious-padding
-		tao-theme tree-sitter-langs ultra-scroll vertico vterm))
+		git-link gptel gruber-darker-theme haskell-mode
+		imenu-list lsp-haskell lsp-pyright lsp-ui marginalia
+		mixed-pitch multiple-cursors nerd-icons olivetti
+		orderless org-modern org-roam poet-theme rg rspec-mode
+		rust-mode south-theme spacious-padding tao-theme
+		tree-sitter-langs ultra-scroll vertico vterm))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
