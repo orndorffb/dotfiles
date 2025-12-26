@@ -199,26 +199,10 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(defvar brian/default-dark-theme 'modus-vivendi)
-(defvar brian/default-light-theme 'modus-operandi-tinted)
-(defvar brian/default-dark-accent-colour "SkyBlue4")
-(defvar brian/default-light-accent-color "#8fafe3")
+(use-package gruber-darker-theme
+  :ensure t)
 
-(load-theme brian/default-light-theme t)
-
-(use-package auto-dark
-  :ensure t :init (auto-dark-mode 1)
-  :hook
-  (auto-dark-dark-mode
-   . (lambda ()
-       (mapc #'disable-theme custom-enabled-themes)
-       (load-theme brian/default-dark-theme t)
-       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-dark-accent-colour)))))))
-  (auto-dark-light-mode
-   . (lambda ()
-       (mapc #'disable-theme custom-enabled-themes)
-       (load-theme brian/default-light-theme t)
-       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-light-accent-color))))))))
+(load-theme 'gruber-darker)
 
 (use-package olivetti
   :ensure t
@@ -239,6 +223,7 @@
 (use-package consult
   :ensure t
   :bind (("C-s"     . consult-line)
+	 ("C-x b"   . consult-buffer)
          ("C-x C-b" . consult-buffer)
 	 ("C-x b"   . consult-buffer)
          ("C-c h"   . consult-history)
@@ -375,6 +360,24 @@
 (use-package imenu-list :ensure t :bind (("M-g i" . imenu-list-smart-toggle)))
 (use-package expand-region :ensure t :bind (("C-c SPC" . er/expand-region)))
 
+(defun open-vterm-in-project-root ()
+  "Open a vterm terminal in the current project's root directory."
+  (interactive)
+  (let* ((project-root (project-root (project-current t)))
+         (project-name (file-name-nondirectory (directory-file-name project-root)))
+         (buffer-name (format "*vterm-%s*" project-name))
+         (existing-buffer (get-buffer buffer-name)))
+    (if project-root
+        (progn
+          (if existing-buffer
+              (switch-to-buffer existing-buffer)
+            (let ((default-directory project-root))
+              (vterm buffer-name)))
+          (goto-char (point-max)))
+      (error "Not in a project"))))
+
+(global-set-key (kbd "M-<return>") 'open-vterm-in-project-root)
+
 ;;; ---------------------------------------------------------------------------
 ;;; 15. Custom functions
 ;;; ---------------------------------------------------------------------------
@@ -402,15 +405,15 @@
  '(package-selected-packages
    '(ace-window adaptive-wrap agent-shell-sidebar auto-dark blamer cape
 		catppuccin-theme claude-code-ide company
-		consult-denote copilot corfu denote-menu direnv eat
-		evil-collection evil-nerd-commenter evil-org
-		evil-surround exec-path-from-shell expand-region forge
-		git-link gptel gruber-darker-theme haskell-mode
-		imenu-list lsp-haskell lsp-pyright lsp-ui marginalia
-		mixed-pitch multiple-cursors nerd-icons olivetti
-		orderless org-modern org-roam poet-theme rg rspec-mode
-		rust-mode south-theme spacious-padding tao-theme
-		tree-sitter-langs ultra-scroll vertico vterm))
+		consult-denote copilot corfu deadgrep denote-menu
+		direnv docker eat evil-collection evil-nerd-commenter
+		evil-org evil-surround exec-path-from-shell
+		expand-region flexoki-themes forge git-link gptel
+		gruber-darker-theme imenu-list lsp-pyright lsp-ui
+		marginalia mixed-pitch multiple-cursors nerd-icons
+		olivetti orderless org-modern org-roam poet-theme rg
+		rspec-mode rust-mode south-theme spacious-padding
+		tao-theme tree-sitter-langs ultra-scroll vertico vterm))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
@@ -426,4 +429,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:background nil))))
- '(eval-sexp-fu-flash ((t (:background "#8fafe3")))))
+ '(eval-sexp-fu-flash ((t (:background "SkyBlue4")))))
