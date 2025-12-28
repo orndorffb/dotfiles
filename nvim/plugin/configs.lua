@@ -1,5 +1,6 @@
 -- plugin/00-configs.lua
 vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
 -- General settings
 vim.opt.nu = true
