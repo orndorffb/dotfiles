@@ -409,11 +409,12 @@
 		direnv docker eat evil-collection evil-nerd-commenter
 		evil-org evil-surround exec-path-from-shell
 		expand-region flexoki-themes forge git-link gptel
-		gruber-darker-theme imenu-list lsp-pyright lsp-ui
-		marginalia mixed-pitch multiple-cursors nerd-icons
-		olivetti orderless org-modern org-roam poet-theme rg
-		rspec-mode rust-mode south-theme spacious-padding
-		tao-theme tree-sitter-langs ultra-scroll vertico vterm))
+		gruber-darker-theme imenu-list inf-ruby lsp-pyright
+		lsp-ui marginalia mixed-pitch multiple-cursors
+		nerd-icons olivetti orderless org-modern org-roam
+		poet-theme rg rspec-mode rust-mode south-theme
+		spacious-padding tao-theme tree-sitter-langs
+		ultra-scroll vertico vterm))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
