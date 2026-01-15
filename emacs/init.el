@@ -199,10 +199,26 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(use-package gruber-darker-theme
-  :ensure t)
+(defvar brian/default-dark-theme 'modus-vivendi)
+(defvar brian/default-light-theme 'modus-operandi-tinted)
+(defvar brian/default-dark-accent-colour "SkyBlue4")
+(defvar brian/default-light-accent-color "#8fafe3")
 
-(load-theme 'gruber-darker)
+(load-theme brian/default-light-theme t)
+
+(use-package auto-dark
+  :ensure t :init (auto-dark-mode 1)
+  :hook
+  (auto-dark-dark-mode
+   . (lambda ()
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme brian/default-dark-theme t)
+       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-dark-accent-colour)))))))
+  (auto-dark-light-mode
+   . (lambda ()
+       (mapc #'disable-theme custom-enabled-themes)
+       (load-theme brian/default-light-theme t)
+       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-light-accent-color))))))))
 
 (use-package olivetti
   :ensure t
