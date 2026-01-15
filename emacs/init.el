@@ -271,7 +271,7 @@
   (display-buffer-alist
    '(("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|[Hh]elp\\|Messages\\|Bookmark List\\|Ibuffer\\|Occur\\|eldoc.*\\)\\*"
       (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 0))
-     ("\\*\\(lsp-help\\)\\*"
+     ("\\*eglot-help\\*"
       (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 0))
      ("\\*\\(Flymake diagnostics\\|xref\\|ivy\\|Swiper\\|Completions\\)"
       (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 1)))))
@@ -307,23 +307,19 @@
   (define-key copilot-completion-map (kbd "TAB") #'copilot-accept-completion))
 
 ;;; ---------------------------------------------------------------------------
-;;; 11. LSP + programming languages
+;;; 11. Eglot + programming languages
 ;;; ---------------------------------------------------------------------------
-(use-package lsp-mode
-  :ensure t
-  :init
-  (setq lsp-keymap-prefix "C-c l"
-        lsp-headerline-breadcrumb-enable nil
-        lsp-signature-render-documentation nil
-        lsp-signature-auto-activate nil
-        lsp-disabled-clients '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls
-                               srb-ls semgrep-ls stree-ls pylsp mspyls))
-  :hook ((ruby-ts-mode . lsp)
-         (python-mode . lsp-deferred)
-         (python-ts-mode . lsp-deferred)))
-
-(use-package lsp-pyright :ensure t :after lsp-mode)
-(use-package lsp-ui :ensure t)
+(use-package eglot
+  :ensure nil
+  :hook ((ruby-ts-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
+         (python-ts-mode . eglot-ensure)
+         (rust-mode . eglot-ensure))
+  :config
+  (setq eglot-autoshutdown t
+        eglot-send-changes-idle-time 0.5)
+  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs '(python-ts-mode . ("pyright-langserver" "--stdio"))))
 
 (use-package tree-sitter :ensure t :config (global-tree-sitter-mode))
 (use-package tree-sitter-langs :ensure t :after tree-sitter)
