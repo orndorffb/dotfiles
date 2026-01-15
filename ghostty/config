@@ -1,3 +1,4 @@
 font-family = "Aporetic Mono"
-theme = "dark:Flexoki Dark,light:Flexoki Light"
+theme = "dark:teide_darker,light:teide_light"
+window-colorspace = display-p3
 

@@ -33,3 +33,33 @@ require("mini.indentscope").setup({
 --     replace = "sr", -- Replace surrounding with 'sr'
 --   },
 -- })
+
+-- Picker (fuzzy finder)
+require("mini.pick").setup({
+  mappings = {
+    move_down = "<C-j>",
+    move_up = "<C-k>",
+  },
+  window = {
+    config = function()
+      local height = math.floor(0.618 * vim.o.lines)
+      local width = math.floor(0.618 * vim.o.columns)
+      return {
+        anchor = "NW",
+        height = height,
+        width = width,
+        row = math.floor(0.5 * (vim.o.lines - height)),
+        col = math.floor(0.5 * (vim.o.columns - width)),
+      }
+    end,
+  },
+})
+
+-- Keymaps for mini.pick
+local pick = require("mini.pick")
+vim.keymap.set("n", "<leader>f", pick.builtin.files, { desc = "Find files" })
+vim.keymap.set("n", "<leader>b", pick.builtin.buffers, { desc = "Find buffers" })
+vim.keymap.set("n", "<leader>s", pick.builtin.grep_live, { desc = "Live grep" })
+vim.keymap.set("n", "<leader>S", function()
+  require("mini.extra").pickers.lsp({ scope = "document_symbol" })
+end, { desc = "LSP document symbols" })

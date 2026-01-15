@@ -16,7 +16,6 @@ local function lsp_keymaps(bufnr)
   map("n", "<leader>rn", vim.lsp.buf.rename, opts)
   map("n", "<leader>ca", vim.lsp.buf.code_action, opts)
   map("n", "K", vim.lsp.buf.hover, opts)
-  map("n", "<C-k>", vim.lsp.buf.signature_help, opts)
 end
 
 -- Global diagnostic settings
