@@ -9,10 +9,13 @@
 ;;; 1. Environment (PATH etc.)
 (use-package exec-path-from-shell
   :ensure t
-  :init
-  ;; Load PATH and other env vars from your login shell
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
+  :config
+  (exec-path-from-shell-initialize))
+
+(use-package rbenv
+  :ensure t
+  :config
+  (global-rbenv-mode))
 
 
 ;;; ---------------------------------------------------------------------------
@@ -329,7 +332,12 @@
   (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode)))
 
 (use-package ruby-mode :ensure t :init (setq ruby-indent-level 2))
-(use-package rspec-mode :ensure t :after ruby-mode)
+(use-package rspec-mode
+  :ensure t
+  :after ruby-mode
+  :config
+  (setq rspec-use-spring-when-possible nil)
+  (add-hook 'ruby-mode-hook 'rspec-mode))
 (use-package rust-mode :ensure t :hook (rust-mode . (lambda ()
                                                       (setq indent-tabs-mode nil
                                                             rust-format-on-save t))))
@@ -415,19 +423,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(ace-window adaptive-wrap agent-shell-sidebar auto-dark blamer cape
-		catppuccin-theme claude-code-ide company
-		consult-denote copilot corfu deadgrep denote-menu
-		direnv docker eat evil-collection evil-nerd-commenter
-		evil-org evil-surround exec-path-from-shell
-		expand-region flexoki-themes forge git-link gptel
-		gruber-darker-theme imenu-list inf-ruby lsp-pyright
-		lsp-ui marginalia mixed-pitch multiple-cursors
-		nerd-icons olivetti orderless org-modern org-roam
-		poet-theme rg rspec-mode rust-mode south-theme
-		spacious-padding tao-theme tree-sitter-langs
-		ultra-scroll vertico vterm))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
