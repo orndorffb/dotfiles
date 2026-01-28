@@ -46,31 +46,6 @@
 (setq auth-sources '("~/.authinfo")
       custom-safe-themes t)
 
-(use-package spacious-padding
-  :ensure t
-  :config
-  (setq spacious-padding-widths
-        '( :internal-border-width 8
-           :header-line-width 4
-           :mode-line-width 0
-           :tab-width 4
-           :right-divider-width 2
-           :scroll-bar-width 8
-           :fringe-width 8))
-  (setq spacious-padding-subtle-frame-lines
-        `( :mode-line-active 'default
-           :mode-line-inactive vertical-border))
-  (spacious-padding-mode 0))
-
-(defun my/theme-adjust-vertical-border ()
-  (let ((border (face-background 'default)))
-    (set-face-attribute 'vertical-border nil
-                        :background border
-                        :foreground border)))
-
-(add-hook 'after-load-theme-hook #'my/theme-adjust-vertical-border)
-
-
 ;;; ---------------------------------------------------------------------------
 ;;; 2. Fonts / typography
 ;;; ---------------------------------------------------------------------------
@@ -484,8 +459,8 @@
 		gptel gruber-darker-theme imenu-list inf-ruby lsp-pyright lsp-ui
 		marginalia mixed-pitch multiple-cursors nerd-icons nord-theme
 		nordic-night-theme olivetti orderless org-modern org-roam
-		poet-theme rg rspec-mode rust-mode south-theme spacious-padding
-		tao-theme tree-sitter-langs ultra-scroll vertico vterm))
+		poet-theme rg rspec-mode rust-mode south-theme tao-theme
+		tree-sitter-langs ultra-scroll vertico vterm))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
@@ -493,4 +468,9 @@
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
 		   "main")
      (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
-(custom-set-faces)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:background nil)))))
