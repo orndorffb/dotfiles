@@ -34,7 +34,7 @@
       ns-use-proxy-icon nil)
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(internal-border-width . 8))
+(add-to-list 'default-frame-alist '(internal-border-width . 0))
 ;(add-to-list 'default-frame-alist '(left-fringe . 0))
 ;(add-to-list 'default-frame-alist '(right-fringe . 0))
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -50,9 +50,9 @@
   :ensure t
   :config
   (setq spacious-padding-widths
-        '( :internal-border-width 15
+        '( :internal-border-width 8
            :header-line-width 4
-           :mode-line-width 2
+           :mode-line-width 0
            :tab-width 4
            :right-divider-width 2
            :scroll-bar-width 8
@@ -60,7 +60,7 @@
   (setq spacious-padding-subtle-frame-lines
         `( :mode-line-active 'default
            :mode-line-inactive vertical-border))
-  (spacious-padding-mode 1))
+  (spacious-padding-mode 0))
 
 (defun my/theme-adjust-vertical-border ()
   (let ((border (face-background 'default)))
@@ -75,7 +75,7 @@
 ;;; 2. Fonts / typography
 ;;; ---------------------------------------------------------------------------
 (defvar my/variable-pitch-font "Aporetic Sans")
-(defvar my/fixed-pitch-font "Aporetic Sans Mono")
+(defvar my/fixed-pitch-font "Essential PragmataPro")
 
 (add-to-list 'default-frame-alist `(font . ,(format "%s-14" my/fixed-pitch-font)))
 (add-to-list 'default-frame-alist `(variable-pitch . ,(format "%s-14" my/variable-pitch-font)))
@@ -203,26 +203,23 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(defvar brian/default-dark-theme 'modus-vivendi)
-(defvar brian/default-light-theme 'modus-operandi-tinted)
-(defvar brian/default-dark-accent-colour "SkyBlue4")
-(defvar brian/default-light-accent-color "#8fafe3")
-
-(load-theme brian/default-light-theme t)
+(use-package nordic-night-theme
+  :ensure t
+  :config
+  (load-theme 'nordic-night t))
 
 (use-package auto-dark
-  :ensure t :init (auto-dark-mode 1)
+  :ensure t
+  :init (auto-dark-mode 1)
   :hook
   (auto-dark-dark-mode
    . (lambda ()
        (mapc #'disable-theme custom-enabled-themes)
-       (load-theme brian/default-dark-theme t)
-       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-dark-accent-colour)))))))
+       (load-theme 'nordic-night t)))
   (auto-dark-light-mode
    . (lambda ()
        (mapc #'disable-theme custom-enabled-themes)
-       (load-theme brian/default-light-theme t)
-       (custom-set-faces `(eval-sexp-fu-flash ((t (:background ,brian/default-light-accent-color))))))))
+       (load-theme 'nordic-night t))))
 
 (use-package olivetti
   :ensure t
@@ -358,14 +355,11 @@
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
 
 (use-package agent-shell
-  :vc (:url "https://github.com/xenodium/agent-shell"))
-
-(use-package copilot
-  :vc (:url "https://github.com/copilot-emacs/copilot.el")
+  :ensure t
+  :bind (("C-c e" . agent-shell))
   :config
-  (setq copilot-node-executable "node")
-  (define-key copilot-completion-map (kbd "<tab>") #'copilot-accept-completion)
-  (define-key copilot-completion-map (kbd "TAB") #'copilot-accept-completion))
+  (setq agent-shell-prefer-viewport-interaction t)
+  (setq agent-shell-preferred-agent-config (agent-shell-anthropic-make-claude-code-config)))
 
 ;;; ---------------------------------------------------------------------------
 ;;; 11. Eglot + programming languages
@@ -481,20 +475,22 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(ace-window acp adaptive-wrap agent-shell auto-dark blamer cape
+		catppuccin-theme claude-code claude-code-ide company
+		consult-denote copilot corfu deadgrep denote-menu direnv docker
+		eat evil-collection evil-nerd-commenter evil-org evil-surround
+		exec-path-from-shell expand-region flexoki-themes forge git-link
+		gptel gruber-darker-theme imenu-list inf-ruby lsp-pyright lsp-ui
+		marginalia mixed-pitch multiple-cursors nerd-icons nord-theme
+		nordic-night-theme olivetti orderless org-modern org-roam
+		poet-theme rg rspec-mode rust-mode south-theme spacious-padding
+		tao-theme tree-sitter-langs ultra-scroll vertico vterm))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
-     (claude-code :url
-		  "https://github.com/stevemolitor/claude-code.el")
-     (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll"
-		   :branch "main")
-     (copilot :url "https://github.com/copilot-emacs/copilot.el"
-	      :branch "main"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background nil))))
- '(eval-sexp-fu-flash ((t (:background "SkyBlue4")))))
+     (claude-code :url "https://github.com/stevemolitor/claude-code.el")
+     (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
+		   "main")
+     (copilot :url "https://github.com/copilot-emacs/copilot.el" :branch "main"))))
+(custom-set-faces)
