@@ -50,7 +50,7 @@
 ;;; 2. Fonts / typography
 ;;; ---------------------------------------------------------------------------
 (defvar my/variable-pitch-font "Aporetic Sans")
-(defvar my/fixed-pitch-font "Essential PragmataPro")
+(defvar my/fixed-pitch-font "Aporetic Sans Mono")
 
 (add-to-list 'default-frame-alist `(font . ,(format "%s-14" my/fixed-pitch-font)))
 (add-to-list 'default-frame-alist `(variable-pitch . ,(format "%s-14" my/variable-pitch-font)))
@@ -178,23 +178,22 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(use-package nordic-night-theme
-  :ensure t
-  :config
-  (load-theme 'nordic-night t))
+(defvar brian/default-dark-theme 'modus-vivendi)
+(defvar brian/default-light-theme 'modus-operandi-tinted)
+
+(load-theme brian/default-light-theme t)
 
 (use-package auto-dark
-  :ensure t
-  :init (auto-dark-mode 1)
+  :ensure t :init (auto-dark-mode 1)
   :hook
   (auto-dark-dark-mode
    . (lambda ()
        (mapc #'disable-theme custom-enabled-themes)
-       (load-theme 'nordic-night t)))
+       (load-theme brian/default-dark-theme t)))
   (auto-dark-light-mode
    . (lambda ()
        (mapc #'disable-theme custom-enabled-themes)
-       (load-theme 'nordic-night t))))
+       (load-theme brian/default-light-theme t))))
 
 (use-package olivetti
   :ensure t
@@ -202,9 +201,46 @@
   (setq olivetti-body-width 0.8)
   :bind (("C-c o" . olivetti-mode)))
 
+;;; Custom modeline configuration
+(defface my-modeline-background
+  '((t :background "#3355bb" :foreground "white" :inherit bold))
+  "Face with a blue background for use on the mode line.")
+
+(defun my-modeline--buffer-name ()
+  "Return `buffer-name' with spaces around it."
+  (format " %s " (buffer-name)))
+
+(defvar-local my-modeline-buffer-name
+    '(:eval
+      (when (mode-line-window-selected-p)
+        (propertize (my-modeline--buffer-name) 'face 'my-modeline-background)))
+  "Mode line construct to display the buffer name.")
+
+(put 'my-modeline-buffer-name 'risky-local-variable t)
+
+(defun my-modeline--major-mode-name ()
+  "Return capitalized `major-mode' as a string."
+  (capitalize (symbol-name major-mode)))
+
+(defvar-local my-modeline-major-mode
+    '(:eval
+      (list
+       (propertize "λ" 'face 'shadow)
+       " "
+       (propertize (my-modeline--major-mode-name) 'face 'bold)))
+  "Mode line construct to display the major mode.")
+
+(put 'my-modeline-major-mode 'risky-local-variable t)
+
+;; Set the custom modeline format
+(setq-default mode-line-format
+              '("%e"
+                my-modeline-buffer-name
+                "  "
+                my-modeline-major-mode))
+
 (use-package adaptive-wrap :ensure t :hook (visual-line-mode . adaptive-wrap-prefix-mode))
 (use-package nerd-icons :ensure t)
-(use-package autothemer :defer t)
 
 ;;; ---------------------------------------------------------------------------
 ;;; 8. Completion / navigation stack
@@ -450,17 +486,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(ace-window acp adaptive-wrap agent-shell auto-dark blamer cape
-		catppuccin-theme claude-code claude-code-ide company
-		consult-denote copilot corfu deadgrep denote-menu direnv docker
-		eat evil-collection evil-nerd-commenter evil-org evil-surround
-		exec-path-from-shell expand-region flexoki-themes forge git-link
-		gptel gruber-darker-theme imenu-list inf-ruby lsp-pyright lsp-ui
-		marginalia mixed-pitch multiple-cursors nerd-icons nord-theme
-		nordic-night-theme olivetti orderless org-modern org-roam
-		poet-theme rg rspec-mode rust-mode south-theme tao-theme
-		tree-sitter-langs ultra-scroll vertico vterm))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")
