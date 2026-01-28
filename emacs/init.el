@@ -106,7 +106,8 @@
       backup-by-copying t
       visible-bell nil
       ring-bell-function #'ignore
-      create-lockfiles nil)
+      create-lockfiles nil
+      compilation-scroll-output t)
 
 (global-display-line-numbers-mode 1)
 (dolist (hook '(org-mode-hook term-mode-hook vterm-mode-hook eat-mode-hook
@@ -279,9 +280,66 @@
      ("\\*\\(Flymake diagnostics\\|xref\\|ivy\\|Swiper\\|Completions\\)"
       (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 1)))))
 
+(defun split-window-sensibly-prefer-horizontal (&optional window)
+"Based on `split-window-sensibly', but prefers to split WINDOW side-by-side."
+  (let ((window (or window (selected-window))))
+    (or (and (window-splittable-p window t)
+         ;; Split window horizontally
+         (with-selected-window window
+           (split-window-right)))
+    (and (window-splittable-p window)
+         ;; Split window vertically
+         (with-selected-window window
+           (split-window-below)))
+    (and
+         ;; If WINDOW is the only usable window on its frame (it is
+         ;; the only one or, not being the only one, all the other
+         ;; ones are dedicated) and is not the minibuffer window, try
+         ;; to split it horizontally disregarding the value of
+         ;; `split-height-threshold'.
+         (let ((frame (window-frame window)))
+           (or
+            (eq window (frame-root-window frame))
+            (catch 'done
+              (walk-window-tree (lambda (w)
+                                  (unless (or (eq w window)
+                                              (window-dedicated-p w))
+                                    (throw 'done nil)))
+                                frame)
+              t)))
+     (not (window-minibuffer-p window))
+     (let ((split-width-threshold 0))
+       (when (window-splittable-p window t)
+         (with-selected-window window
+               (split-window-right))))))))
+
+(defun split-window-really-sensibly (&optional window)
+  (let ((window (or window (selected-window))))
+    (if (> (window-total-width window) (* 2 (window-total-height window)))
+        (with-selected-window window (split-window-sensibly-prefer-horizontal window))
+      (with-selected-window window (split-window-sensibly window)))))
+
+(setq split-window-preferred-function 'split-window-really-sensibly)
+
+(setq-default split-height-threshold nil
+              split-width-threshold  nil
+              fill-column            80)
+
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  ("M-n" . mc/mark-next-like-this)
+  ("M-p" . mc/mark-previous-like-this))
+
 (use-package ace-window :ensure t :bind (("M-o" . ace-window)))
-(use-package avy :ensure t :bind (("C-c j" . avy-goto-char-timer)
-                                  ("C-c w" . avy-goto-word-0)))
+(use-package avy :ensure t
+  :init
+  (defun avy-goto-word-crt-line ()
+    (interactive)
+    (avy-with avy-goto-word-0
+      (avy-goto-word-0 nil (line-beginning-position) (line-end-position))))
+  :bind (("C-c j" . avy-goto-char-timer)
+         ("C-c w" . avy-goto-word-crt-line)))
 
 (use-package ultra-scroll
   :vc (:url "https://github.com/jdtsmith/ultra-scroll" :rev :newest)
