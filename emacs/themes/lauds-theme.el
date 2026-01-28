@@ -1,9 +1,9 @@
-;; compline-theme.el --- Be at peace with the darkness -*- lexical-binding: t; no-byte-compile: t; -*-
+;; lauds-theme.el --- Welcome the light -*- lexical-binding: t; no-byte-compile: t; -*-
 ;;
-;; Added: December 31, 2017 (#129)
+;; Added: October 20, 2025
 ;; Author: joshuablais <https://github.com/jblais493>
 ;; Maintainer:
-;; Source: https://compline-theme.el/
+;; Source: http://kkga.github.io/spacegray/
 ;;
 ;;; Commentary:
 ;;; Code:
@@ -12,82 +12,83 @@
 
 ;;; Variables
 
-(defgroup doom-compline-theme nil
-  "Options for the `doom-compline' theme."
+(defgroup doom-lauds-theme nil
+  "Options for the `doom-lauds' theme."
   :group 'doom-themes)
 
-(defcustom doom-compline-brighter-modeline nil
+(defcustom doom-lauds-brighter-modeline nil
   "If non-nil, more vivid colors will be used to style the mode-line."
-  :group 'doom-compline-theme
+  :group 'doom-lauds-theme
   :type 'boolean)
 
-(defcustom doom-compline-brighter-comments nil
+(defcustom doom-lauds-brighter-comments nil
   "If non-nil, comments will be highlighted in more vivid colors."
-  :group 'doom-compline-theme
+  :group 'doom-lauds-theme
   :type 'boolean)
 
-(defcustom doom-compline-comment-bg doom-compline-brighter-comments
+(defcustom doom-lauds-comment-bg doom-lauds-brighter-comments
   "If non-nil, comments will have a subtle, darker background. Enhancing their
 legibility."
-  :group 'doom-compline-theme
+  :group 'doom-lauds-theme
   :type 'boolean)
 
-(defcustom doom-compline-padded-modeline doom-themes-padded-modeline
+(defcustom doom-lauds-padded-modeline doom-themes-padded-modeline
   "If non-nil, adds a 4px padding to the mode-line. Can be an integer to
 determine the exact padding."
-  :group 'doom-compline-theme
+  :group 'doom-lauds-theme
   :type '(choice integer boolean))
 
 
 ;;; Theme definition
 
-(def-doom-theme compline
-    "The compline colorscheme"
+(def-doom-theme lauds
+    "The Lauds Light colorscheme"
 
   ;; name        default   256       16
-  ((bg         '("#1a1d21" nil       nil            ))  ; cool slate, the stone walls
-   (bg-alt     '("#22262b" nil       nil            ))  ; slightly lighter panels
-   (base0      '("#0f1114" "black"   "black"        ))
-   (base1      '("#171a1e" "#1e1e1e" "brightblack"  ))
-   (base2      '("#1f2228" "#2e2e2e" "brightblack"  ))
-   (base3      '("#282c34" "#2F3237" "brightblack"  ))
-   (base4      '("#3d424a" "#4f5b66" "brightblack"  ))
-   (base5      '("#515761" "#65737E" "brightblack"  ))
-   (base6      '("#676d77" "#6b6b6b" "brightblack"  ))
-   (base7      '("#8b919a" "#979797" "brightblack"  ))
-   (base8      '("#e0dcd4" "#dfdfdf" "white"        ))
-   (fg         '("#f0efeb" "#c0c5ce" "brightwhite"  ))  ; warm parchment, easier on eyes
-   (fg-alt     '("#ccc4b4" "#a0a0a0" "white"        ))  ; muted secondary
-
+  ((bg         '("#f0efeb" nil       nil            ))  ; aged vellum - perfect
+   (bg-alt     '("#e0dcd4" nil       nil            ))  ; slightly darker panels
+   (base0      '("#f5f4f2" "white"   "white"        ))
+   (base1      '("#efeeed" "#e4e4e4" "white"        ))
+   (base2      '("#e5e3e0" "#d0d0d0" "brightwhite"  ))
+   (base3      '("#d8d6d3" "#c6c6c6" "brightwhite"  ))
+   (base4      '("#b8b5b0" "#b2b2b2" "brightwhite"  ))
+   (base5      '("#9a9791" "#979797" "brightblack"  ))
+   (base6      '("#7d7a75" "#6b6b6b" "brightblack"  ))
+   (base7      '("#5f5c58" "#525252" "brightblack"  ))
+   (base8      '("#2d2a27" "#1e1e1e" "black"        ))
+   (fg         '("#1a1d21" "#2d2d2d" "black"        ))  ; warm charcoal - perfect
+   (fg-alt     '("#4A4D51" "#4e4e4e" "brightblack"  ))
    (grey       base4)
-   (red        '("#CDACAC" "#D69A9F" "red"          ))  ; keep - perfect warmth    L=76% S=22%
-   (orange     '("#ccc4b4" "#D08770" "brightred"    ))  ; hint of sand       L=78% S=15%
-   (green      '("#b8c4b8" "#A3BE8C" "green"        ))  ; whisper of sage    L=78% S=10%
-   (blue       '("#b4bcc4" "#8FA1B3" "brightblue"   ))  ; cool steel-grey    L=77% S=13%
-   (yellow     '("#d4ccb4" "#ECBE7B" "yellow"       ))  ; warm parchment     L=79% S=15%
-   (violet     base7)                                    ; eliminated - pure grey
-   (teal       '("#b4c4bc" "#44b9b1" "brightgreen"  ))  ; cool water-grey    L=78% S=12%
-   (dark-blue  '("#9ca4ac" "#2257A0" "blue"         ))  ; deep slate         L=67% S=10%
-   (magenta    base7)                                    ; eliminated - pure grey
-   (cyan       '("#b4c0c8" "#46D9FF" "brightcyan"   ))  ; hint of ice        L=77% S=13%
-   (dark-cyan  '("#98a4ac" "#5699AF" "cyan"         ))  ; deep water-grey    L=67% S=12%
+
+   ;; REFINED: Slightly more saturation for instant recognition
+   (red        '("#8B6666" "#BF616A" "red"          ))  ; deeper dusty rose
+   (orange     '("#7A6D5A" "#A2957C" "brightred"    ))  ; richer earth-clay
+   (green      '("#5A6B5A" "#6e7d64" "green"        ))  ; stronger olive
+   (blue       '("#5A6B7A" "#64717d" "brightblue"   ))  ; deeper slate-blue
+   (yellow     '("#8B7E52" "#A2957C" "yellow"       ))  ; richer sand-gold
+   (violet     '("#7d7470" "#7d7470" "brightmagenta"))  ; warmer dust-mauve
+   (teal       '("#4D6B6B" "#6e7d75" "brightgreen"  ))  ; deeper sage-grey
+   (dark-blue  '("#546070" "#546070" "blue"         ))  ; deep charcoal-slate
+   (magenta    '("#756e75" "#756e75" "magenta"      ))  ; deeper grey-plum
+   (cyan       '("#64757d" "#64757d" "brightcyan"   ))  ; deeper grey-water
+   (dark-cyan  '("#546470" "#546470" "cyan"         ))  ; deep grey-storm
 
    ;; face categories -- required for all themes
-   (highlight      yellow)
+   (highlight      orange)
    (vertical-bar   (doom-darken bg 0.25))
    (selection      base4)
    (builtin        cyan)
-   (comments       base4)
-   (doc-comments   base4)
-   (constants      base7)
-   (functions      cyan)
-   (keywords       base8)
-   (methods        dark-cyan)
-   (operators      base6)
+   (comments       base5)
+   (doc-comments   base5)
+   (constants      teal)
+   (functions      blue)
+   (keywords       base6)
+   (methods        blue)
+   (operators      base7)
    (type           blue)
    (strings        green)
-   (variables      base8)
-   (numbers        red)
+   (variables      fg-alt)
+   (numbers        orange)
    (region         selection)
    (error          red)
    (warning        yellow)
@@ -98,10 +99,10 @@ determine the exact padding."
 
    ;; custom categories
    (hidden     `(,(car bg-alt) "black" "black"))
-   (-modeline-bright doom-compline-brighter-modeline)
+   (-modeline-bright doom-lauds-brighter-modeline)
    (-modeline-pad
-    (when doom-compline-padded-modeline
-      (if (integerp doom-compline-padded-modeline) doom-compline-padded-modeline 4)))
+    (when doom-lauds-padded-modeline
+      (if (integerp doom-lauds-padded-modeline) doom-lauds-padded-modeline 4)))
 
    (modeline-fg     'unspecified)
    (modeline-fg-alt (doom-blend violet base4 (if -modeline-bright 0.5 0.2)))
@@ -119,7 +120,7 @@ determine the exact padding."
 
   ;;;; Base theme face overrides
   (((font-lock-comment-face &override)
-    :background (if doom-compline-comment-bg (doom-lighten bg 0.05)))
+    :background (if doom-lauds-comment-bg (doom-lighten bg 0.05)))
    ((line-number &override) :foreground base4)
    ((line-number-current-line &override) :foreground fg)
    (mode-line
@@ -142,7 +143,7 @@ determine the exact padding."
    (markdown-markup-face :foreground base5)
    (markdown-header-face :inherit 'bold :foreground red)
    ((markdown-code-face &override) :background (doom-darken bg 0.1))
-   ;; outline <built-in>
+   ;;;; outline <built-in>
    ((outline-1 &override) :foreground fg :weight 'ultra-bold)
    ((outline-2 &override) :foreground (doom-blend fg blue 0.35))
    ((outline-3 &override) :foreground (doom-blend fg blue 0.7))
@@ -171,4 +172,4 @@ determine the exact padding."
   ;; ()
   )
 
-;;; compline-theme.el ends here
+;;; lauds-theme.el ends here

@@ -178,8 +178,12 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(defvar brian/default-dark-theme 'modus-vivendi)
-(defvar brian/default-light-theme 'modus-operandi-tinted)
+(add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
+
+(use-package doom-themes :ensure t)
+
+(defvar brian/default-dark-theme 'compline)
+(defvar brian/default-light-theme 'lauds)
 
 (load-theme brian/default-light-theme t)
 
