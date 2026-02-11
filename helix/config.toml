@@ -1,7 +1,4 @@
-theme = "catppuccin_mocha"
-
-[editor]
-rulers = [120]
+theme = "base16_transparent"
 
 [editor.indent-guides]
 render = true
