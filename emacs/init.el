@@ -50,7 +50,7 @@
 ;;; 2. Fonts / typography
 ;;; ---------------------------------------------------------------------------
 (defvar my/variable-pitch-font "Aporetic Sans")
-(defvar my/fixed-pitch-font "Aporetic Sans Mono")
+(defvar my/fixed-pitch-font "Essential PragmataPro")
 
 (add-to-list 'default-frame-alist `(font . ,(format "%s-14" my/fixed-pitch-font)))
 (add-to-list 'default-frame-alist `(variable-pitch . ,(format "%s-14" my/variable-pitch-font)))
@@ -153,18 +153,7 @@
                               "#+title: %<%Y-%m-%d %A>\n#+filetags: :journal:\n\n")
            :unnarrowed t))))
 
-;; Org-capture for todos (simple append to todo.org)
-(setq org-capture-templates
-      '(("t" "Todo" entry
-         (file "~/org/roam/todo.org")
-         "* TODO %?\nDEADLINE: %^{Deadline}t\n%i\n%a"
-         :empty-lines 1
-         :prepend t)
-        ("T" "Todo (no deadline)" entry
-         (file "~/org/roam/todo.org")
-         "* TODO %?\n%i\n%a"
-         :empty-lines 1
-         :prepend t)))
+
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -178,12 +167,10 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
+(use-package doric-themes :ensure t)
 
-(use-package doom-themes :ensure t)
-
-(defvar brian/default-dark-theme 'compline)
-(defvar brian/default-light-theme 'lauds)
+(defvar brian/default-dark-theme 'doric-dark)
+(defvar brian/default-light-theme 'doric-light)
 
 (load-theme brian/default-light-theme t)
 
@@ -464,7 +451,7 @@
           (goto-char (point-max)))
       (error "Not in a project"))))
 
-(global-set-key (kbd "M-<return>") 'open-vterm-in-project-root)
+;;(global-set-key (kbd "M-<return>") 'open-vterm-in-project-root)
 
 ;;; ---------------------------------------------------------------------------
 ;;; 15. Custom functions
@@ -490,7 +477,18 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil)
+ '(package-selected-packages
+   '(ace-window adaptive-wrap agent-shell auto-dark blamer cape catppuccin-theme
+		claude-code-ide company consult-denote copilot corfu deadgrep
+		denote-menu direnv docker doom-themes doric-themes eat ef-themes
+		evil-collection evil-nerd-commenter evil-org evil-surround
+		exec-path-from-shell expand-region flexoki-themes forge git-link
+		gptel gruber-darker-theme imenu-list inf-ruby lambda-line
+		lambda-themes lsp-pyright lsp-ui marginalia mixed-pitch
+		multiple-cursors nerd-icons nordic-night-theme olivetti
+		orderless org-modern org-roam poet-theme rbenv rg rspec-mode
+		rust-mode south-theme spacious-padding standard-themes tao-theme
+		tree-sitter-langs ultra-scroll vertico vterm))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
      (acp :url "https://github.com/xenodium/acp.el")

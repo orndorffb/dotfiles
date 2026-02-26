@@ -17,7 +17,7 @@ j = { k = "normal_mode" }
 
 [editor.lsp]
 display-messages = true
-display-inlay-hints = true
+display-inlay-hints = false
 auto-signature-help = false
 
 [editor.statusline]
