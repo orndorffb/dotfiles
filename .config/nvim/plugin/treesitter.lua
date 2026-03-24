@@ -2,7 +2,7 @@ vim.pack.add({
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 }, { load = true })
 
-require("nvim-treesitter.configs").setup({
+require("nvim-treesitter").setup({
   ensure_installed = {
     "c", "lua", "vim", "vimdoc", "query",
     "elixir", "heex", "javascript", "html", "ruby", "python"
