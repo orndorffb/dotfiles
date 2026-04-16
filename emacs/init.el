@@ -167,10 +167,8 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 7. UI packages (themes, modeline, auto-dark)
 ;;; ---------------------------------------------------------------------------
-(use-package doric-themes :ensure t)
-
-(defvar brian/default-dark-theme 'doric-dark)
-(defvar brian/default-light-theme 'doric-light)
+(defvar brian/default-light-theme 'modus-operandi)
+(defvar brian/default-dark-theme 'modus-vivendi)
 
 (load-theme brian/default-light-theme t)
 
@@ -230,7 +228,7 @@
                 "  "
                 my-modeline-major-mode))
 
-(use-package adaptive-wrap :ensure t :hook (visual-line-mode . adaptive-wrap-prefix-mode))
+(add-hook 'visual-line-mode-hook #'visual-wrap-prefix-mode)
 (use-package nerd-icons :ensure t)
 
 ;;; ---------------------------------------------------------------------------
@@ -244,26 +242,31 @@
   :bind (("C-s"     . consult-line)
 	 ("C-x b"   . consult-buffer)
          ("C-x C-b" . consult-buffer)
-	 ("C-x b"   . consult-buffer)
          ("C-c h"   . consult-history)
          ("C-c s"   . consult-imenu)
          ("C-c d"   . consult-flymake)))
 
-(use-package company
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.2)
+  (corfu-auto-prefix 2)
+  (corfu-cycle t)
+  (corfu-preselect 'prompt)
+  :bind (:map corfu-map
+              ("TAB" . corfu-next)
+              ([tab] . corfu-next)
+              ("S-TAB" . corfu-previous)
+              ([backtab] . corfu-previous))
+  :init
+  (global-corfu-mode))
+
+(use-package cape
   :ensure t
   :init
-  (global-company-mode)
-  :custom
-  (company-idle-delay 0.2)
-  (company-minimum-prefix-length 2)
-  (company-selection-wrap-around t)
-  (company-tooltip-align-annotations t)
-  (company-require-match nil)
-  :bind (:map company-active-map
-              ("TAB" . company-complete-selection)
-              ([tab] . company-complete-selection)
-              ("C-n" . company-select-next)
-              ("C-p" . company-select-previous)))
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file))
 
 ;;; ---------------------------------------------------------------------------
 ;;; 9. Window management
@@ -274,7 +277,7 @@
   (display-buffer-alist
    '(("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\|[Hh]elp\\|Messages\\|Bookmark List\\|Ibuffer\\|Occur\\|eldoc.*\\)\\*"
       (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 0))
-     ("\\*eglot-help\\*"
+     ("\\*\\(lsp-help\\)\\*"
       (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 0))
      ("\\*\\(Flymake diagnostics\\|xref\\|ivy\\|Swiper\\|Completions\\)"
       (display-buffer-in-side-window) (window-height . 0.25) (side . bottom) (slot . 1)))))
@@ -350,7 +353,7 @@
 ;;; ---------------------------------------------------------------------------
 (use-package gptel :ensure t
   :config
-  (setq gptel-default-model "gpt-4"
+  (setq gptel-default-model "gpt-4o"
         gptel-system-message "You are a helpful assistant.")
   (global-set-key (kbd "C-c <return>") 'gptel-send)
   (global-set-key (kbd "C-c C-<return>") 'gptel-menu)
@@ -364,22 +367,24 @@
   (setq agent-shell-preferred-agent-config (agent-shell-anthropic-make-claude-code-config)))
 
 ;;; ---------------------------------------------------------------------------
-;;; 11. Eglot + programming languages
+;;; 11. LSP + programming languages
 ;;; ---------------------------------------------------------------------------
-(use-package eglot
-  :ensure nil
-  :hook ((ruby-ts-mode . eglot-ensure)
-         (python-mode . eglot-ensure)
-         (python-ts-mode . eglot-ensure)
-         (rust-mode . eglot-ensure))
-  :config
-  (setq eglot-autoshutdown t
-        eglot-send-changes-idle-time 0.5)
-  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
-  (add-to-list 'eglot-server-programs '(python-ts-mode . ("pyright-langserver" "--stdio"))))
+(use-package lsp-mode
+  :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c l"
+        lsp-headerline-breadcrumb-enable nil
+        lsp-signature-render-documentation nil
+        lsp-signature-auto-activate nil
+        lsp-disabled-clients '(ruby-ls rubocop-ls typeprof-ls steep-ls solargraph-ls
+                               srb-ls semgrep-ls stree-ls pylsp mspyls))
+  :hook ((ruby-ts-mode . lsp-deferred)
+         (python-mode . lsp-deferred)
+         (python-ts-mode . lsp-deferred)
+         (rust-mode . lsp-deferred)))
 
-(use-package tree-sitter :ensure t :config (global-tree-sitter-mode))
-(use-package tree-sitter-langs :ensure t :after tree-sitter)
+(use-package lsp-pyright :ensure t :after lsp-mode)
+(use-package lsp-ui :ensure t)
 
 (setq major-mode-remap-alist '((python-mode . python-ts-mode)))
 (when (treesit-available-p)
@@ -432,7 +437,6 @@
 ;;; ---------------------------------------------------------------------------
 ;;; 14. Misc utilities
 ;;; ---------------------------------------------------------------------------
-(use-package imenu-list :ensure t :bind (("M-g i" . imenu-list-smart-toggle)))
 (use-package expand-region :ensure t :bind (("C-c SPC" . er/expand-region)))
 
 (defun open-vterm-in-project-root ()
@@ -478,20 +482,15 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ace-window adaptive-wrap agent-shell auto-dark blamer cape catppuccin-theme
-		claude-code-ide company consult-denote copilot corfu deadgrep
-		denote-menu direnv docker doom-themes doric-themes eat ef-themes
-		evil-collection evil-nerd-commenter evil-org evil-surround
-		exec-path-from-shell expand-region flexoki-themes forge git-link
-		gptel gruber-darker-theme imenu-list inf-ruby lambda-line
-		lambda-themes lsp-pyright lsp-ui marginalia mixed-pitch
-		multiple-cursors nerd-icons nordic-night-theme olivetti
-		orderless org-modern org-roam poet-theme rbenv rg rspec-mode
-		rust-mode south-theme spacious-padding standard-themes tao-theme
-		tree-sitter-langs ultra-scroll vertico vterm))
+   '(ace-window agent-shell auto-dark avy blamer cape consult corfu
+		exec-path-from-shell expand-region forge git-link gptel
+		lsp-pyright lsp-ui marginalia mixed-pitch multiple-cursors
+		nerd-icons olivetti orderless org-modern org-roam
+		rbenv rspec-mode rust-mode ultra-scroll vertico))
  '(package-vc-selected-packages
    '((agent-shell :url "https://github.com/xenodium/agent-shell")
-     (acp :url "https://github.com/xenodium/acp.el")
+     (acp :url "https://github.com/xenodium/acp.el"
+	  :branch "main")
      (claude-code :url "https://github.com/stevemolitor/claude-code.el")
      (ultra-scroll :url "https://github.com/jdtsmith/ultra-scroll" :branch
 		   "main")
